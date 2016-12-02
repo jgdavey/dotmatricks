@@ -97,7 +97,6 @@ if [[ -s "$HOME/.rvm/bin" ]] ; then export PATH="$PATH:$HOME/.rvm/bin" ; fi
 export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
-export LS_COLORS='di=1;31:fi=0:ln=36:pi=5:so=5:bd=5:cd=5:or=37:ex=1;32:*.deb=90'
 export CLICOLOR=1
 
 export PGHOST="/tmp"
