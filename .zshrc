@@ -70,7 +70,7 @@ if [ -n "$SSH_CONNECTION" ]; then
 else
   p='%{$fg_bold[green]%}%n@%m'
 fi
-PROMPT="$p%{\$reset_color%}:%{\$fg[cyan]%}%~ %{\$reset_color%}\$(git_prompt_info)%{\$fg[yellow]%}%# %{\$reset_color%}"
+PROMPT="$p%{\$reset_color%}:%{\$fg[cyan]%}%~ %{\$reset_color%}\$(git_prompt_info)%{\$fg_bold[yellow]%}%# %{\$reset_color%}"
 
 # show non-success exit code in right prompt
 RPROMPT="%(?..{%{$fg[red]%}%?%{$reset_color%}})"
