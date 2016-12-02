@@ -8,11 +8,7 @@ fpath=(
 [ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # color term
-export CLICOLOR=1
-export LSCOLORS=Dxfxcxdxbxegedabadacad
-export ZLS_COLORS=$LSCOLORS
 export LC_CTYPE=en_US.UTF-8
-export LESS=FRX
 
 # make with the nice completion
 autoload -U compinit; compinit
@@ -81,22 +77,6 @@ RPROMPT="%(?..{%{$fg[red]%}%?%{$reset_color%}})"
 
 # default apps
 (( ${+PAGER}   )) || export PAGER='less'
-(( ${+EDITOR}  )) || export EDITOR='vim'
-export PSQL_EDITOR='vim -c"setf sql"'
-
-# aliases
-alias l="ls -F -G -lah"
-alias la="ls -a"
-alias lsd='ls -ld *(-/DN)'
-alias cd..='cd ..'
-alias ..='cd ..'
-
-l.() {
-  ls -ld "${1:-$PWD}"/.[^.]*
-}
-
-# rvm-install added line:
-if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then source "$HOME/.rvm/scripts/rvm" ; fi
 
 # import local zsh customizations, if present
 zrcl="$HOME/.zshrc.local"

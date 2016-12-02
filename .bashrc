@@ -9,16 +9,6 @@ export HISTCONTROL=erasedups
 # Append to history file
 shopt -s histappend
 
-VISUAL=vim
-EDITOR="$VISUAL"
-LESS="FRX"
-RI="--format ansi -T"
-PSQL_EDITOR='vim -c"setf sql"'
-CLICOLOR=1
-LSCOLORS=gxgxcxdxbxegedabagacad
-
-export VISUAL EDITOR LESS RI PSQL_EDITOR CLICOLOR LSCOLORS
-
 if [ -t 1 ]; then
 bind 'set bind-tty-special-chars off'
 bind '"\ep": history-search-backward'
@@ -38,7 +28,7 @@ else
   prefix="\[\033[01;32m\]\u@\h"
 fi
 
-[ -z "$PS1" ] || export PS1="$prefix\[\033[00m\]:\[\033[01;36m\]\w \[\033[00m\]\$(git_prompt_info)$ "
+[ -z "$PS1" ] || export PS1="$prefix\[\033[00m\]:\[\033[36m\]\w \[\033[00m\]\$(git_prompt_info)$ "
 
 if [ -f '/usr/local/etc/bash_completion.d/git-completion.bash' ]; then
   source '/usr/local/etc/bash_completion.d/git-completion.bash'

@@ -77,7 +77,12 @@ git_prompt_info () {
   fi
 }
 
+alias cd..='cd ..'
+alias ..='cd ..'
 alias ll='ls -l'
+alias l="ls -F -G -lah"
+alias la="ls -a"
+alias lsd='ls -ld *(-/DN)'
 alias gap='git add -p'
 alias gb='git branch'
 alias gc='git commit -v'
@@ -91,13 +96,25 @@ alias gra='git rebase --abort'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
+l.() {
+  ls -ld "${1:-$PWD}"/.[^.]*
+}
+
 # RVM exectuble path for scripting, when available
 if [[ -s "$HOME/.rvm/bin" ]] ; then export PATH="$PATH:$HOME/.rvm/bin" ; fi
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then source "$HOME/.rvm/scripts/rvm" ; fi
 
 export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
+export LESS=FRX
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
 export CLICOLOR=1
+export LSCOLORS=Dxfxcxdxbxegedabadacad
+export ZLS_COLORS=$LSCOLORS
+export VISUAL=vim
+export EDITOR="$VISUAL"
+export RI="--format ansi -T"
+export PSQL_EDITOR='vim -c"setf sql"'
 
 export PGHOST="/tmp"
 export GOPATH="$SOURCE_DIR"
