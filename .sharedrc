@@ -1,11 +1,7 @@
 # vim:set ft=sh sw=2 sts=2:
 
-[ -e "$SOURCE_DIR" ] || SOURCE_DIR="$HOME/hashrocket"
+[ -e "$SOURCE_DIR" ] || SOURCE_DIR="$HOME/src"
 export SOURCE_DIR
-
-# DEPRECATED: Use more generic SOURCE_DIR. HASHROCKET_DIR persists as a
-# legacy artifact, and for 3rd-party scripts.
-export HASHROCKET_DIR=$SOURCE_DIR
 
 # Paths for prepending
 for dir in /usr/local/bin "$HOME/bin" .git/safe/../../bin; do
@@ -31,16 +27,6 @@ if command -v hub >/dev/null; then
     command hub "$@"
   }
 fi
-
-twiki () {
-  rake db:migrate && rake db:migrate:redo && rake db:test:prepare
-}
-
-alias sc='rails console'
-alias ss='rails server'
-alias sdbc='rails dbconsole -p'
-
-alias ll='ls -l'
 
 # git_prompt_info accepts 0 or 1 arguments (i.e., format string)
 # returns text to add to bash PS1 prompt (includes branch name)
@@ -91,43 +77,29 @@ git_prompt_info () {
   fi
 }
 
-gcr() {
-  git checkout -b $1 origin/$1
-}
-
-# git reset empty files
-gref() {
-  command git --no-pager diff --cached --stat | command grep "|\s*0$" | awk '{system("command git reset " $1)}'
-}
-
+alias ll='ls -l'
 alias gap='git add -p'
-alias gnap='git add -N --ignore-removal . && gap && gref'
-alias glp='git log -p'
-alias glg='git log --graph --oneline --decorate --color --all'
 alias gb='git branch'
 alias gc='git commit -v'
-alias gca='git commit -a -v'
-alias gcl='git clean -f -d'
 alias gd='git diff'
 alias gdc='git diff --cached'
-alias gdh='git diff HEAD'
-alias gl='git pull'
-alias glod='git log --oneline --decorate'
 alias gp='git push'
 alias gpr='git pull --rebase'
 alias gst='git status'
-alias gr='git rebase'
 alias grc='git rebase --continue'
 alias gra='git rebase --abort'
-alias gco='git checkout'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
-if [ "$(uname)" = Darwin -a "$(command -v vim)" = /usr/bin/vim ]; then
-  bettervim="/Applications/MacVim.app/Contents/MacOS/Vim"
-  [ -f "$bettervim" ] && alias vim="$bettervim"
-  [ -f "$HOME$bettervim" ] && alias vim="$HOME$bettervim"
-fi
-
 # RVM exectuble path for scripting, when available
 if [[ -s "$HOME/.rvm/bin" ]] ; then export PATH="$PATH:$HOME/.rvm/bin" ; fi
+
+export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
+
+# http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
+export LS_COLORS='di=1;31:fi=0:ln=36:pi=5:so=5:bd=5:cd=5:or=37:ex=1;32:*.deb=90'
+export CLICOLOR=1
+
+export PGHOST="/tmp"
+export GOPATH="$SOURCE_DIR"
+export JRUBY_OPTS="-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify"
