@@ -1,2 +1,4 @@
 FILES
 .vim/bundle
+.emacs.d/elpa
+.emacs.d/default.el
