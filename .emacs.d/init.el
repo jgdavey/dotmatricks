@@ -55,6 +55,11 @@
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 (add-hook 'clojure-mode-hook          #'enable-paredit-mode)
 
+(require 'ido)
+(setq ido-everywhere t
+      ido-enable-flex-matching t)
+(ido-mode t)
+
 (defmacro with-library (symbol &rest body)
   `(condition-case nil
        (progn
