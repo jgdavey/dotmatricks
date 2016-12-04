@@ -10,6 +10,7 @@
   (package-refresh-contents))
 
 (defvar my-packages '(cider
+                      clj-refactor
                       company
                       exec-path-from-shell
                       magit
@@ -21,6 +22,16 @@
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
+
+(defmacro with-library (symbol &rest body)
+  `(condition-case nil
+       (progn
+         (require ',symbol)
+         ,@body)
+
+     (error (message (format "I guess we don't have %s available." ',symbol))
+            nil)))
+(put 'with-library 'lisp-indent-function 1)
 
 ;; Editor
 (menu-bar-mode -1)
@@ -55,22 +66,31 @@
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 (add-hook 'clojure-mode-hook          #'enable-paredit-mode)
 
+(with-library clj-refactor
+  (defun my-clojure-mode-hook ()
+      (clj-refactor-mode 1)
+      (cljr-add-keybindings-with-prefix "C-c C-m"))
+  (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 
-(require 'ido)
-(setq ido-everywhere t
-      ido-enable-flex-matching t)
-(ido-mode t)
+(with-library ido
+  (setq ido-everywhere t
+        ido-enable-flex-matching t)
+  (ido-mode t))
 
-(require 'paredit)
-(define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
+(with-library paredit
+  (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp))
 
-
-(defmacro with-library (symbol &rest body)
-  `(condition-case nil
-       (progn
-         (require ',symbol)
-         ,@body)
-
-     (error (message (format "I guess we don't have %s available." ',symbol))
-            nil)))
-(put 'with-library 'lisp-indent-function 1)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (monokai-theme magit exec-path-from-shell company clj-refactor cider))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
