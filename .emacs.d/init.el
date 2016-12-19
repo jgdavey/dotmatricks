@@ -1,5 +1,6 @@
 ;; Packages
 (require 'package)
+(require 'cl)
 
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
@@ -54,7 +55,9 @@
       `((".*" . ,temporary-file-directory)))
 (setq undo-tree-auto-save-history t)
 
-(setq show-trailing-whitespace t)
+(setq whitespace-style '(face trailing lines-tail tabs)
+      whitespace-line-column 80)
+(add-hook 'clojure-mode-hook 'whitespace-mode)
 
 (load-theme 'monokai t)
 
@@ -65,12 +68,19 @@
 (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 (add-hook 'clojure-mode-hook          #'enable-paredit-mode)
+(add-hook 'cider-repl-mode-hook       #'enable-paredit-mode)
+
+(with-library magit
+  (global-set-key (kbd "C-x g") 'magit-status))
+
+(with-library cider
+  (setq cider-prompt-for-symbol nil))
 
 (with-library clj-refactor
-  (defun my-clojure-mode-hook ()
+  (defun my-clj-refactor-mode-hook ()
       (clj-refactor-mode 1)
       (cljr-add-keybindings-with-prefix "C-c C-m"))
-  (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
+  (add-hook 'clojure-mode-hook #'my-clj-refactor-mode-hook))
 
 (with-library ido
   (setq ido-everywhere t
@@ -80,17 +90,7 @@
 (with-library paredit
   (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (monokai-theme magit exec-path-from-shell company clj-refactor cider))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(let ((local "~/.emacs.d/default.el"))
+  (if (file-exists-p local)
+    (load-file local)
+    nil))
