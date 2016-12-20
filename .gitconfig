@@ -27,7 +27,6 @@
 	ui = auto
 [core]
 	excludesfile = ~/.cvsignore
-	editor = vim
 	whitespace = warn
 [help]
 	autocorrect = 10
