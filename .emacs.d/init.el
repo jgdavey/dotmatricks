@@ -17,7 +17,8 @@
                       magit
                       monokai-theme
                       org
-                      paredit)
+                      paredit
+                      zenburn-theme)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -59,7 +60,7 @@
       whitespace-line-column 80)
 (add-hook 'clojure-mode-hook 'whitespace-mode)
 
-(load-theme 'monokai t)
+(load-theme 'zenburn t)
 
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
 (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
