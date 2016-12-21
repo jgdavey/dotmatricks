@@ -119,3 +119,5 @@ export PSQL_EDITOR='vim -c"setf sql"'
 export PGHOST="/tmp"
 export GOPATH="$SOURCE_DIR"
 export JRUBY_OPTS="-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify"
+
+alias e="$EDITOR"
