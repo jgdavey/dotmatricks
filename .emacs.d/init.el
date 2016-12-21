@@ -14,6 +14,7 @@
                       clj-refactor
                       company
                       exec-path-from-shell
+                      gist
                       magit
                       monokai-theme
                       org
