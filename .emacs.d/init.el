@@ -1,3 +1,13 @@
+;; Turn off useless UI elements -- do this as early as possible to
+;; avoid visual thrashing.
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(setq inhibit-splash-screen t)
+(setq inhibit-startup-screen t)
+(setq inhibit-startup-echo-area-message t)
+(setq initial-scratch-message "")
+
 ;; Packages
 (require 'package)
 (require 'cl)
@@ -37,7 +47,6 @@
 (put 'with-library 'lisp-indent-function 1)
 
 ;; Editor
-(menu-bar-mode -1)
 
 (setq-default indent-tabs-mode nil)   ;; don't use tabs to indent
 (setq-default tab-width 4)            ;; but maintain correct appearance
