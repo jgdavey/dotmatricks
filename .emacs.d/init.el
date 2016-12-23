@@ -20,7 +20,8 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages '(cider
+(defvar my-packages '(browse-kill-ring
+                      cider
                       clj-refactor
                       company
                       exec-path-from-shell
