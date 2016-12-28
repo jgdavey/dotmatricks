@@ -25,9 +25,11 @@
                       clj-refactor
                       company
                       exec-path-from-shell
+                      expand-region
                       gist
                       magit
                       monokai-theme
+                      multiple-cursors
                       org
                       paredit
                       zenburn-theme)
@@ -101,6 +103,9 @@
 
 (with-library paredit
   (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp))
+
+(with-library 'uniquify
+  (setq uniquify-buffer-name-style 'forward))
 
 (let ((local "~/.emacs.d/default.el"))
   (if (file-exists-p local)
