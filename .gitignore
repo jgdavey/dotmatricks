@@ -5,3 +5,5 @@ FILES
 /.emacs.d/ido.last
 /.emacs.d/url
 /.emacs.d/var
+/.emacs.d/recentf
+/.emacs.d/.*

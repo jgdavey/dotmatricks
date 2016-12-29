@@ -99,7 +99,19 @@
 (with-library ido
   (setq ido-everywhere t
         ido-enable-flex-matching t)
-  (ido-mode t))
+  (ido-mode t)
+  ;; Recent files support
+  (require 'recentf)
+  (recentf-mode t)
+  (setq recentf-max-saved-items 50)
+  (defun ido-recentf-open ()
+    "Use `ido-completing-read' to \\[find-file] a recent file"
+    (interactive)
+    (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+      (message "Aborting")))
+  (global-set-key (kbd "C-x M-f") 'ido-recentf-open)
+  (global-set-key (kbd "C-x C-M-f") 'ido-recentf-open))
 
 (with-library paredit
   (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp))
