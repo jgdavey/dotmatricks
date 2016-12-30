@@ -118,8 +118,9 @@
 (with-library paredit
   (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp))
 
-(with-library 'uniquify
-  (setq uniquify-buffer-name-style 'forward))
+(with-library uniquify
+  (setq uniquify-buffer-name-style 'post-forward)
+  (setq uniquify-separator ":"))
 
 (let ((local "~/.emacs.d/default.el"))
   (if (file-exists-p local)
