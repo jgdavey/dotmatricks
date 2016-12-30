@@ -85,7 +85,9 @@
 (add-hook 'cider-repl-mode-hook       #'enable-paredit-mode)
 
 (with-library magit
-  (global-set-key (kbd "C-x g") 'magit-status))
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (magit-define-popup-switch 'magit-log-popup
+    ?m "Omit merge commits" "--no-merges"))
 
 (with-library cider
   (setq cider-prompt-for-symbol nil))
