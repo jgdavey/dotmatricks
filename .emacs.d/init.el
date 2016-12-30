@@ -131,6 +131,11 @@
 (with-library company
   (global-company-mode 1))
 
+(add-hook 'sql-interactive-mode-hook
+          (lambda ()
+            (setq sql-prompt-regexp "^[_[:alpha:]]*[=][#>] ")
+            (setq sql-prompt-cont-regexp "^[_[:alpha:]]*[-][#>] ")))
+
 (let ((local "~/.emacs.d/default.el"))
   (if (file-exists-p local)
     (load-file local)
