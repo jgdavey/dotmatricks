@@ -20,6 +20,7 @@ set hidden
 set guifont=Menlo:h15
 set guioptions-=T guioptions-=e guioptions-=L guioptions-=r
 set shell=bash
+set modeline
 
 augroup vimrc
   autocmd!
