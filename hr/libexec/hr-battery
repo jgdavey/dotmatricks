@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+#
+# Usage: hr battery [options]
+#
+# Summary: Show battery percentage, with various formatting options
+#
+# Help: By default, prints just the battery percentage.
+#
+# Options:
+#   --charging     Print percent even when plugged in (default prints nothing when plugged in)
+#   --color        Print with color (depending on formatter)
+#   --format=[opt] One of percent, tmux, or hearts
+#
+# This utility is known to work with OS X and Ubuntu, but may work with other Linux distros.
+
+if [ "$1" = "--complete" ]; then
+    echo --charging
+    echo --color
+    echo --format=percent
+    echo --format=hearts
+    echo --format=tmux
+    exit
+fi
+
+format=percent
+color=
+charging=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+      --charging) charging=1 ;;
+      -c|--color) color=1 ;;
+      -f|--format*)
+          if echo "$1" | grep -q "=[^ ]"; then
+              format=$(echo "$1" | sed -e 's/^[^=]*=//g')
+          else
+              format="$2"
+              shift
+          fi
+          ;;
+      (--) shift; break ;;
+      (*) break ;;
+  esac
+  shift
+done
+
+[ -e "$NUM_HEARTS" ] || NUM_HEARTS=5
+
+format_hearts() {
+    if [ -n "$color" ]; then
+        heart_full="\033[0;31m♥\033[0;0m"
+        heart_empty="\033[0;31m♡\033[0;0m"
+    else
+        heart_full=♥
+        heart_empty=♡
+    fi
+
+    perc=$1
+    inc=$(( 100 / $NUM_HEARTS))
+
+    for i in `seq $NUM_HEARTS`; do
+        if [ $perc -gt 0 ]; then
+            echo -e "$heart_full"
+        else
+            echo -e "$heart_empty"
+        fi
+        perc=$(( $perc - $inc ))
+    done
+}
+
+format_tmux() {
+    percent="$1%"
+    if [ -n "$color" ]; then
+        c=
+        r="#[none]"
+        if   (( $1 > 80 )); then c='#[nobright fg=green]'
+        elif (( $1 > 65 )); then c='#[bright fg=yellow]'
+        elif (( $1 > 40 )); then c='#[bright fg=red]'
+        else c='#[nobright fg=red]'
+        fi
+        echo -e "$c$percent$r"
+    else
+        echo "$percent"
+    fi
+}
+
+format_percent() {
+    echo "$1%"
+}
+
+battery_status() {
+    case $(uname -s) in
+        "Linux")
+            BATPATH="/sys/class/power_supply/BAT0"
+            status="$(cat $BATPATH/status)"
+            if [ "$status" = "Discharging" -o -n "$charging" ]; then
+                bf=$(cat $BATPATH/energy_full)
+                bn=$(cat $BATPATH/energy_now)
+                echo "$(( 100 * $bn / $bf ))"
+            fi
+            ;;
+        "Darwin")
+            info="$(pmset -g batt)"
+            status=$(echo "$info" | grep -io '\(battery\|ac\) power')
+            if [ "$status" = "Battery Power" -o -n "$charging" ]; then
+               percentage=$(echo "$info" | grep -o "\d\+%")
+               echo "${percentage%\%}"
+            fi
+            ;;
+    esac
+}
+
+formatter="format_percent"
+
+case "$format" in
+    hearts)
+        formatter="format_hearts" ;;
+    tmux)
+        formatter="format_tmux" ;;
+    *)
+        formatter="format_percent" ;;
+esac
+
+percentage="$(battery_status)"
+[ -z "$percentage" ] && exit
+
+echo -e $($formatter "$percentage")
