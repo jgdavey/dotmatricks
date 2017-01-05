@@ -7,10 +7,11 @@
 # Help: By default, prints just the battery percentage.
 #
 # Options:
-#   --charging     Print percent even when plugged in (default prints nothing when plugged in)
+#   --charging     Print even when plugged in (default prints nothing when plugged in)
 #   --color        Print with color (depending on formatter)
 #   --tmux         Print with tmux formatting (for status bar)
-#   --format=[opt] One of percent, bar, icon, or hearts, or a format string (any of the opts, prefixed with %)
+#   --format=[opt] One of percent, bar, icon, block, or hearts,
+#                  or a format string (any of the opts, prefixed with %)
 #
 # This utility is known to work with OS X and Ubuntu, but may work with other Linux distros.
 
@@ -115,23 +116,33 @@ if [ -n "$color" ]; then
     fi
 fi
 
-colorize_bg() {
+bg_color() {
     percent="$BATTERY_PERCENTAGE"
     if   (( $percent > 80 )); then c=$GREEN_BG
     elif (( $percent > 50 )); then c=$YELLOW_BG
     elif (( $percent > 30 )); then c=$ORANGE_BG
     else                           c=$RED_BG
     fi
-    echo -e "$c$1$RESET_COLOR"
+    echo -e "$c"
 }
 
-colorize_fg() {
+fg_color() {
     percent="$BATTERY_PERCENTAGE"
     if   (( $percent > 80 )); then c=$GREEN_FG
     elif (( $percent > 50 )); then c=$YELLOW_FG
     elif (( $percent > 30 )); then c=$ORANGE_FG
     else                           c=$RED_FG
     fi
+    echo -e "$c"
+}
+
+colorize_bg() {
+    c="$(bg_color)"
+    echo -e "$c$1$RESET_COLOR"
+}
+
+colorize_fg() {
+    c="$(fg_color)"
     echo -e "$c$1$RESET_COLOR"
 }
 
@@ -177,6 +188,25 @@ format_bar() {
     fi
 }
 
+format_block() {
+    percent=$BATTERY_PERCENTAGE
+    if   (( $percent > 90 )); then c="█"
+    elif (( $percent > 80 )); then c="▇"
+    elif (( $percent > 68 )); then c="▆"
+    elif (( $percent > 56 )); then c="▅"
+    elif (( $percent > 44 )); then c="▄"
+    elif (( $percent > 32 )); then c="▃"
+    elif (( $percent > 20 )); then c="▂"
+    else                           c="▁"
+    fi
+
+    if [ -n "$tmux" ]; then
+        colorize_bg "$c"
+    else
+        colorize_fg "$c"
+    fi
+}
+
 format_icon() {
     charged="🔌 "
     charging="⚡️ "
@@ -197,15 +227,22 @@ case "$format" in
         echo $(format_hearts) ;;
     bar)
         echo $(format_bar) ;;
+    block)
+        echo $(format_block) ;;
     icon)
         echo $(format_percent) $(format_icon) ;;
     *%*)
         f=$format
         f="${f//%hearts/$(format_hearts)}"
         f="${f//%bar/$(format_bar)}"
+        f="${f//%block/$(format_block)}"
         f="${f//%percent/$(format_percent)}"
         f="${f//%icon/$(format_icon)}"
-        echo $f
+        f="${f//%bg_color/$(bg_color)}"
+        f="${f//%fg_color/$(fg_color)}"
+        f="${f//%reset_color/$RESET_COLOR}"
+        f="${f//%reset/$RESET_COLOR}"
+        echo -e $f
         ;;
     *)
         echo $(format_percent) ;;
