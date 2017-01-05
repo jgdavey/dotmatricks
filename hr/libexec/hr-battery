@@ -70,7 +70,7 @@ case $(uname -s) in
         if [ "$status" = "Battery Power" ]; then
             BATTERY_DISCHARGING=1
         fi
-        BATTERY_PERCENTAGE=$(echo "$info" | grep -o "\d\+%")
+        BATTERY_PERCENTAGE=$(echo "$info" | grep -o "\d\+%" | sed 's/%//')
         ;;
     *)
         # Unsupported platform
