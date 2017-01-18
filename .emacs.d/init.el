@@ -27,6 +27,7 @@
                       exec-path-from-shell
                       expand-region
                       gist
+                      inf-ruby
                       magit
                       monokai-theme
                       multiple-cursors
@@ -90,6 +91,7 @@
     ?m "Omit merge commits" "--no-merges"))
 
 (with-library cider
+  (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil))
 
 (with-library clj-refactor
@@ -130,6 +132,10 @@
 
 (with-library company
   (global-company-mode 1))
+
+(with-library org
+  (require 'ob-clojure)
+  (require 'ob-ruby))
 
 (add-hook 'sql-interactive-mode-hook
           (lambda ()
