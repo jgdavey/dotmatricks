@@ -140,3 +140,10 @@
   (if (file-exists-p local)
     (load-file local)
     nil))
+
+;; set custom file
+(let ((custom "~/.emacs.d/custom.el"))
+  (setq custom-file custom)
+  (if (file-exists-p custom)
+      (load-file custom)
+    nil))
