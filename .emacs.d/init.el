@@ -21,6 +21,7 @@
   (package-refresh-contents))
 
 (defvar my-packages '(ag
+                      browse-kill-ring
                       cider
                       clj-refactor
                       company
@@ -29,6 +30,7 @@
                       expand-region
                       gist
                       inf-ruby
+                      json-mode
                       magit
                       monokai-theme
                       multiple-cursors
