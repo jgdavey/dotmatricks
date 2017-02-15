@@ -96,12 +96,17 @@
 
 (with-library cider
   (setq org-babel-clojure-backend 'cider)
-  (setq cider-prompt-for-symbol nil))
+  (setq cider-prompt-for-symbol nil)
+  (setq cider-mode-line-show-connection nil)
+  (setq cider-repl-display-help-banner nil))
 
 (with-library clj-refactor
   (defun my-clj-refactor-mode-hook ()
       (clj-refactor-mode 1)
       (cljr-add-keybindings-with-prefix "C-c C-m"))
+  (setq cljr-favor-prefix-notation nil
+        cljr-auto-sort-ns nil
+        cljr-favor-private-functions nil)
   (add-hook 'clojure-mode-hook #'my-clj-refactor-mode-hook))
 
 (with-library ido
