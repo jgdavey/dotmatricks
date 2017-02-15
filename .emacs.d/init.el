@@ -24,6 +24,7 @@
                       cider
                       clj-refactor
                       company
+                      diminish
                       exec-path-from-shell
                       expand-region
                       gist
@@ -137,6 +138,10 @@
 (with-library org
   (require 'ob-clojure)
   (require 'ob-ruby))
+
+(with-library diminish
+  (diminish 'company-mode "comp")
+  (diminish 'paredit-mode))
 
 (with-library wgrep
   (autoload 'wgrep-ag-setup "wgrep-ag"))
