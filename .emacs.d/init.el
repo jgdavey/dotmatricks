@@ -20,7 +20,7 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages '(browse-kill-ring
+(defvar my-packages '(ag
                       cider
                       clj-refactor
                       company
@@ -33,6 +33,7 @@
                       multiple-cursors
                       org
                       paredit
+                      wgrep-ag
                       zenburn-theme)
   "A list of packages to ensure are installed at launch.")
 
@@ -141,6 +142,13 @@
           (lambda ()
             (setq sql-prompt-regexp "^[_[:alpha:]]*[=][#>] ")
             (setq sql-prompt-cont-regexp "^[_[:alpha:]]*[-][#>] ")))
+(with-library wgrep
+  (autoload 'wgrep-ag-setup "wgrep-ag"))
+
+(with-library ag
+  (setq ag-highlight-search t)
+  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
 
 (let ((local "~/.emacs.d/default.el"))
   (if (file-exists-p local)
