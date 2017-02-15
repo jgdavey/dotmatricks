@@ -138,10 +138,6 @@
   (require 'ob-clojure)
   (require 'ob-ruby))
 
-(add-hook 'sql-interactive-mode-hook
-          (lambda ()
-            (setq sql-prompt-regexp "^[_[:alpha:]]*[=][#>] ")
-            (setq sql-prompt-cont-regexp "^[_[:alpha:]]*[-][#>] ")))
 (with-library wgrep
   (autoload 'wgrep-ag-setup "wgrep-ag"))
 
@@ -149,6 +145,26 @@
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
+;; Silence compiler warnings
+(defvar sql-product)
+(defvar sql-prompt-regexp)
+(defvar sql-prompt-cont-regexp)
+
+(defun my-sql-interactive-mode-hook ()
+  "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
+  (when (eq sql-product 'postgres)
+    ;; Allow symbol chars in database names in prompt.
+    ;; Default postgres pattern was: "^\\w*=[#>] " (see `sql-product-alist').
+    (setq sql-prompt-regexp "^\\(?:\\sw\\|\\s_\\)*=[#>] *")
+    (setq sql-prompt-cont-regexp "^\\(?:\\sw\\|\\s_\\)*[-(][#>] *")
+    (let ((proc (get-buffer-process (current-buffer))))
+      ;; Output each query before executing it. (n.b. this also avoids
+      ;; the psql prompt breaking the alignment of query results.)
+      (comint-send-string proc "\\set ECHO queries\n"))))
+
+(add-hook 'sql-interactive-mode-hook 'my-sql-interactive-mode-hook)
+
+; (setq sql-interactive-mode-hook nil)
 
 (let ((local "~/.emacs.d/default.el"))
   (if (file-exists-p local)
