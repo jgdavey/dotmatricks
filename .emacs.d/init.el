@@ -14,6 +14,8 @@
 
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/") t)
 
 (package-initialize)
 
@@ -144,7 +146,21 @@
 
 (with-library org
   (require 'ob-clojure)
-  (require 'ob-ruby))
+  (require 'ob-ruby)
+  (setq org-babel-clojure-backend 'cider)
+  ;; Here I specify the languages I want to be able to use with Org-babel.
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((clojure . t)
+     (sh . t)
+     (emacs-lisp . t)))
+
+  ;; Let's have pretty source code blocks
+  (setq org-edit-src-content-indentation 0
+        org-src-tab-acts-natively t
+        org-src-fontify-natively t
+        org-confirm-babel-evaluate nil
+        org-support-shift-select 'always))
 
 (with-library diminish
   (diminish 'company-mode "comp")
