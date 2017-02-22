@@ -36,7 +36,7 @@
                       magit
                       monokai-theme
                       multiple-cursors
-                      org
+                      org-plus-contrib
                       paredit
                       wgrep-ag
                       zenburn-theme)
