@@ -79,6 +79,7 @@
 (setq whitespace-style '(face trailing lines-tail tabs)
       whitespace-line-column 80)
 (add-hook 'clojure-mode-hook 'whitespace-mode)
+(add-hook 'clojure-mode-hook 'show-paren-mode)
 
 (load-theme 'zenburn t)
 
