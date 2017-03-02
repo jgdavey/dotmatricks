@@ -118,6 +118,5 @@ export ZLS_COLORS=$LSCOLORS
 export RI="--format ansi -T"
 export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
 export LESS=FRX
-export PGHOST="/tmp"
 export GOPATH="$SOURCE_DIR"
 export JRUBY_OPTS="-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify"
