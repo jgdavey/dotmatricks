@@ -8,6 +8,10 @@
 (setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
 
+(when (and window-system (eq system-type 'darwin))
+  (set-face-attribute 'default nil :family "Menlo")
+  (set-face-attribute 'default nil :height 140))
+
 ;; Packages
 (require 'package)
 (require 'cl)
