@@ -31,6 +31,7 @@
                       cider
                       clj-refactor
                       company
+                      deft
                       diminish
                       exec-path-from-shell
                       expand-region
@@ -38,6 +39,7 @@
                       inf-ruby
                       json-mode
                       magit
+                      markdown-mode
                       monokai-theme
                       multiple-cursors
                       org-plus-contrib
@@ -148,6 +150,14 @@
 
 (with-library company
   (global-company-mode 1))
+
+(with-library deft
+  (global-set-key (kbd "C-c d") 'deft)
+  (setq deft-extensions '("org" "md"))
+  (setq deft-directory "~/notes")
+  (setq deft-use-filename-as-title t)
+  (setq deft-use-filter-string-for-filename t)
+  (setq deft-auto-save-interval 0))
 
 (with-library org
   (require 'ob-clojure)
