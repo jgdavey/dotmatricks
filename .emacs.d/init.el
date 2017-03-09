@@ -34,6 +34,7 @@
                       browse-kill-ring
                       cider
                       clj-refactor
+                      clojure-mode
                       company
                       deft
                       diminish
@@ -118,6 +119,7 @@
       (clj-refactor-mode 1)
       (cljr-add-keybindings-with-prefix "C-c C-m"))
   (setq cljr-favor-prefix-notation nil
+        cljr-eagerly-build-asts-on-startup nil
         cljr-auto-sort-ns nil
         cljr-favor-private-functions nil)
   (add-hook 'clojure-mode-hook #'my-clj-refactor-mode-hook))
