@@ -159,11 +159,12 @@
 
 (with-library deft
   (global-set-key (kbd "C-c d") 'deft)
-  (setq deft-extensions '("org" "md"))
-  (setq deft-directory "~/notes")
-  (setq deft-use-filename-as-title t)
-  (setq deft-use-filter-string-for-filename t)
-  (setq deft-auto-save-interval 0))
+  (setq deft-extensions '("org" "md")
+        deft-default-extension "org"
+        deft-directory "~/notes"
+        deft-use-filename-as-title t
+        deft-use-filter-string-for-filename t
+        deft-auto-save-interval 0))
 
 (with-library org
   (require 'ob-clojure)
