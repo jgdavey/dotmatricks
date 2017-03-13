@@ -41,6 +41,7 @@
                       exec-path-from-shell
                       expand-region
                       gist
+                      git-link
                       inf-ruby
                       json-mode
                       magit
@@ -104,7 +105,7 @@
 (add-hook 'cider-repl-mode-hook       #'enable-paredit-mode)
 
 (with-library magit
-  (global-set-key (kbd "C-x g") 'magit-status)
+  (global-set-key (kbd "C-c g") 'magit-status)
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
@@ -193,6 +194,7 @@
 
 (with-library ag
   (setq ag-highlight-search t)
+  (global-set-key (kbd "C-c a") 'ag-project)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
 ;; Silence compiler warnings
