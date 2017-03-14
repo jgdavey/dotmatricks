@@ -49,6 +49,7 @@
                       monokai-theme
                       multiple-cursors
                       org-plus-contrib
+                      orgit
                       paredit
                       wgrep-ag
                       zenburn-theme)
@@ -175,7 +176,7 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((clojure . t)
-     (sh . t)
+     (shell . t)
      (emacs-lisp . t)))
 
   ;; Let's have pretty source code blocks
