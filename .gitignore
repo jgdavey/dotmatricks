@@ -1,10 +1,3 @@
 FILES
 .vim/bundle
-/.emacs.d/elpa
-/.emacs.d/default.el
-/.emacs.d/custom.el
-/.emacs.d/ido.last
-/.emacs.d/url
-/.emacs.d/var
-/.emacs.d/recentf
-/.emacs.d/.*
+/.emacs.d/*
