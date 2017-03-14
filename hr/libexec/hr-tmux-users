@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Usage: hr tmux-users
+#
+# Summary: List users attached to tmux session
+
+if [ "$1" = "--complete" ]; then
+  exit
+fi
+
+table="yes"
+
+if [ "$1" = "--porcelain" ]; then
+    table=
+fi
+
+
+list() {
+    while IFS= read line; do
+        IFS=: read tty session created activity <<<$(echo $line)
+        read tty mode <<<$(echo $tty)
+        # Get user associated with tty
+        name=`stat -f%Su $tty 2>/dev/null` || name=`stat -c%U $tty 2>/dev/null`
+        user="$name$mode"
+        if [ -z "$mode" ]; then mode="norm"; fi
+        echo -e "$name:$mode:$session:$created:$activity"
+    done < <(tmux list-clients -F '#{client_tty}:#{client_session}:#{client_created}:#{client_activity}')
+}
+
+table() {
+   {
+        echo -e "Name\tMode\tSession\tCreated\tLast Activity"
+        list | awk 'BEGIN { FS=":"; OFS="\t"}
+                    { print $1, $2, $3, strftime("%H:%M:%S", $4), strftime("%H:%M:%S", $5) }' 
+    } | column -t -s $'\t'
+}
+
+if [ "$table" = "yes" ]; then
+    table
+else
+    list
+fi
+
+
