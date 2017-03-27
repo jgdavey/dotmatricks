@@ -15,8 +15,9 @@
 	ri = rebase --interactive
 	br = branch
 	pruneremote = remote prune origin
-	tree = log --graph --oneline --decorate --color --all
 	tr = log --graph --oneline --decorate --color
+	tre = log --graph --oneline --decorate --color --all
+	tree = log --pretty=format:'%C(auto)%h%d%Creset %s  %C(auto,bold blue)%an%Creset %C(auto,green)(%ar)%Creset' --graph --all
 	add-untracked = !"git status --porcelain | awk '/\\?\\?/{ print $2 }' | xargs git add"
 	reset-authors = commit --amend --reset-author -CHEAD
 	rmbranch = "!f(){ git branch -d ${1} && git push origin --delete ${1}; };f"
