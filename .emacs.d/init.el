@@ -48,6 +48,7 @@
                       markdown-mode
                       monokai-theme
                       multiple-cursors
+                      ob-http
                       org-plus-contrib
                       orgit
                       paredit
@@ -169,14 +170,14 @@
         deft-auto-save-interval 0))
 
 (with-library org
-  (require 'ob-clojure)
-  (require 'ob-ruby)
   (setq org-babel-clojure-backend 'cider)
   ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((clojure . t)
      (shell . t)
+     (http . t)
+     (ruby . t)
      (emacs-lisp . t)))
 
   ;; Let's have pretty source code blocks
