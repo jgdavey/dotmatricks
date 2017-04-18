@@ -97,6 +97,16 @@
 (add-hook 'clojure-mode-hook 'whitespace-mode)
 (add-hook 'clojure-mode-hook 'show-paren-mode)
 
+(defun cleanup-buffer ()
+ "Perform a bunch of operations on the whitespace content of a buffer."
+ (interactive)
+ (indent-region (point-min) (point-max))
+ (untabify (point-min) (point-max))
+ (delete-trailing-whitespace))
+
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
+(global-set-key (kbd "C-c r") 'revert-buffer)
+
 (load-theme 'zenburn t)
 
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
