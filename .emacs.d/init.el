@@ -43,7 +43,9 @@
                       gist
                       git-link
                       inf-ruby
+                      js2-mode
                       json-mode
+                      jsx-mode
                       magit
                       markdown-mode
                       monokai-theme
@@ -105,6 +107,9 @@
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 (add-hook 'clojure-mode-hook          #'enable-paredit-mode)
 (add-hook 'cider-repl-mode-hook       #'enable-paredit-mode)
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+(autoload 'jsx-mode "jsx-mode" "JSX mode" t)
 
 (with-library magit
   (global-set-key (kbd "C-c g") 'magit-status)
