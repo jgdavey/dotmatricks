@@ -17,12 +17,14 @@
 
 (setq package-archives
       '(("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")
         ("gnu" . "http://elpa.gnu.org/packages/")
         ("org" . "http://orgmode.org/elpa/"))
       package-archive-priorities
       '(("org" . 20)
         ("melpa-stable" . 10)
-        ("gnu" . 5)))
+        ("gnu" . 5)
+        ("melpa" . 0)))
 
 (package-initialize)
 
