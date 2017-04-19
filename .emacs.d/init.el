@@ -131,7 +131,7 @@
     ?m "Omit merge commits" "--no-merges"))
 
 (use-package cider
-  :init
+  :config
   (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil)
   (setq cider-mode-line-show-connection nil)
@@ -185,6 +185,13 @@
 (use-package org
   :init
   (setq org-babel-clojure-backend 'cider)
+    ;; Let's have pretty source code blocks
+  (setq org-edit-src-content-indentation 0
+        org-src-tab-acts-natively t
+        org-src-fontify-natively t
+        org-confirm-babel-evaluate nil
+        org-support-shift-select 'always)
+  :config
   ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -192,14 +199,7 @@
      (shell . t)
      (http . t)
      (ruby . t)
-     (emacs-lisp . t)))
-
-  ;; Let's have pretty source code blocks
-  (setq org-edit-src-content-indentation 0
-        org-src-tab-acts-natively t
-        org-src-fontify-natively t
-        org-confirm-babel-evaluate nil
-        org-support-shift-select 'always))
+     (emacs-lisp . t))))
 
 (use-package diminish
   :init
