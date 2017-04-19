@@ -14,7 +14,6 @@
 
 ;; Packages
 (require 'package)
-(require 'cl)
 
 (setq package-archives
       '(("melpa-stable" . "https://stable.melpa.org/packages/")
@@ -54,23 +53,15 @@
                       org-plus-contrib
                       orgit
                       paredit
+                      use-package
                       wgrep-ag
                       zenburn-theme)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
+    (require 'cl)
     (package-install p)))
-
-(defmacro with-library (symbol &rest body)
-  `(condition-case nil
-       (progn
-         (require ',symbol)
-         ,@body)
-
-     (error (message (format "I guess we don't have %s available." ',symbol))
-            nil)))
-(put 'with-library 'lisp-indent-function 1)
 
 ;; Editor
 
@@ -92,6 +83,11 @@
       `((".*" . ,temporary-file-directory)))
 (setq undo-tree-auto-save-history t)
 
+;; better buffer filenames
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
+(setq uniquify-separator ":")
+
 (setq whitespace-style '(face trailing lines-tail tabs)
       whitespace-line-column 80)
 (add-hook 'clojure-mode-hook 'whitespace-mode)
@@ -109,40 +105,50 @@
 
 (load-theme 'zenburn t)
 
-(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-(add-hook 'clojure-mode-hook          #'enable-paredit-mode)
-(add-hook 'cider-repl-mode-hook       #'enable-paredit-mode)
+;; Package setup
+(require 'use-package)
 
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
-(autoload 'jsx-mode "jsx-mode" "JSX mode" t)
+(use-package paredit
+  :bind (:map paredit-mode-map
+              ("M-)" . paredit-forward-slurp-sexp))
+  :init
+  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+  (add-hook 'clojure-mode-hook          #'enable-paredit-mode)
+  (add-hook 'cider-repl-mode-hook       #'enable-paredit-mode))
 
-(with-library magit
-  (global-set-key (kbd "C-c g") 'magit-status)
+(use-package jsx
+  :mode ("\\.jsx\\'" . jsx-mode))
+
+(use-package magit
+  :bind (("C-c g" . magit-status))
+  :config
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
-(with-library cider
+(use-package cider
+  :init
   (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil)
   (setq cider-mode-line-show-connection nil)
   (setq cider-repl-display-help-banner nil))
 
-(with-library clj-refactor
-  (defun my-clj-refactor-mode-hook ()
-      (clj-refactor-mode 1)
-      (cljr-add-keybindings-with-prefix "C-c C-m"))
+(use-package clj-refactor
+  :init
   (setq cljr-favor-prefix-notation nil
         cljr-eagerly-build-asts-on-startup nil
         cljr-auto-sort-ns nil
         cljr-favor-private-functions nil)
-  (add-hook 'clojure-mode-hook #'my-clj-refactor-mode-hook))
+  (add-hook 'clojure-mode-hook (lambda ()
+                                 (clj-refactor-mode 1)
+                                 (cljr-add-keybindings-with-prefix "C-c C-m"))))
 
-(with-library ido
+(use-package ido
+  :init
   (setq ido-everywhere t
         ido-enable-flex-matching t)
   (ido-mode t)
@@ -159,24 +165,16 @@
   (global-set-key (kbd "C-x M-f") 'ido-recentf-open)
   (global-set-key (kbd "C-x C-M-f") 'ido-recentf-open))
 
-(with-library paredit
-  (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp))
+(use-package multiple-cursors
+  :bind (("C-c C-l" . mc/edit-lines)))
 
-(with-library uniquify
-  (setq uniquify-buffer-name-style 'post-forward)
-  (setq uniquify-separator ":"))
-
-(with-library multiple-cursors
-  (global-set-key (kbd "C-c C-l") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C->") 'mc/mark-all-like-this))
-
-(with-library company
+(use-package company
+  :init
   (global-company-mode 1))
 
-(with-library deft
-  (global-set-key (kbd "C-c d") 'deft)
+(use-package deft
+  :bind ("C-c d" . deft)
+  :init
   (setq deft-extensions '("org" "md")
         deft-default-extension "org"
         deft-directory "~/notes"
@@ -184,7 +182,8 @@
         deft-use-filter-string-for-filename t
         deft-auto-save-interval 0))
 
-(with-library org
+(use-package org
+  :init
   (setq org-babel-clojure-backend 'cider)
   ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
@@ -202,17 +201,22 @@
         org-confirm-babel-evaluate nil
         org-support-shift-select 'always))
 
-(with-library diminish
+(use-package diminish
+  :init
   (diminish 'company-mode "comp")
   (diminish 'paredit-mode))
 
-(with-library wgrep
+(use-package wgrep
+  :init
   (autoload 'wgrep-ag-setup "wgrep-ag"))
 
-(with-library ag
+(use-package ag
+  :bind (("C-c a" . ag-project))
+  :init
   (setq ag-highlight-search t)
-  (global-set-key (kbd "C-c a") 'ag-project)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+;; Make SQL mode usable
 
 ;; Silence compiler warnings
 (defvar sql-product)
