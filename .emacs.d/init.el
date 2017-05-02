@@ -12,6 +12,15 @@
   (set-face-attribute 'default nil :family "Menlo")
   (set-face-attribute 'default nil :height 140))
 
+(when (not window-system)
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (setq mouse-sel-mode t)
+  (defun track-mouse (e))
+
+  (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+  (global-set-key (kbd "<mouse-5>") 'scroll-up-line))
+
 ;; Packages
 (require 'package)
 
