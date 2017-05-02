@@ -196,6 +196,7 @@
 (use-package org
   :init
   (setq org-babel-clojure-backend 'cider)
+  (setq org-export-backends '(ascii html icalendar latex md odt))
     ;; Let's have pretty source code blocks
   (setq org-edit-src-content-indentation 0
         org-src-tab-acts-natively t
