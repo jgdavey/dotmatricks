@@ -194,7 +194,9 @@
         deft-auto-save-interval 0))
 
 (use-package org
+  :bind (("C-c c" . org-capture))
   :init
+  (setq org-directory "~/org")
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
     ;; Let's have pretty source code blocks
@@ -203,8 +205,16 @@
         org-src-fontify-natively t
         org-confirm-babel-evaluate nil
         org-support-shift-select 'always)
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
+  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+  (setq org-refile-targets '((nil :maxlevel . 9)
+                             (org-agenda-files :maxlevel . 4)))
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+             "* TODO %?\n  %i")))
   :config
-  ;; Here I specify the languages I want to be able to use with Org-babel.
+   ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((clojure . t)
@@ -223,7 +233,7 @@
   (autoload 'wgrep-ag-setup "wgrep-ag"))
 
 (use-package ag
-  :bind (("C-c a" . ag-project))
+  :bind (("C-c s" . ag-project))
   :init
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
