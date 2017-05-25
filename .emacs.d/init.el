@@ -141,6 +141,12 @@
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
+(use-package clojure
+  :config
+  (define-clojure-indent
+    (defroutes 'defun)
+    (defui 'defun)))
+
 (use-package cider
   :config
   (setq org-babel-clojure-backend 'cider)
