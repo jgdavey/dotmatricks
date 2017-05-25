@@ -238,6 +238,15 @@
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
+(defun replace-smart-quotes (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+  (format-replace-strings '(("\x201C" . "\"")
+                            ("\x201D" . "\"")
+                            ("\x2018" . "'")
+                            ("\x2019" . "'"))
+                          nil beg end))
+
 ;; Make SQL mode usable
 
 ;; Silence compiler warnings
