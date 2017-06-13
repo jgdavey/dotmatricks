@@ -161,8 +161,8 @@
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
-(use-package clojure
-  :ensure clojure-mode
+(use-package clojure-mode
+  :ensure t
   :init
   (add-hook 'clojure-mode-hook 'whitespace-mode)
   (add-hook 'clojure-mode-hook 'show-paren-mode)
