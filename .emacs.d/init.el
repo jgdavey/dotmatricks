@@ -77,8 +77,6 @@
 
 (setq whitespace-style '(face trailing lines-tail tabs)
       whitespace-line-column 80)
-(add-hook 'clojure-mode-hook 'whitespace-mode)
-(add-hook 'clojure-mode-hook 'show-paren-mode)
 
 (unless window-system
   (add-hook 'linum-before-numbering-hook
@@ -165,6 +163,9 @@
 
 (use-package clojure
   :ensure clojure-mode
+  :init
+  (add-hook 'clojure-mode-hook 'whitespace-mode)
+  (add-hook 'clojure-mode-hook 'show-paren-mode)
   :config
   (define-clojure-indent
     (defroutes 'defun)
