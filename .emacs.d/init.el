@@ -231,6 +231,9 @@
   :ensure org-plus-contrib
   :bind (("C-c c" . org-capture))
   :init
+  (setq org-agenda-files (list "~/org/flagged.org"
+                               "~/org/todo.org"))
+
   (setq org-directory "~/org")
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
@@ -314,9 +317,10 @@
 
 ; (setq sql-interactive-mode-hook nil)
 
-(let ((local "~/.emacs.d/default.el"))
-  (if (file-exists-p local)
-    (load-file local)
+;; additional (local) config
+(dolist (extra-file '("~/.emacs.d/default.el" "~/.emacs.d/local.el"))
+  (if (file-exists-p extra-file)
+    (load-file extra-file)
     nil))
 
 ;; set custom file
