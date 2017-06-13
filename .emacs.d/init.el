@@ -230,15 +230,13 @@
 
 (use-package org
   :ensure org-plus-contrib
-  :bind (("C-c c" . org-capture))
+  :bind (("C-c c" . org-capture)
+         ("C-c a" . org-agenda))
   :init
-  (setq org-agenda-files (list "~/org/flagged.org"
-                               "~/org/todo.org"))
-
-  (setq org-directory "~/org")
+  (setq org-directory (expand-file-name "~/org"))
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
-    ;; Let's have pretty source code blocks
+  ;; Let's have pretty source code blocks
   (setq org-edit-src-content-indentation 0
         org-src-tab-acts-natively t
         org-src-fontify-natively t
@@ -249,11 +247,13 @@
   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
   (setq org-refile-targets '((nil :maxlevel . 9)
                              (org-agenda-files :maxlevel . 4)))
+  (setq org-log-done t)
   (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
-             "* TODO %?\n  %i")))
+        '(("t" "Todo" entry (file+headline (concat org-directory "/todo.org") "Tasks")
+           "* TODO %?\n  %i")))
+  (add-to-list 'org-agenda-files org-directory 'append)
   :config
-   ;; Here I specify the languages I want to be able to use with Org-babel.
+  ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((clojure . t)
