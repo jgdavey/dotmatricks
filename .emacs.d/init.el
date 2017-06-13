@@ -40,36 +40,12 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages '(ag
-                      browse-kill-ring
-                      cider
-                      clj-refactor
-                      clojure-mode
-                      company
-                      deft
-                      diminish
-                      exec-path-from-shell
-                      expand-region
-                      gist
-                      git-link
-                      inf-ruby
-                      js2-mode
-                      json-mode
-                      jsx-mode
-                      magit
-                      markdown-mode
-                      monokai-theme
-                      multiple-cursors
-                      ob-http
-                      org-plus-contrib
-                      orgit
-                      paredit
-                      use-package
-                      wgrep-ag
-                      zenburn-theme)
+(defvar base-packages '(monokai-theme
+                        use-package
+                        zenburn-theme)
   "A list of packages to ensure are installed at launch.")
 
-(dolist (p my-packages)
+(dolist (p base-packages)
   (when (not (package-installed-p p))
     (require 'cl)
     (package-install p)))
@@ -135,7 +111,35 @@
 ;; Package setup
 (require 'use-package)
 
+(use-package browse-kill-ring
+  :ensure t)
+
+(use-package exec-path-from-shell
+  :ensure t)
+
+(use-package expand-region
+  :ensure t)
+
+(use-package gist
+  :ensure t)
+
+(use-package git-link
+  :ensure t)
+
+(use-package inf-ruby
+  :ensure t)
+
+(use-package js2-mode
+  :ensure t)
+
+(use-package json
+  :ensure json-mode)
+
+(use-package markdown-mode
+  :ensure t)
+
 (use-package paredit
+  :ensure t
   :bind (:map paredit-mode-map
               ("M-)" . paredit-forward-slurp-sexp))
   :init
@@ -149,21 +153,25 @@
   (add-hook 'cider-repl-mode-hook       #'enable-paredit-mode))
 
 (use-package jsx
+  :ensure jsx-mode
   :mode ("\\.jsx\\'" . jsx-mode))
 
 (use-package magit
+  :ensure t
   :bind (("C-c g" . magit-status))
   :config
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
 (use-package clojure
+  :ensure clojure-mode
   :config
   (define-clojure-indent
     (defroutes 'defun)
-    (defui 'defun)))
+    (defui '(1 nil (1)))))
 
 (use-package cider
+  :ensure t
   :config
   (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil)
@@ -171,6 +179,7 @@
   (setq cider-repl-display-help-banner nil))
 
 (use-package clj-refactor
+  :ensure t
   :init
   (setq cljr-favor-prefix-notation nil
         cljr-eagerly-build-asts-on-startup nil
@@ -199,13 +208,16 @@
   (global-set-key (kbd "C-x C-M-f") 'ido-recentf-open))
 
 (use-package multiple-cursors
+  :ensure t
   :bind (("C-c C-l" . mc/edit-lines)))
 
 (use-package company
+  :ensure t
   :init
   (global-company-mode 1))
 
 (use-package deft
+  :ensure t
   :bind ("C-c d" . deft)
   :init
   (setq deft-extensions '("org" "md")
@@ -216,6 +228,7 @@
         deft-auto-save-interval 0))
 
 (use-package org
+  :ensure org-plus-contrib
   :bind (("C-c c" . org-capture))
   :init
   (setq org-directory "~/org")
@@ -245,16 +258,25 @@
      (ruby . t)
      (emacs-lisp . t))))
 
+(use-package ob-http
+  :ensure t)
+
+(use-package orgit
+  :ensure t)
+
 (use-package diminish
+  :ensure t
   :init
   (diminish 'company-mode "comp")
   (diminish 'paredit-mode))
 
 (use-package wgrep
+  :ensure t
   :init
   (autoload 'wgrep-ag-setup "wgrep-ag"))
 
 (use-package ag
+  :ensure t
   :bind (("C-c s" . ag-project))
   :init
   (setq ag-highlight-search t)
