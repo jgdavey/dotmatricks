@@ -251,6 +251,7 @@
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline (concat org-directory "/todo.org") "Tasks")
            "* TODO %?\n  %i")))
+  (setq org-agenda-span 14)
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
   ;; Here I specify the languages I want to be able to use with Org-babel.
