@@ -94,6 +94,7 @@ alias gpr='git pull --rebase'
 alias gst='git status'
 alias grc='git rebase --continue'
 alias gra='git rebase --abort'
+alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
@@ -116,7 +117,7 @@ export CLICOLOR=1
 export LSCOLORS=Dxfxcxdxbxegedabadacad
 export ZLS_COLORS=$LSCOLORS
 export RI="--format ansi -T"
-export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
+export GREP_COLOR='1;32'
 export LESS=FRX
 export GOPATH="$SOURCE_DIR"
 export JRUBY_OPTS="-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify"
