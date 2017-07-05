@@ -282,7 +282,8 @@
 
 (use-package ag
   :ensure t
-  :bind (("C-c s" . ag-project))
+  :bind (("C-c s" . ag-project)
+         ("C-c C-s" . ag-project-regexp))
   :init
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
