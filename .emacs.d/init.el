@@ -250,7 +250,7 @@
   (setq org-log-done t)
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline (concat org-directory "/todo.org") "Tasks")
-           "* TODO %?\n  %i")))
+           "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
   (setq org-agenda-span 14)
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
