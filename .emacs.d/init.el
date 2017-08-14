@@ -171,6 +171,9 @@
     (defroutes 'defun)
     (defui '(1 nil (1)))))
 
+(use-package inf-clojure
+  :ensure t)
+
 (use-package cider
   :ensure t
   :config
@@ -287,6 +290,12 @@
   :init
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+(use-package ssh-config-mode
+  :ensure t)
+
+(use-package visual-fill-column
+  :ensure t)
 
 (defun replace-smart-quotes (beg end)
   "Replace 'smart quotes' in buffer or region with ascii quotes."
