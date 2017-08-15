@@ -21,6 +21,47 @@
   (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
   (global-set-key (kbd "<mouse-5>") 'scroll-up-line))
 
+;; Editor
+
+(setq-default indent-tabs-mode nil)   ;; don't use tabs to indent
+(setq-default tab-width 4)            ;; but maintain correct appearance
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Newline at end of file
+(setq require-final-newline t
+      apropos-do-all t)
+(show-paren-mode 1)
+
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+;; autosave the undo-tree history
+(setq undo-tree-history-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq undo-tree-auto-save-history t)
+
+;; better buffer filenames
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward
+      uniquify-separator ":")
+
+(setq whitespace-style '(face trailing lines-tail tabs)
+      whitespace-line-column 80)
+
+(defun cleanup-buffer ()
+ "Perform a bunch of operations on the whitespace content of a buffer."
+ (interactive)
+ (indent-region (point-min) (point-max))
+ (untabify (point-min) (point-max))
+ (delete-trailing-whitespace))
+
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
+(global-set-key (kbd "C-c r") 'revert-buffer)
+
+
 ;; Packages
 (require 'package)
 
@@ -50,59 +91,20 @@
     (require 'cl)
     (package-install p)))
 
-;; Editor
-
-(setq-default indent-tabs-mode nil)   ;; don't use tabs to indent
-(setq-default tab-width 4)            ;; but maintain correct appearance
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; Newline at end of file
-(setq require-final-newline t)
-
-;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
-;; autosave the undo-tree history
-(setq undo-tree-history-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq undo-tree-auto-save-history t)
-
-;; better buffer filenames
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward)
-(setq uniquify-separator ":")
-
-(setq whitespace-style '(face trailing lines-tail tabs)
-      whitespace-line-column 80)
-
 (unless window-system
   (add-hook 'linum-before-numbering-hook
             (lambda ()
               (setq-local linum-format-fmt
                           (let ((w (length (number-to-string
                                             (count-lines (point-min) (point-max))))))
-                            (concat "%" (number-to-string w) "d"))))))
+                            (concat "%" (number-to-string w) "d")))))
 
-(defun linum-format-func (line)
-  (concat
-   (propertize (format linum-format-fmt line) 'face 'linum)
-   (propertize " " 'face 'mode-line)))
+  (defun linum-format-func (line)
+    (concat
+     (propertize (format linum-format-fmt line) 'face 'linum)
+     (propertize " " 'face 'mode-line)))
 
-(unless window-system
   (setq linum-format 'linum-format-func))
-
-(defun cleanup-buffer ()
- "Perform a bunch of operations on the whitespace content of a buffer."
- (interactive)
- (indent-region (point-min) (point-max))
- (untabify (point-min) (point-max))
- (delete-trailing-whitespace))
-
-(global-set-key (kbd "C-c n") 'cleanup-buffer)
-(global-set-key (kbd "C-c r") 'revert-buffer)
 
 (load-theme 'zenburn t)
 
@@ -165,7 +167,6 @@
   :ensure t
   :init
   (add-hook 'clojure-mode-hook 'whitespace-mode)
-  (add-hook 'clojure-mode-hook 'show-paren-mode)
   :config
   (define-clojure-indent
     (defroutes 'defun)
