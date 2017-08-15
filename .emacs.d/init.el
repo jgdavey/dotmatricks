@@ -114,6 +114,61 @@
 (use-package browse-kill-ring
   :ensure t)
 
+(use-package evil
+  :ensure t
+  :init
+  (progn
+    ;; if we don't have this evil overwrites the cursor color
+    (setq evil-default-cursor t
+          evil-toggle-key "C-c C-z")
+    (use-package evil-leader
+      :ensure t
+      :init (global-evil-leader-mode)
+      :config
+      (progn
+        (setq evil-leader/in-all-states t)
+        ;; keyboard shortcuts
+        (evil-leader/set-key
+          "b" 'ido-switch-buffer
+          "c" 'mc/mark-next-like-this
+          "C" 'mc/mark-all-like-this
+          "e" 'er/expand-region
+          "E" 'mc/edit-lines
+          "g" 'magit-status
+          "k" 'kill-buffer
+          "K" 'kill-this-buffer
+          "s" 'ag-project
+          "w" 'save-buffer)))
+    ;; boot evil by default
+    (evil-mode 1))
+  :config
+  (progn
+    ;; use ido to open files
+    (define-key evil-ex-map "e " 'ido-find-file)
+    (define-key evil-ex-map "b " 'ido-switch-buffer)
+
+    (setq
+     evil-cross-lines t
+     ;; Training wheels: start evil-mode in emacs mode
+     evil-default-state 'emacs)
+
+    ;; esc should always quit: http://stackoverflow.com/a/10166400/61435
+    (define-key evil-normal-state-map [escape] 'keyboard-quit)
+    (define-key evil-visual-state-map [escape] 'keyboard-quit)
+    (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
+
+    ;; modes to map to different default states
+    (dolist (mode-map '((comint-mode . emacs)
+                        (term-mode . emacs)
+                        (eshell-mode . emacs)
+                        (help-mode . emacs)
+                        (fundamental-mode . emacs)))
+      (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))))
+
 (use-package exec-path-from-shell
   :ensure t)
 
