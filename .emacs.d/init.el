@@ -337,12 +337,16 @@
 (use-package wgrep
   :ensure t
   :init
+  (use-package wgrep-ag
+    :ensure t)
   (autoload 'wgrep-ag-setup "wgrep-ag"))
 
 (use-package ag
   :ensure t
   :bind (("C-c s" . ag-project)
          ("C-c C-s" . ag-project-regexp))
+  :config
+  (require 'wgrep-ag)
   :init
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
