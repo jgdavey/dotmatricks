@@ -164,6 +164,7 @@
     ;; modes to map to different default states
     (dolist (mode-map '((comint-mode . emacs)
                         (term-mode . emacs)
+                        (shell-mode . emacs)
                         (eshell-mode . emacs)
                         (help-mode . emacs)
                         (fundamental-mode . emacs)))
