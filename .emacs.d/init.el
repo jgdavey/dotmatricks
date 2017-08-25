@@ -310,6 +310,8 @@
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline (concat org-directory "/todo.org") "Tasks")
            "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
+  (setq org-todo-keywords
+       '((sequence "TODO" "|" "DONE" "DELEGATED")))
   (setq org-agenda-span 14)
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
