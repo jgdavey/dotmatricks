@@ -30,7 +30,10 @@
 ;; Newline at end of file
 (setq require-final-newline t
       apropos-do-all t)
+
 (show-paren-mode 1)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
 
 ;; store all backup and autosave files in the tmp dir
 (setq backup-directory-alist
@@ -359,6 +362,11 @@
 
 (use-package visual-fill-column
   :ensure t)
+
+(use-package winner
+  :ensure t
+  :config
+  (winner-mode 1))
 
 (defun replace-smart-quotes (beg end)
   "Replace 'smart quotes' in buffer or region with ascii quotes."
