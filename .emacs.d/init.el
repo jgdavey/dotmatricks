@@ -121,9 +121,9 @@
   :ensure t
   :init
   (progn
-    ;; if we don't have this evil overwrites the cursor color
-    (setq evil-default-cursor t
-          evil-toggle-key "C-c C-z")
+    (setq evil-toggle-key "C-c C-z"
+          evil-cross-lines t
+          evil-default-state 'emacs)
     (use-package evil-leader
       :ensure t
       :init (global-evil-leader-mode)
@@ -150,11 +150,6 @@
     (define-key evil-ex-map "e " 'ido-find-file)
     (define-key evil-ex-map "b " 'ido-switch-buffer)
 
-    (setq
-     evil-cross-lines t
-     ;; Training wheels: start evil-mode in emacs mode
-     evil-default-state 'emacs)
-
     ;; esc should always quit: http://stackoverflow.com/a/10166400/61435
     (define-key evil-normal-state-map [escape] 'keyboard-quit)
     (define-key evil-visual-state-map [escape] 'keyboard-quit)
@@ -164,8 +159,14 @@
     (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
     (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
 
+    ;; Hammer of thor! Make everything start in emacs mode
+    (setq evil-insert-state-modes '()
+          evil-normal-state-modes '()
+          evil-motion-state-modes '())
     ;; modes to map to different default states
     (dolist (mode-map '((comint-mode . emacs)
+                        (erc-mode . emacs)
+                        (wdired-mode . emacs)
                         (term-mode . emacs)
                         (shell-mode . emacs)
                         (eshell-mode . emacs)
@@ -312,8 +313,12 @@
                              (org-agenda-files :maxlevel . 4)))
   (setq org-log-done t)
   (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline (concat org-directory "/todo.org") "Tasks")
-           "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
+        `(("t" "Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
+           "* TODO %?\n  %i")
+          ("l" "Linked Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
+           "* TODO %?\n  %i\n  %A")
+          ("s" "Scheduled Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
+           "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
   (setq org-todo-keywords
        '((sequence "TODO" "|" "DONE" "DELEGATED")))
   (setq org-agenda-span 14)
@@ -386,15 +391,19 @@
 
 (defun my-sql-interactive-mode-hook ()
   "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
-  (when (eq sql-product 'postgres)
+  (toggle-truncate-lines t)
+  (when (or (eq sql-product 'postgres)
+            (eq sql-product 'heroku))
     ;; Allow symbol chars in database names in prompt.
     ;; Default postgres pattern was: "^\\w*=[#>] " (see `sql-product-alist').
-    (setq sql-prompt-regexp "^\\(?:\\sw\\|\\s_\\)*=[#>] *")
-    (setq sql-prompt-cont-regexp "^\\(?:\\sw\\|\\s_\\)*[-(][#>] *")
+    (setq sql-prompt-regexp "^\\(?:\\sw\\|\\s_\\|::\\)*=[#>] *")
+    (setq sql-prompt-cont-regexp "^\\(?:\\sw\\|\\s_\\|::\\)*[-(][#>] *")
     (let ((proc (get-buffer-process (current-buffer))))
       ;; Output each query before executing it. (n.b. this also avoids
       ;; the psql prompt breaking the alignment of query results.)
-      (comint-send-string proc "\\set ECHO queries\n"))))
+      (comint-send-string proc "\\set ECHO queries\n")
+      (when (eq sql-product 'heroku)
+        (comint-send-string proc "\\pset pager off\n")))))
 
 (add-hook 'sql-interactive-mode-hook 'my-sql-interactive-mode-hook)
 
