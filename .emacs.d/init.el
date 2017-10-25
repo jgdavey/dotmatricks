@@ -339,10 +339,20 @@
      (ruby . t)
      (emacs-lisp . t))))
 
+(use-package org-bullets
+  :ensure t)
+
 (use-package ob-http
   :ensure t)
 
+(use-package ob-sql-mode
+  :ensure t)
+
 (use-package orgit
+  :ensure t)
+
+(use-package ox-pandoc
+  :defer t
   :ensure t)
 
 (use-package diminish
