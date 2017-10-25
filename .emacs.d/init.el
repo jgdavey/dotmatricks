@@ -54,6 +54,8 @@
 (setq whitespace-style '(face trailing lines-tail tabs)
       whitespace-line-column 80)
 
+(global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
+
 (defun cleanup-buffer ()
  "Perform a bunch of operations on the whitespace content of a buffer."
  (interactive)
@@ -106,9 +108,11 @@
   (defun linum-format-func (line)
     (concat
      (propertize (format linum-format-fmt line) 'face 'linum)
-     (propertize " " 'face 'mode-line)))
+     (propertize " " 'face 'linum)))
 
   (setq linum-format 'linum-format-func))
+
+(global-set-key (kbd "C-c C-o C-l") 'linum-mode)
 
 ;(load-theme 'zenburn t)
 (load-theme 'sanityinc-tomorrow-eighties t)
