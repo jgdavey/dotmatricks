@@ -84,7 +84,8 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar base-packages '(monokai-theme
+(defvar base-packages '(color-theme-sanityinc-tomorrow
+                        monokai-theme
                         use-package
                         zenburn-theme)
   "A list of packages to ensure are installed at launch.")
@@ -109,7 +110,8 @@
 
   (setq linum-format 'linum-format-func))
 
-(load-theme 'zenburn t)
+;(load-theme 'zenburn t)
+(load-theme 'sanityinc-tomorrow-eighties t)
 
 ;; Package setup
 (require 'use-package)
