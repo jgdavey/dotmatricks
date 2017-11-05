@@ -327,7 +327,6 @@
            "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
   (setq org-todo-keywords
        '((sequence "TODO" "|" "DONE" "DELEGATED")))
-  (setq org-agenda-span 14)
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
   ;; Here I specify the languages I want to be able to use with Org-babel.
