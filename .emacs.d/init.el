@@ -411,8 +411,8 @@
             (eq sql-product 'heroku))
     ;; Allow symbol chars in database names in prompt.
     ;; Default postgres pattern was: "^\\w*=[#>] " (see `sql-product-alist').
-    (setq sql-prompt-regexp "^\\(?:\\sw\\|\\s_\\|::\\)*=[#>] *")
-    (setq sql-prompt-cont-regexp "^\\(?:\\sw\\|\\s_\\|::\\)*[-(][#>] *")
+    (setq sql-prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
+    (setq sql-prompt-cont-regexp "^[_[:alnum:]\-:]*[-(][#>] *")
     (let ((proc (get-buffer-process (current-buffer))))
       ;; Output each query before executing it. (n.b. this also avoids
       ;; the psql prompt breaking the alignment of query results.)
