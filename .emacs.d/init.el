@@ -316,6 +316,17 @@
   :bind (("C-c c" . org-capture)
          ("C-c a" . org-agenda))
   :init
+  (use-package org-bullets
+    :ensure t)
+  (use-package ob-http
+    :ensure t)
+  (use-package ob-sql-mode
+    :ensure t)
+  (use-package orgit
+    :ensure t)
+  (use-package ox-pandoc
+    :defer t
+    :ensure t)
   (setq org-directory (expand-file-name "~/org"))
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
@@ -350,22 +361,6 @@
      (http . t)
      (ruby . t)
      (emacs-lisp . t))))
-
-(use-package org-bullets
-  :ensure t)
-
-(use-package ob-http
-  :ensure t)
-
-(use-package ob-sql-mode
-  :ensure t)
-
-(use-package orgit
-  :ensure t)
-
-(use-package ox-pandoc
-  :defer t
-  :ensure t)
 
 (use-package diminish
   :ensure t
