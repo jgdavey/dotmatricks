@@ -132,6 +132,14 @@
     (setq evil-toggle-key "C-c C-z"
           evil-cross-lines t
           evil-default-state 'emacs)
+    (use-package evil-magit
+      :ensure t)
+    (use-package evil-surround
+      :ensure t)
+    (use-package evil-mu4e
+      :ensure t)
+    (use-package evil-paredit
+      :ensure t)
     (use-package evil-leader
       :ensure t
       :init (global-evil-leader-mode)
@@ -170,7 +178,9 @@
     ;; Hammer of thor! Make everything start in emacs mode
     (setq evil-insert-state-modes '()
           evil-normal-state-modes '()
-          evil-motion-state-modes '())
+          evil-motion-state-modes '()
+          evil-visual-state-modes '()
+          evil-operator-state-modes '())
     ;; modes to map to different default states
     (dolist (mode-map '((comint-mode . emacs)
                         (erc-mode . emacs)
@@ -179,6 +189,7 @@
                         (shell-mode . emacs)
                         (eshell-mode . emacs)
                         (help-mode . emacs)
+                        (ag-mode . emacs)
                         (fundamental-mode . emacs)))
       (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))))
 
