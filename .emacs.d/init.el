@@ -88,6 +88,7 @@
 
 (defvar base-packages '(color-theme-sanityinc-tomorrow
                         monokai-theme
+                        railscasts-reloaded-theme
                         use-package
                         zenburn-theme)
   "A list of packages to ensure are installed at launch.")
@@ -114,7 +115,8 @@
 
 (global-set-key (kbd "C-c C-o C-l") 'linum-mode)
 
-;(load-theme 'zenburn t)
+;;(load-theme 'zenburn t)
+;;(load-theme 'railscasts-reloaded t)
 (load-theme 'sanityinc-tomorrow-eighties t)
 
 ;; Package setup
