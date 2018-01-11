@@ -382,7 +382,17 @@
   :config
   (require 'wgrep-ag)
   :init
-  (setq ag-highlight-search t)
+  (defun my-project-root-fn (file-path)
+    (or (ag/longest-string
+         (vc-find-root file-path "project.clj")
+         (vc-find-root file-path "build.boot")
+         (vc-git-root file-path)
+         (vc-svn-root file-path)
+         (vc-hg-root file-path))
+        file-path))
+  (setq ag-highlight-search t
+        ag-reuse-window t
+        ag-project-root-function 'my-project-root-fn)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
 (use-package ssh-config-mode
