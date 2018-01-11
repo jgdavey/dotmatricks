@@ -111,6 +111,7 @@ if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then source "$HOME/.rvm/scripts/rvm" ; fi
 [ -n "$PSQL_EDITOR" ] || PSQL_EDITOR='vim -c"setf sql"'
 export VISUAL EDITOR PSQL_EDITOR
 alias e="$EDITOR"
+alias E="SUDO_EDITOR=\"$EDITOR\" sudoedit"
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
 export CLICOLOR=1
