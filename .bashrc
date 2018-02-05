@@ -1,5 +1,6 @@
 # vim:set ft=sh sw=2 sts=2:
 
+[ ! -f "$HOME/.profile" ] || source "$HOME/.profile"
 [ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # Store 10,000 history entries

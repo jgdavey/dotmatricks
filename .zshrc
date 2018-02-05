@@ -5,6 +5,7 @@ fpath=(
   /usr/local/share/zsh/site-functions
 )
 
+[ ! -f "$HOME/.profile" ] || source "$HOME/.profile"
 [ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # color term
