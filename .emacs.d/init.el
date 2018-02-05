@@ -401,6 +401,12 @@
 (use-package visual-fill-column
   :ensure t)
 
+(use-package web-mode
+  :config
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2))
+
 (use-package winner
   :ensure t
   :config
