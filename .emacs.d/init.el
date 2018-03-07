@@ -148,7 +148,7 @@
         (setq evil-leader/in-all-states t)
         ;; keyboard shortcuts
         (evil-leader/set-key
-          "b" 'ido-switch-buffer
+          "b" 'ivy-switch-buffer
           "c" 'mc/mark-next-like-this
           "C" 'mc/mark-all-like-this
           "e" 'er/expand-region
@@ -159,12 +159,12 @@
           "s" 'ag-project
           "w" 'save-buffer)))
     ;; boot evil by default
-    (evil-mode 1))
+    ;(evil-mode 1)
+    )
   :config
   (progn
-    ;; use ido to open files
-    (define-key evil-ex-map "e " 'ido-find-file)
-    (define-key evil-ex-map "b " 'ido-switch-buffer)
+    (define-key evil-ex-map "e " 'ivy-find-file)
+    (define-key evil-ex-map "b " 'ivy-switch-buffer)
 
     ;; esc should always quit: http://stackoverflow.com/a/10166400/61435
     (define-key evil-normal-state-map [escape] 'keyboard-quit)
@@ -273,23 +273,32 @@
                                  (clj-refactor-mode 1)
                                  (cljr-add-keybindings-with-prefix "C-c C-m"))))
 
-(use-package ido
-  :init
-  (setq ido-everywhere t
-        ido-enable-flex-matching t)
-  (ido-mode t)
-  ;; Recent files support
-  (require 'recentf)
-  (recentf-mode t)
-  (setq recentf-max-saved-items 50)
-  (defun ido-recentf-open ()
-    "Use `ido-completing-read' to \\[find-file] a recent file"
-    (interactive)
-    (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-      (message "Aborting")))
-  (global-set-key (kbd "C-x M-f") 'ido-recentf-open)
-  (global-set-key (kbd "C-x C-M-f") 'ido-recentf-open))
+(use-package ivy
+  :ensure t
+  :diminish ivy-mode
+  :bind (("C-c C-r" . ivy-resume))
+  :config
+  (progn
+    (with-eval-after-load 'ido
+      (ido-mode -1)
+      ;; Enable ivy
+      (ivy-mode 1))
+    (setq ivy-use-virtual-buffers t
+          ivy-count-format "%d/%d "
+          ivy-height 12
+          ivy-display-style 'fancy)
+    (defun my/ivy-kill-buffer ()
+      (interactive)
+      (ivy-set-action 'kill-buffer)
+      (ivy-done))
+    (bind-keys
+     :map ivy-switch-buffer-map
+     ("C-k" . my/ivy-kill-buffer))))
+
+(use-package counsel
+  :ensure t
+  :bind (("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)))
 
 (use-package multiple-cursors
   :ensure t
