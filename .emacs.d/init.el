@@ -329,8 +329,6 @@
     :ensure t)
   (use-package ob-http
     :ensure t)
-  (use-package ob-sql-mode
-    :ensure t)
   (use-package orgit
     :ensure t)
   (use-package ox-pandoc
@@ -362,6 +360,7 @@
        '((sequence "TODO" "|" "DONE" "DELEGATED")))
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
+  (require 'ob-sql)
   ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
    'org-babel-load-languages
