@@ -56,12 +56,20 @@ git_prompt_info () {
   fi
 }
 
+# Do we need Linux or BSD Style?
+lsc=
+if ls --color -d $PWD &>/dev/null 2>&1
+then
+  lsc="--color=tty"
+else
+  lsc="-G"
+fi
+
 alias cd..='cd ..'
 alias ..='cd ..'
-alias ll='ls -l'
-alias l="ls -F -G -lah"
-alias la="ls -a"
-alias lsd='ls -ld *(-/DN)'
+alias ll="ls $lsc -l"
+alias l="ls $lsc -F -lah"
+alias la="ls $lsc -a"
 alias gap='git add -p'
 alias gb='git branch'
 alias gc='git commit -v'
@@ -75,10 +83,6 @@ alias gra='git rebase --abort'
 alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
-
-l.() {
-  ls -ld "${1:-$PWD}"/.[^.]*
-}
 
 # RVM exectuble path for scripting, when available
 if [[ -s "$HOME/.rvm/bin" ]] ; then export PATH="$PATH:$HOME/.rvm/bin" ; fi

@@ -64,6 +64,11 @@ bindkey '\ep' up-line-or-search
 bindkey '\en' down-line-or-search
 bindkey '\ew' kill-region
 
+alias lsd='ls -ld *(-/DN)'
+l.() {
+  ls -ld "${1:-$PWD}"/.[^.]*
+}
+
 # prompt
 p=
 if [ -n "$SSH_CONNECTION" ]; then
