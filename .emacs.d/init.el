@@ -231,6 +231,7 @@
 
 (use-package paredit
   :ensure t
+  :diminish paredit-mode
   :bind (:map paredit-mode-map
               ("M-)" . paredit-forward-slurp-sexp))
   :init
@@ -334,6 +335,7 @@
 
 (use-package company
   :ensure t
+  :diminish company-mode
   :init
   (global-company-mode 1))
 
@@ -397,12 +399,6 @@
      (http . t)
      (ruby . t)
      (emacs-lisp . t))))
-
-(use-package diminish
-  :ensure t
-  :init
-  (diminish 'company-mode "comp")
-  (diminish 'paredit-mode))
 
 (use-package wgrep
   :ensure t
