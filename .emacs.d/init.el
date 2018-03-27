@@ -125,9 +125,9 @@
 (require 'use-package)
 
 (use-package powerline
+  ;; disabled by default. Enable with (powerline-default-theme)
   :ensure t
-  :init (setq powerline-default-separator 'utf-8)
-  :config (powerline-default-theme))
+  :init (setq powerline-default-separator 'utf-8))
 
 (use-package browse-kill-ring
   :ensure t)
