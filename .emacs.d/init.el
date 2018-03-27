@@ -9,8 +9,8 @@
 (setq initial-scratch-message "")
 
 (when (and window-system (eq system-type 'darwin))
-  (set-face-attribute 'default nil :family "Menlo")
-  (set-face-attribute 'default nil :height 140))
+  (set-face-attribute 'default nil :font "Hack-14.0")
+  (set-frame-font "Hack-14.0" nil t))
 
 (when (not window-system)
   (require 'mouse)
