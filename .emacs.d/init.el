@@ -48,8 +48,9 @@
 
 ;; better buffer filenames
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward
-      uniquify-separator ":")
+(setq uniquify-buffer-name-style 'forward
+      uniquify-separator "/"
+      uniquify-trailing-separator-p 't)
 
 (setq whitespace-style '(face trailing lines-tail tabs)
       whitespace-line-column 80)
