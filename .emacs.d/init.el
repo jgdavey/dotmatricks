@@ -216,6 +216,9 @@
 (use-package inf-ruby
   :ensure t)
 
+(use-package yaml-mode
+  :ensure t)
+
 (use-package js2-mode
   :ensure t)
 
@@ -281,6 +284,21 @@
   (add-hook 'clojure-mode-hook (lambda ()
                                  (clj-refactor-mode 1)
                                  (cljr-add-keybindings-with-prefix "C-c C-m"))))
+
+(use-package projectile
+  :ensure t
+  :config
+  (setq projectile-mode-line
+        '(:eval (format " [%s]" (projectile-project-name))))
+  (setq projectile-completion-system 'ivy))
+
+(use-package counsel-projectile
+  :ensure t
+  :config
+  (define-globalized-minor-mode counsel-projectile-global-mode
+    counsel-projectile-mode
+    counsel-projectile-mode)
+  (counsel-projectile-global-mode))
 
 (use-package ivy
   :ensure t
