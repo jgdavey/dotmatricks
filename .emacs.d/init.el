@@ -86,7 +86,8 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar base-packages '(color-theme-sanityinc-tomorrow
+(defvar base-packages '(ample-theme
+                        color-theme-sanityinc-tomorrow
                         monokai-theme
                         railscasts-reloaded-theme
                         use-package
@@ -115,12 +116,17 @@
 
 (global-set-key (kbd "C-c C-o C-l") 'linum-mode)
 
-;;(load-theme 'zenburn t)
+;;(load-theme 'ample t)
 ;;(load-theme 'railscasts-reloaded t)
 (load-theme 'sanityinc-tomorrow-eighties t)
 
 ;; Package setup
 (require 'use-package)
+
+(use-package powerline
+  :ensure t
+  :init (setq powerline-default-separator 'utf-8)
+  :config (powerline-default-theme))
 
 (use-package browse-kill-ring
   :ensure t)
