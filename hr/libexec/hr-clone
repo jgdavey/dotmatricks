@@ -48,41 +48,6 @@ if [ ! -d "$path" ]; then
   new=1
 fi
 
-setup_git_hooks() {
-  cd "$path"
-  if [ ! -f .git/hooks/post-rewrite ]; then
-    cat > .git/hooks/post-rewrite <<EOS
-#!/bin/sh
-
-GIT_DIR="\$(dirname "\$(dirname "\$0")")"
-export GIT_DIR
-
-case "\$1" in
-  rebase) exec "\$GIT_DIR/hooks/post-merge" 0 rebase ;;
-esac
-EOS
-  fi
-  if [ ! -f .git/hooks/pre-commit ]; then
-    echo '#!/bin/sh' > .git/hooks/pre-commit
-    echo 'git diff --exit-code --cached -- Gemfile Gemfile.lock >/dev/null || bundle check' >> .git/hooks/pre-commit
-  fi
-  if [ ! -f .git/hooks/ctags ]; then
-    echo '#!/bin/sh' > .git/hooks/ctags
-    echo 'rm -f .git/tags' >> .git/hooks/ctags
-    echo 'ctags --tag-relative -f .git/tags --exclude=.git --exclude=db --exclude=public/uploads --exclude=vendor --exclude=tmp --languages=-javascript,html,sql -R' >> .git/hooks/ctags
-    chmod +x .git/hooks/ctags
-    for basename in post-checkout post-commit post-merge; do
-      echo '#!/bin/sh' > .git/hooks/$basename
-      echo '$GIT_DIR/hooks/ctags >/dev/null 2>&1 &' >> .git/hooks/$basename
-      chmod +x .git/hooks/$basename
-    done
-    .git/hooks/ctags
-  fi
-  echo 'if command -v hookup >/dev/null; then' >> .git/hooks/post-checkout
-  echo '  hookup post-checkout "$@"' >> .git/hooks/post-checkout
-  echo "fi" >> .git/hooks/post-checkout
-}
-
 setup_bin_path() {
   cd "$path"
   ln -sf ../bin .git
@@ -121,7 +86,6 @@ setup_git_submodules() {
 hclone() {
   clone_if_necessary || return 1
   setup_git_submodules
-  setup_git_hooks
   setup_bin_path
   script_setup
 }
