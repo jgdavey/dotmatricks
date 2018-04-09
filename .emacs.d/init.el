@@ -366,7 +366,10 @@
   :ensure t)
 
 (use-package web-mode
+  :ensure t
   :config
+  (use-package company-web
+    :ensure t)
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2))
