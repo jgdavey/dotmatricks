@@ -237,7 +237,9 @@
 (use-package ivy
   :ensure t
   :diminish ivy-mode
-  :bind (("C-c C-r" . ivy-resume))
+  :bind (("C-c C-r" . ivy-resume)
+         ("C-c v"   . ivy-push-view)
+         ("C-c V"   . ivy-pop-view))
   :config
   (progn
     (with-eval-after-load 'ido
@@ -255,6 +257,9 @@
     (bind-keys
      :map ivy-switch-buffer-map
      ("C-k" . my/ivy-kill-buffer))))
+
+(use-package smex
+  :ensure t)
 
 (use-package counsel
   :ensure t
