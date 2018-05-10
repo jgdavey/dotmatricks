@@ -53,7 +53,7 @@
       uniquify-trailing-separator-p 't)
 
 (setq whitespace-style '(face trailing lines-tail tabs)
-      whitespace-line-column 80)
+      whitespace-line-column 86)
 
 (global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
 
