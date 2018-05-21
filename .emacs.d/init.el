@@ -383,6 +383,14 @@
   :config
   (winner-mode 1))
 
+(use-package heroku
+  :ensure t
+  :config
+  (defun heroku-sql-alt (alternate-db-name)
+    (interactive "sDB name: ")
+    (let ((heroku-sql-options (list "pg:psql" alternate-db-name)))
+      (heroku-sql))))
+
 (setq css-indent-offset 2)
 
 (defun replace-smart-quotes (beg end)
@@ -419,7 +427,18 @@
 
 (add-hook 'sql-interactive-mode-hook 'my-sql-interactive-mode-hook)
 
-; (setq sql-interactive-mode-hook nil)
+;; (setq sql-interactive-mode-hook nil)
+
+(defun sql-postgres-connect-url (url)
+  (interactive "sDB URL: ")
+  (let ((parsed (url-generic-parse-url url)))
+    (let ((sql-product   (url-type parsed)) ;; postgres
+          (sql-user      (url-user parsed))
+          (sql-password  (url-password parsed))
+          (sql-server    (url-host parsed))
+          (sql-database  (replace-regexp-in-string "^/" "" (car (url-path-and-query parsed))))
+          (sql-port      (url-port parsed)))
+      (sql-postgres))))
 
 (defun unfill-paragraph (&optional region)
   "Takes a multi-line paragraph and makes it into a single line of text."
