@@ -149,6 +149,9 @@
 (use-package git-link
   :ensure t)
 
+(use-package ruby-mode
+  :init (add-hook 'ruby-mode-hook 'whitespace-mode))
+
 (use-package inf-ruby
   :ensure t)
 
