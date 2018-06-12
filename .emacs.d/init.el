@@ -80,7 +80,10 @@
       '(("org" . 20)
         ("melpa-stable" . 10)
         ("gnu" . 5)
-        ("melpa" . 0)))
+        ("melpa" . 0))
+      package-pinned-packages
+      '((clj-refactor . "melpa")
+        (cider . "melpa")))
 
 (package-initialize)
 
