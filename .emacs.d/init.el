@@ -194,6 +194,12 @@
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
+(use-package magithub
+  :after magit
+  :config
+  (magithub-feature-autoinject t)
+  (setq magithub-clone-default-directory "~/src"))
+
 (use-package clojure-mode
   :ensure t
   :init
@@ -388,6 +394,11 @@
   :ensure t
   :config
   (winner-mode 1))
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
 
 (use-package heroku
   :ensure t
