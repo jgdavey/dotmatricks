@@ -391,7 +391,8 @@
     :ensure t)
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2))
+        web-mode-code-indent-offset 2
+        css-indent-offset 2))
 
 (use-package winner
   :ensure t
@@ -400,6 +401,7 @@
 
 (use-package which-key
   :ensure t
+  :diminish which-key-mode
   :config
   (which-key-mode))
 
@@ -409,9 +411,7 @@
   (defun heroku-sql-alt (alternate-db-name)
     (interactive "sDB name: ")
     (let ((heroku-sql-options (list "pg:psql" alternate-db-name)))
-      (heroku-sql))))
-
-(setq css-indent-offset 2)
+      (call-interactively 'heroku-sql))))
 
 (defun replace-smart-quotes (beg end)
   "Replace 'smart quotes' in buffer or region with ascii quotes."
