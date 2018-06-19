@@ -82,8 +82,7 @@
         ("gnu" . 5)
         ("melpa" . 0))
       package-pinned-packages
-      '((clj-refactor . "melpa")
-        (cider . "melpa")))
+      '((clj-refactor . "melpa")))
 
 (package-initialize)
 
