@@ -312,6 +312,8 @@
   (use-package ox-pandoc
     :defer t
     :ensure t)
+  (use-package ob-sql-mode
+    :ensure t)
   (setq org-directory (expand-file-name "~/org"))
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
@@ -339,6 +341,8 @@
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
   (require 'ob-sql)
+  (require 'ob-sql-mode)
+  (require 'ob-clojure)
   ;; Here I specify the languages I want to be able to use with Org-babel.
   (org-babel-do-load-languages
    'org-babel-load-languages
