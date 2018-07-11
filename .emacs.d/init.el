@@ -64,10 +64,6 @@
  (untabify (point-min) (point-max))
  (delete-trailing-whitespace))
 
-(global-set-key (kbd "C-c n") 'cleanup-buffer)
-(global-set-key (kbd "C-c r") 'revert-buffer)
-
-
 ;; Packages
 (require 'package)
 
@@ -248,9 +244,9 @@
 (use-package ivy
   :ensure t
   :diminish ivy-mode
-  :bind (("C-c C-r" . ivy-resume)
-         ("C-c v"   . ivy-push-view)
-         ("C-c V"   . ivy-pop-view))
+  :bind (("C-c r" . ivy-resume)
+         ("C-c v" . ivy-push-view)
+         ("C-c V" . ivy-pop-view))
   :config
   (progn
     (with-eval-after-load 'ido
@@ -401,9 +397,8 @@
 
 (use-package which-key
   :ensure t
-  :diminish which-key-mode
-  :config
-  (which-key-mode))
+  :config (which-key-mode)
+  :diminish which-key-mode)
 
 (use-package heroku
   :ensure t
