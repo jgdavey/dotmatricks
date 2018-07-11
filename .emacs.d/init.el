@@ -448,11 +448,12 @@
   (interactive "sDB URL: ")
   (let ((parsed (url-generic-parse-url url)))
     (let ((sql-product   (url-type parsed)) ;; postgres
-          (sql-user      (url-user parsed))
-          (sql-password  (url-password parsed))
-          (sql-server    (url-host parsed))
-          (sql-database  (replace-regexp-in-string "^/" "" (car (url-path-and-query parsed))))
-          (sql-port      (url-port parsed)))
+          (sql-user      "")
+          (sql-password  "")
+          (sql-server    "")
+          (sql-database  url)
+          (sql-port      0)
+          (sql-postgres-login-params '()))
       (sql-postgres))))
 
 (defun unfill-paragraph (&optional region)
