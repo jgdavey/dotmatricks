@@ -242,10 +242,7 @@
 (use-package counsel-projectile
   :ensure t
   :config
-  (define-globalized-minor-mode counsel-projectile-global-mode
-    counsel-projectile-mode
-    counsel-projectile-mode)
-  (counsel-projectile-global-mode))
+  (counsel-projectile-mode))
 
 (use-package ivy
   :ensure t
@@ -339,7 +336,8 @@
           ("s" "Scheduled Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
            "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
   (setq org-todo-keywords
-       '((sequence "TODO" "|" "DONE" "DELEGATED")))
+        '((sequence "TODO" "|" "DONE" "DELEGATED")))
+
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
   (require 'ob-sql)
