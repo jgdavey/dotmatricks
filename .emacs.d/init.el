@@ -21,6 +21,12 @@
   (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
   (global-set-key (kbd "<mouse-5>") 'scroll-up-line))
 
+(defun debug-on-load-obsolete (filename)
+  (when (equal (car (last (split-string filename "[/\\]") 2))
+               "obsolete")
+    (debug)))
+(add-to-list 'after-load-functions #'debug-on-load-obsolete)
+
 ;; Editor
 
 (setq-default indent-tabs-mode nil)   ;; don't use tabs to indent
