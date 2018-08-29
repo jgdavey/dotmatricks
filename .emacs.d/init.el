@@ -134,7 +134,9 @@
   :init (setq powerline-default-separator 'utf-8))
 
 (use-package browse-kill-ring
-  :ensure t)
+  :ensure t
+  :config
+  (browse-kill-ring-default-keybindings))
 
 (use-package exec-path-from-shell
   :ensure t
