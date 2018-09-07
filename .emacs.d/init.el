@@ -310,7 +310,9 @@
 (use-package org
   :ensure org-plus-contrib
   :bind (("C-c c" . org-capture)
-         ("C-c a" . org-agenda))
+         ("C-c a" . org-agenda)
+         :map org-mode-map
+         ("C-c C-o" . my/org-open-at-point))
   :init
   (use-package org-bullets
     :ensure t)
@@ -350,6 +352,13 @@
 
   (add-to-list 'org-agenda-files org-directory 'append)
   :config
+  (defun my/org-open-at-point (&optional arg)
+    "Wrapper for mu4e-view-go-to-url to use eww instead of default browser"
+    (interactive "P")
+    (if arg
+        (let ((browse-url-browser-function 'eww-browse-url))
+          (org-open-at-point))
+      (org-open-at-point)))
   (require 'ob-sql)
   (require 'ob-sql-mode)
   (require 'ob-clojure)
@@ -371,8 +380,6 @@
 
 (use-package ag
   :ensure t
-  :bind (("C-c s" . ag-project)
-         ("C-c C-s" . ag-project-regexp))
   :config
   (require 'wgrep-ag)
   :init
@@ -469,6 +476,12 @@
           (sql-port      0)
           (sql-postgres-login-params '()))
       (sql-postgres))))
+
+;; use browser depending on url
+(setq browse-url-browser-function
+      '(("github\\.com" . browse-url-chromium)
+        ("postgres\\.org" . eww-browse-url)
+        ("." . browse-url-default-browser)))
 
 (defun unfill-paragraph (&optional region)
   "Takes a multi-line paragraph and makes it into a single line of text."
