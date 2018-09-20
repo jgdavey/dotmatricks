@@ -37,7 +37,6 @@
 (setq require-final-newline t
       apropos-do-all t)
 
-(show-paren-mode 1)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
@@ -170,20 +169,30 @@
 (use-package markdown-mode
   :ensure t)
 
-(use-package paredit
+(use-package smartparens
   :ensure t
-  :diminish paredit-mode
-  :bind (:map paredit-mode-map
-              ("M-)" . paredit-forward-slurp-sexp))
+  :bind (:map smartparens-strict-mode-map
+              ("M-)" . sp-forward-slurp-sexp)
+              ("M-(" . sp-wrap-from-point)
+              ("M-J" . sp-join-sexp)
+              ("M-q" . sp-indent-defun))
+  :config
+  (require 'smartparens-config)
   :init
-  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-  (add-hook 'clojure-mode-hook          #'enable-paredit-mode)
-  (add-hook 'cider-repl-mode-hook       #'enable-paredit-mode))
+  (setq sp-base-key-bindings 'paredit
+        sp-autoskip-closing-pair 'always)
+  (setq blink-matching-paren nil)
+  (smartparens-global-mode +1)
+  (show-smartparens-global-mode +1)
+  (dolist (hook '(inferior-emacs-lisp-mode-hook
+                  emacs-lisp-mode-hook
+                  eval-expression-minibuffer-setup-hook
+                  lisp-mode-hook
+                  lisp-interaction-mode-hook
+                  scheme-mode-hook
+                  clojure-mode-hook
+                  cider-repl-mode-hook))
+    (add-hook hook #'turn-on-smartparens-strict-mode)))
 
 (use-package jsx
   :ensure jsx-mode
