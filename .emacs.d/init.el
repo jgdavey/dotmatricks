@@ -8,6 +8,7 @@
 (setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
 
+
 (when (and window-system (eq system-type 'darwin))
   (set-face-attribute 'default nil :font "Hack-14.0")
   (set-frame-font "Hack-14.0" nil t))
@@ -81,9 +82,7 @@
       '(("org" . 20)
         ("melpa-stable" . 10)
         ("gnu" . 5)
-        ("melpa" . 0))
-      package-pinned-packages
-      '((clj-refactor . "melpa")))
+        ("melpa" . 0)))
 
 (package-initialize)
 
@@ -242,6 +241,7 @@
 
 (use-package clj-refactor
   :ensure t
+  :pin melpa-stable
   :init
   (setq cljr-favor-prefix-notation nil
         cljr-eagerly-build-asts-on-startup nil
