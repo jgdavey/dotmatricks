@@ -102,24 +102,10 @@
     (require 'cl)
     (package-install p)))
 
-(unless window-system
-  (add-hook 'linum-before-numbering-hook
-            (lambda ()
-              (setq-local linum-format-fmt
-                          (let ((w (length (number-to-string
-                                            (count-lines (point-min) (point-max))))))
-                            (concat "%" (number-to-string w) "d")))))
+(when (version<= "26.0.50" emacs-version)
+  (global-display-line-numbers-mode)
+  (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
 
-  (defun linum-format-func (line)
-    (concat
-     (propertize (format linum-format-fmt line) 'face 'linum)
-     (propertize " " 'face 'linum)))
-
-  (setq linum-format 'linum-format-func))
-
-(global-set-key (kbd "C-c C-o C-l") 'linum-mode)
-
-;;(load-theme 'ample t)
 ;;(load-theme 'railscasts-reloaded t)
 (load-theme 'sanityinc-tomorrow-eighties t)
 
