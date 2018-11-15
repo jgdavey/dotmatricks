@@ -103,7 +103,8 @@
     (package-install p)))
 
 (when (version<= "26.0.50" emacs-version)
-  (global-display-line-numbers-mode)
+  ;; (global-display-line-numbers-mode)
+  (set-face-attribute 'line-number-current-line nil :background "color-237")
   (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
 
 ;;(load-theme 'railscasts-reloaded t)
@@ -137,7 +138,9 @@
   :ensure t)
 
 (use-package ruby-mode
-  :init (add-hook 'ruby-mode-hook 'whitespace-mode))
+  :init
+  ;; (add-hook 'ruby-mode-hook 'display-line-numbers-mode)
+  (add-hook 'ruby-mode-hook 'whitespace-mode))
 
 (use-package inf-ruby
   :ensure t)
@@ -209,6 +212,7 @@
   :ensure t
   :init
   (add-hook 'clojure-mode-hook 'whitespace-mode)
+  ;; (add-hook 'clojure-mode-hook 'display-line-numbers-mode)
   :config
   (define-clojure-indent
     (defroutes 'defun)
@@ -398,6 +402,8 @@
 
 (use-package web-mode
   :ensure t
+  :init
+  ;; (add-hook 'web-mode-hook 'display-line-numbers-mode)
   :config
   (use-package company-web
     :ensure t)
@@ -457,6 +463,10 @@
         (comint-send-string proc "\\pset pager off\n")))))
 
 (add-hook 'sql-interactive-mode-hook 'my-sql-interactive-mode-hook)
+;; (add-hook 'sql-mode-hook 'display-line-numbers-mode)
+
+;; Use postgres as default .sql file type
+(sql-set-product "postgres")
 
 ;; (setq sql-interactive-mode-hook nil)
 
