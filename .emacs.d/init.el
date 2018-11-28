@@ -58,8 +58,7 @@
       uniquify-separator "/"
       uniquify-trailing-separator-p 't)
 
-(setq whitespace-style '(face trailing lines-tail tabs)
-      whitespace-line-column 86)
+(setq whitespace-style '(face trailing tabs empty))
 
 (global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
 
