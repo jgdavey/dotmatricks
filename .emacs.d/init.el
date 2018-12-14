@@ -112,6 +112,10 @@
 ;; Package setup
 (require 'use-package)
 
+;; Has to be first to use :diminish option
+(use-package diminish
+  :ensure t)
+
 (use-package powerline
   ;; disabled by default. Enable with (powerline-default-theme)
   :ensure t
