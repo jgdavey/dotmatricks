@@ -31,7 +31,11 @@ total = log.length
 names = log.flat_map do |line|
   authors, message = line.split("|||", 2)
   names = authors.split(/,? and |, /).map { |n| usernames.fetch(n, n) }
-  names += message.scan(/Co-authored-by: ?([^<]*) ?<.*$/).flat_map{ |md| md.map(&:strip)}
+  names += message.scan(/Co-authored-by: ?([^<]*) ?<.*$/).flat_map { |md|
+    md.map { |n|
+      n.strip.gsub(/^"|"$/, "")
+    }
+  }
   names
 end
 
