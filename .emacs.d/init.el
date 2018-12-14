@@ -425,14 +425,6 @@
   :config (which-key-mode)
   :diminish which-key-mode)
 
-(use-package heroku
-  :ensure t
-  :config
-  (defun heroku-sql-alt (alternate-db-name)
-    (interactive "sDB name: ")
-    (let ((heroku-sql-options (list "pg:psql" alternate-db-name)))
-      (call-interactively 'heroku-sql))))
-
 (defun replace-smart-quotes (beg end)
   "Replace 'smart quotes' in buffer or region with ascii quotes."
   (interactive "r")
@@ -462,8 +454,7 @@
       ;; Output each query before executing it. (n.b. this also avoids
       ;; the psql prompt breaking the alignment of query results.)
       (comint-send-string proc "\\set ECHO queries\n")
-      (when (eq sql-product 'heroku)
-        (comint-send-string proc "\\pset pager off\n")))))
+      (comint-send-string proc "\\pset pager off\n"))))
 
 (add-hook 'sql-interactive-mode-hook 'my-sql-interactive-mode-hook)
 ;; (add-hook 'sql-mode-hook 'display-line-numbers-mode)
@@ -483,7 +474,20 @@
           (sql-database  url)
           (sql-port      0)
           (sql-postgres-login-params '()))
-      (sql-postgres))))
+      (sql-product-interactive 'postgres (car (url-path-and-query parsed))))))
+
+(defun sql-heroku-connect (app-name)
+  (interactive "sHeroku App: ")
+  (let ((sql-product 'postgres)
+        (sql-user      "")
+        (sql-password  "")
+        (sql-server    "")
+        (sql-database  "")
+        (sql-port      0)
+        (sql-postgres-login-params '())
+        (sql-postgres-program "heroku")
+        (sql-postgres-options (list "pg:psql" "-a" app-name)))
+    (sql-product-interactive 'postgres app-name)))
 
 ;; use browser depending on url
 (setq browse-url-browser-function
