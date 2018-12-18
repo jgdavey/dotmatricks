@@ -145,6 +145,21 @@
   ;; (add-hook 'ruby-mode-hook 'display-line-numbers-mode)
   (add-hook 'ruby-mode-hook 'whitespace-mode))
 
+(use-package rust-mode
+  :ensure t)
+
+(use-package cargo
+  :ensure t
+  :init
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
+
+(use-package racer
+  :ensure t
+  :init
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (add-hook 'racer-mode-hook #'eldoc-mode)
+  (add-hook 'racer-mode-hook #'company-mode))
+
 (use-package inf-ruby
   :ensure t)
 
