@@ -268,11 +268,13 @@
 
 (use-package counsel-projectile
   :ensure t
+  :pin melpa
   :config
   (counsel-projectile-mode))
 
 (use-package ivy
   :ensure t
+  :pin melpa
   :diminish ivy-mode
   :bind (("C-c r" . ivy-resume)
          ("C-c v" . ivy-push-view)
@@ -300,6 +302,7 @@
 
 (use-package counsel
   :ensure t
+  :pin melpa
   :bind (("M-x" . counsel-M-x)
          ("C-x C-f" . counsel-find-file)))
 
