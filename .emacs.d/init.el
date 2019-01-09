@@ -63,11 +63,11 @@
 (global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
 
 (defun cleanup-buffer ()
- "Perform a bunch of operations on the whitespace content of a buffer."
- (interactive)
- (indent-region (point-min) (point-max))
- (untabify (point-min) (point-max))
- (delete-trailing-whitespace))
+  "Perform a bunch of operations on the whitespace content of a buffer."
+  (interactive)
+  (indent-region (point-min) (point-max))
+  (untabify (point-min) (point-max))
+  (delete-trailing-whitespace))
 
 ;; Packages
 (require 'package)
@@ -264,8 +264,8 @@
   :bind (:map projectile-mode-map
               ("C-c p" . projectile-command-map))
   :config
-  (setq projectile-mode-line
-        '(:eval (format " [%s]" (projectile-project-name))))
+  (setq projectile-mode-line-function
+        (lambda () (format " [%s]" (projectile-project-name))))
   (setq projectile-completion-system 'ivy))
 
 (use-package counsel-projectile
@@ -556,12 +556,12 @@
         (delete-file filename)
         (set-visited-file-name newname)
         (set-buffer-modified-p nil)
-        t)))) 
+        t))))
 
 ;; additional (local) config
 (dolist (extra-file '("~/.emacs.d/default.el" "~/.emacs.d/local.el"))
   (if (file-exists-p extra-file)
-    (load-file extra-file)
+      (load-file extra-file)
     nil))
 
 ;; set custom file
