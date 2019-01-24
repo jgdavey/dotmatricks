@@ -146,7 +146,9 @@
   (add-hook 'ruby-mode-hook 'whitespace-mode))
 
 (use-package rust-mode
-  :ensure t)
+  :ensure t
+  :init
+  (add-hook 'rust-mode-hook 'whitespace-mode))
 
 (use-package cargo
   :ensure t
@@ -167,7 +169,9 @@
   :ensure t)
 
 (use-package js2-mode
-  :ensure t)
+  :ensure t
+  :init
+  (add-hook 'js2-mode-hook 'whitespace-mode))
 
 (use-package json
   :ensure json-mode)
