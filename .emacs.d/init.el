@@ -464,18 +464,12 @@
 
 ;; Silence compiler warnings
 (defvar sql-product)
-(defvar sql-prompt-regexp)
-(defvar sql-prompt-cont-regexp)
 
 (defun my-sql-interactive-mode-hook ()
   "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
   (toggle-truncate-lines t)
   (when (or (eq sql-product 'postgres)
             (eq sql-product 'heroku))
-    ;; Allow symbol chars in database names in prompt.
-    ;; Default postgres pattern was: "^\\w*=[#>] " (see `sql-product-alist').
-    (setq sql-prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
-    (setq sql-prompt-cont-regexp "^[_[:alnum:]\-:]*[-(][#>] *")
     (let ((proc (get-buffer-process (current-buffer))))
       ;; Output each query before executing it. (n.b. this also avoids
       ;; the psql prompt breaking the alignment of query results.)
@@ -487,6 +481,9 @@
 
 ;; Use postgres as default .sql file type
 (sql-set-product "postgres")
+
+(sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
+(sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\-:]*[-(][#>] *")
 
 ;; (setq sql-interactive-mode-hook nil)
 
