@@ -249,6 +249,7 @@
 
 (use-package cider
   :ensure t
+  :pin melpa-stable
   :config
   (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil)
@@ -258,6 +259,7 @@
 (use-package clj-refactor
   :ensure t
   :pin melpa-stable
+  :after cider
   :init
   (setq cljr-favor-prefix-notation nil
         cljr-eagerly-build-asts-on-startup nil
