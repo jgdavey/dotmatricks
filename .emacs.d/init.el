@@ -358,7 +358,14 @@
     :defer t
     :ensure t)
   (use-package ob-sql-mode
-    :ensure t)
+    :ensure t
+    :config
+    ;; Override so that session can link to existing SQL sessions
+    (defun org-babel-sql-mode--buffer-name (params)
+      (format "%s" (cdr (assoc :session params))))
+    ;; This plugin adds an invalid entry
+    (custom-reevaluate-setting 'org-structure-template-alist))
+
   (setq org-directory (expand-file-name "~/org"))
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
@@ -383,27 +390,26 @@
            "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
   (setq org-todo-keywords
         '((sequence "TODO" "|" "DONE" "DELEGATED")))
-
-  (add-to-list 'org-agenda-files org-directory 'append)
+  (setq org-babel-load-languages
+        '((clojure . t)
+          (shell . t)
+          (http . t)
+          (ruby . t)
+          (emacs-lisp . t)))
   :config
+  (when (version< "9.1.4" (org-version))
+    (add-to-list 'org-modules 'org-tempo))
+  (add-to-list 'org-agenda-files org-directory 'append)
+
+  (require 'ob-sql)
+
   (defun my/org-open-at-point (&optional arg)
     "Wrapper for mu4e-view-go-to-url to use eww instead of default browser"
     (interactive "P")
     (if arg
         (let ((browse-url-browser-function 'eww-browse-url))
           (org-open-at-point))
-      (org-open-at-point)))
-  (require 'ob-sql)
-  (require 'ob-sql-mode)
-  (require 'ob-clojure)
-  ;; Here I specify the languages I want to be able to use with Org-babel.
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((clojure . t)
-     (shell . t)
-     (http . t)
-     (ruby . t)
-     (emacs-lisp . t))))
+      (org-open-at-point))))
 
 (use-package wgrep
   :ensure t
