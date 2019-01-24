@@ -206,6 +206,7 @@
 
 (use-package magit
   :ensure t
+  :pin melpa
   :bind (("C-c g" . magit-status)
          :map git-commit-mode-map
          ("C-c C-a" . git-commit-co-authored-by))
@@ -220,11 +221,14 @@
   (magit-define-popup-switch 'magit-log-popup
     ?m "Omit merge commits" "--no-merges"))
 
-(use-package magithub
+(use-package forge
   :after magit
+  :pin melpa
+  :ensure t
   :config
-  (magithub-feature-autoinject t)
-  (setq magithub-clone-default-directory "~/src"))
+  ;; These two setting make the list look more like GitHub's default PR list
+  (setq forge-topic-list-order '(created . string>))
+  (setq forge-topic-list-limit '(50 . 0)))
 
 (use-package clojure-mode
   :ensure t
