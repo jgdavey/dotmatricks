@@ -512,6 +512,18 @@
           (sql-postgres-login-params '()))
       (sql-product-interactive 'postgres (car (url-path-and-query parsed))))))
 
+(defun sql-postgres-connect-sshx (host dbname)
+  (interactive "sSSH: \nsDatabase: ")
+  (let ((default-directory (format "/sshx:%s:" host)))
+    (let ((sql-product  'postgres) ;; postgres
+          (sql-user     "")
+          (sql-password "")
+          (sql-server   "")
+          (sql-database dbname)
+          (sql-port     0)
+          (sql-postgres-login-params '()))
+      (sql-product-interactive 'postgres (format "%s:%s" host dbname)))))
+
 (defun sql-heroku-connect (app-name)
   (interactive "sHeroku App: ")
   (let ((sql-product 'postgres)
