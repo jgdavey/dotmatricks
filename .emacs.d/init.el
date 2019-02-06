@@ -589,6 +589,17 @@
         (set-buffer-modified-p nil)
         t))))
 
+(defun delete-file-and-buffer ()
+  "Kills the current buffer and deletes the file it is visiting."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" (buffer-name))
+      (progn
+        (delete-file filename)
+        (message "Deleted file %s" filename)
+        (kill-buffer)))))
+
 ;; additional (local) config
 (dolist (extra-file '("~/.emacs.d/default.el" "~/.emacs.d/local.el"))
   (if (file-exists-p extra-file)
