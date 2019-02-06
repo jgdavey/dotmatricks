@@ -448,6 +448,7 @@
   :config
   (use-package company-web
     :ensure t)
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2
