@@ -342,7 +342,7 @@
         deft-auto-save-interval 0))
 
 (use-package org
-  :ensure org-plus-contrib
+  :ensure t
   :bind (("C-c c" . org-capture)
          ("C-c a" . org-agenda)
          :map org-mode-map
