@@ -525,9 +525,14 @@
         (sql-postgres-options (list "pg:psql" "-a" app-name)))
     (sql-product-interactive 'postgres app-name)))
 
+(setq browse-url-default-browser
+      (if (eq system-type 'darwin)
+          'browse-url-default-macosx-browser
+        'browse-url-chrome))
+
 ;; use browser depending on url
 (setq browse-url-browser-function
-      '(("github\\.com" . browse-url-chromium)
+      '(("github\\.com" . browse-url-default-browser)
         ("postgres\\.org" . eww-browse-url)
         ("." . browse-url-default-browser)))
 
