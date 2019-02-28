@@ -270,7 +270,7 @@
   :ensure t
   :pin melpa-stable
   :after cider
-  :init
+  :config
   (setq cljr-favor-prefix-notation nil
         cljr-eagerly-build-asts-on-startup nil
         cljr-auto-sort-ns nil
@@ -287,6 +287,9 @@
   (setq projectile-mode-line-function
         (lambda () (format " [%s]" (projectile-project-name))))
   (setq projectile-completion-system 'ivy))
+
+(use-package projectile-ripgrep
+  :ensure t)
 
 (use-package counsel-projectile
   :ensure t
@@ -357,6 +360,7 @@
          ("C-c a" . org-agenda)
          :map org-mode-map
          ("C-c C-o" . my/org-open-at-point))
+  :pin org
   :init
   (use-package org-bullets
     :ensure t)
@@ -445,6 +449,9 @@
         ag-project-root-function 'my-project-root-fn)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
+(use-package rg
+  :ensure t)
+
 (use-package ssh-config-mode
   :ensure t)
 
@@ -491,8 +498,7 @@
 (defun my-sql-interactive-mode-hook ()
   "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
   (toggle-truncate-lines t)
-  (when (or (eq sql-product 'postgres)
-            (eq sql-product 'heroku))
+  (when (eq sql-product 'postgres)
     (let ((proc (get-buffer-process (current-buffer))))
       ;; Output each query before executing it. (n.b. this also avoids
       ;; the psql prompt breaking the alignment of query results.)
