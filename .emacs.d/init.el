@@ -223,7 +223,10 @@
   (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-completing-read-function 'ivy-completing-read)
   (magit-define-popup-switch 'magit-log-popup
-    ?m "Omit merge commits" "--no-merges"))
+                             ?m "Omit merge commits" "--no-merges"))
+
+(use-package magit-popup
+  :ensure t)
 
 (use-package forge
   :after magit
