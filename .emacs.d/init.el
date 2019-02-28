@@ -254,6 +254,13 @@
   :ensure t
   :pin melpa-stable
   :config
+  (defvar cider-clojure-cli-global-options-history '("-A:dev"))
+  (defun set-cider-clojure-cli-global-options ()
+    (interactive)
+    (setq cider-clojure-cli-global-options
+          (read-string "Additional CLI options: "
+                       (car cider-clojure-cli-global-options-history)
+                       'cider-clojure-cli-global-options-history)))
   (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil)
   (setq cider-mode-line-show-connection nil)
