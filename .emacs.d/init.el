@@ -162,6 +162,9 @@
   (add-hook 'racer-mode-hook #'eldoc-mode)
   (add-hook 'racer-mode-hook #'company-mode))
 
+(use-package go-mode
+  :ensure t)
+
 (use-package inf-ruby
   :ensure t)
 
@@ -413,6 +416,7 @@
   :config
   (when (version< "9.1.4" (org-version))
     (add-to-list 'org-modules 'org-tempo))
+  (org-babel-do-load-languages 'org-babel-load-languages '())
   (add-to-list 'org-agenda-files org-directory 'append)
 
   (require 'ob-sql)
