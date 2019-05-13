@@ -213,7 +213,7 @@
 
 (use-package magit
   :ensure t
-  :pin melpa
+  :pin melpa-stable
   :bind (("C-c g" . magit-status)
          :map git-commit-mode-map
          ("C-c C-a" . git-commit-co-authored-by))
@@ -233,7 +233,7 @@
 
 (use-package forge
   :after magit
-  :pin melpa
+  :pin melpa-stable
   :ensure t
   :config
   ;; These two setting make the list look more like GitHub's default PR list
@@ -296,13 +296,11 @@
 
 (use-package counsel-projectile
   :ensure t
-  :pin melpa
   :config
   (counsel-projectile-mode))
 
 (use-package ivy
   :ensure t
-  :pin melpa
   :diminish ivy-mode
   :bind (("C-c r" . ivy-resume)
          ("C-c v" . ivy-push-view)
@@ -330,7 +328,6 @@
 
 (use-package counsel
   :ensure t
-  :pin melpa
   :bind (("M-x" . counsel-M-x)
          ("C-x C-f" . counsel-find-file)))
 
@@ -368,8 +365,6 @@
   (use-package org-bullets
     :ensure t)
   (use-package ob-http
-    :ensure t)
-  (use-package orgit
     :ensure t)
   (use-package ox-pandoc
     :defer t
@@ -496,7 +491,7 @@
 ;; Make SQL mode usable
 
 ;; Silence compiler warnings
-(defvar sql-product)
+(require 'sql)
 
 (defun my-sql-interactive-mode-hook ()
   "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
