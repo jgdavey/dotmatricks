@@ -407,16 +407,15 @@
            "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
   (setq org-todo-keywords
         '((sequence "TODO" "|" "DONE" "DELEGATED")))
-  (setq org-babel-load-languages
-        '((clojure . t)
-          (shell . t)
-          (http . t)
-          (ruby . t)
-          (emacs-lisp . t)))
   :config
   (when (version< "9.1.4" (org-version))
     (add-to-list 'org-modules 'org-tempo))
-  (org-babel-do-load-languages 'org-babel-load-languages '())
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((clojure . t)
+                                 (shell . t)
+                                 (http . t)
+                                 (ruby . t)
+                                 (emacs-lisp . t)))
   (add-to-list 'org-agenda-files org-directory 'append)
 
   (require 'ob-sql)
@@ -546,16 +545,20 @@
 
 (defun sql-heroku-connect (app-name)
   (interactive "sHeroku App: ")
-  (let ((sql-product 'postgres)
-        (sql-user      "")
-        (sql-password  "")
-        (sql-server    "")
-        (sql-database  "")
-        (sql-port      0)
-        (sql-postgres-login-params '())
-        (sql-postgres-program "heroku")
-        (sql-postgres-options (list "pg:psql" "-a" app-name)))
-    (sql-product-interactive 'postgres app-name)))
+  (let* ((s (split-string app-name ":+"))
+         (app (car s))
+         (db (cadr s))
+         (progopts (seq-filter 'stringp (list "pg:psql" db "-a" app))))
+    (let ((sql-product 'postgres)
+          (sql-user      "")
+          (sql-password  "")
+          (sql-server    "")
+          (sql-database  "")
+          (sql-port      0)
+          (sql-postgres-login-params '())
+          (sql-postgres-program "heroku")
+          (sql-postgres-options progopts))
+      (sql-product-interactive 'postgres app-name))))
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
