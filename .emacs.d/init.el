@@ -213,7 +213,7 @@
 
 (use-package magit
   :ensure t
-  :pin melpa-stable
+  :pin melpa
   :bind (("C-c g" . magit-status)
          :map git-commit-mode-map
          ("C-c C-a" . git-commit-co-authored-by))
@@ -233,7 +233,7 @@
 
 (use-package forge
   :after magit
-  :pin melpa-stable
+  :pin melpa
   :ensure t
   :config
   ;; These two setting make the list look more like GitHub's default PR list
