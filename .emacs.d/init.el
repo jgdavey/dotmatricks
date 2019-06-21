@@ -403,7 +403,7 @@
   (setq org-todo-keywords
         '((sequence "TODO" "|" "DONE" "DELEGATED")))
   :config
-  (when (version< "9.1.4" (org-version))
+  (when (version<= "9.2.0" (org-version))
     (add-to-list 'org-modules 'org-tempo))
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((clojure . t)
