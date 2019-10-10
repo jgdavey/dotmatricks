@@ -62,6 +62,8 @@
 
 (global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
 
+(add-hook 'prog-mode-hook 'whitespace-mode)
+
 (defun cleanup-buffer ()
   "Perform a bunch of operations on the whitespace content of a buffer."
   (interactive)
@@ -140,15 +142,10 @@
 (use-package git-link
   :ensure t)
 
-(use-package ruby-mode
-  :init
-  ;; (add-hook 'ruby-mode-hook 'display-line-numbers-mode)
-  (add-hook 'ruby-mode-hook 'whitespace-mode))
+(use-package ruby-mode)
 
 (use-package rust-mode
-  :ensure t
-  :init
-  (add-hook 'rust-mode-hook 'whitespace-mode))
+  :ensure t)
 
 (use-package cargo
   :ensure t
@@ -172,12 +169,12 @@
   :ensure t)
 
 (use-package js2-mode
-  :ensure t
-  :init
-  (add-hook 'js2-mode-hook 'whitespace-mode))
+  :ensure t)
 
 (use-package json
-  :ensure json-mode)
+  :ensure json-mode
+  :config
+  (setq js-indent-level 2))
 
 (use-package markdown-mode
   :ensure t)
@@ -242,9 +239,6 @@
 
 (use-package clojure-mode
   :ensure t
-  :init
-  (add-hook 'clojure-mode-hook 'whitespace-mode)
-  ;; (add-hook 'clojure-mode-hook 'display-line-numbers-mode)
   :config
   (define-clojure-indent
     (defroutes 'defun)
