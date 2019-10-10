@@ -333,7 +333,16 @@
 (use-package counsel
   :ensure t
   :bind (("M-x" . counsel-M-x)
+         ("C-c i" . counsel-imenu)
          ("C-x C-f" . counsel-find-file)))
+
+(use-package swiper
+  :ensure t
+  :bind (("C-s" . swiper-isearch)
+         :map isearch-mode-map
+         ("C-c s" . swiper-isearch-toggle)
+         :map swiper-map
+         ("C-c s" . swiper-isearch-toggle)))
 
 (use-package multiple-cursors
   :ensure t
