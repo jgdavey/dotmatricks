@@ -403,15 +403,18 @@
   (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-  (setq org-refile-targets '((nil :maxlevel . 9)
-                             (org-agenda-files :maxlevel . 4)))
   (setq org-log-done t)
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-targets '((nil :maxlevel . 9)
+                             (org-agenda-files :maxlevel . 3)))
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-capture-templates
-        `(("t" "Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
+        `(("t" "Todo" entry (file ,(concat org-directory "/todo.org"))
            "* TODO %?\n  %i")
-          ("l" "Linked Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
+          ("l" "Linked Todo" entry (file ,(concat org-directory "/todo.org"))
            "* TODO %?\n  %i\n  %A")
-          ("s" "Scheduled Todo" entry (file+headline ,(concat org-directory "/todo.org") "Tasks")
+          ("s" "Scheduled Todo" entry (file ,(concat org-directory "/todo.org"))
            "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
   (setq org-todo-keywords
         '((sequence "TODO" "|" "DONE" "DELEGATED")))
@@ -427,7 +430,15 @@
   (add-to-list 'org-agenda-files org-directory 'append)
 
   (require 'ob-sql)
-
+  (require 'ox-latex)
+  (add-to-list 'org-latex-classes
+               '("letter"
+                 "\\documentclass{letter}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   (defun my/org-open-at-point (&optional arg)
     "Wrapper for mu4e-view-go-to-url to use eww instead of default browser"
     (interactive "P")
