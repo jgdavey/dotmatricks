@@ -159,6 +159,12 @@
   (add-hook 'racer-mode-hook #'eldoc-mode)
   (add-hook 'racer-mode-hook #'company-mode))
 
+(use-package flycheck-rust
+  :ensure t
+  :init
+  (add-hook 'rust-mode-hook #'flycheck-mode)
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
 (use-package go-mode
   :ensure t)
 
@@ -240,9 +246,13 @@
 (use-package clojure-mode
   :ensure t
   :config
+  (require 'flycheck-clj-kondo)
   (define-clojure-indent
     (defroutes 'defun)
     (defui '(1 nil (1)))))
+
+(use-package flycheck-clj-kondo
+  :ensure t)
 
 (use-package inf-clojure
   :ensure t)
