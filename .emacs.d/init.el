@@ -642,6 +642,46 @@
         (message "Deleted file %s" filename)
         (kill-buffer)))))
 
+
+(when (executable-find "prose")
+  (defun jd/prose-fill-region (begin end)
+    "Use `prose' executable to fill region between BEGIN and END."
+    (interactive (if (use-region-p)
+                     (list (region-beginning) (region-end))
+                   (list (point-min) (point-max))))
+    (let* ((width-str (number-to-string fill-column))
+           (err-buf "*prose Error*")
+           (existed (if (get-buffer err-buf)
+                        (kill-buffer err-buf)))
+           (prose-cmd (concat "prose -w" width-str " "))
+           (before-text (buffer-substring-no-properties begin end))
+           prose-ret
+           ;; Do the formatting in a temp buffer so that the text in the original
+           ;; buffer doesn't get corrupted in case `prose' fails due to some error.
+           (after-text (with-temp-buffer
+                         (insert before-text)
+                         (setq prose-ret (shell-command-on-region
+                                          (point-min) (point-max)
+                                          prose-cmd nil :replace
+                                          err-buf :display-error-buffer))
+                         (buffer-substring-no-properties (point-min) (point-max)))))
+      (if (get-buffer err-buf)
+          (save-excursion
+            (switch-to-buffer-other-window err-buf)
+            (special-mode))) ; Set this mode so that you can quit it quickly using C-u q
+      ;; If 1 is returned, error occurred in the cmd execution; 0 - no error
+      (if (= 1 prose-ret)
+          nil
+        ;; If no error occurred, do below in the original buffer
+        (delete-region begin end)
+        (insert after-text))
+      (message "Executed `%s' on the region" prose-cmd)))
+  ;; Rationale for the below binding is that it flows very well when selecting a
+  ;; paragraph and then filling that region: "M-h M-H"
+  (global-set-key (kbd "M-H") #'jd/prose-fill-region))
+(mark-paragraph)
+(fill-paragraph)
+
 ;; additional (local) config
 (dolist (extra-file '("~/.emacs.d/default.el" "~/.emacs.d/local.el"))
   (if (file-exists-p extra-file)
