@@ -36,3 +36,6 @@ if [ -f '/usr/local/etc/bash_completion.d/git-completion.bash' ]; then
 fi
 
 [ ! -f "$HOME/.bashrc.local" ] || . "$HOME/.bashrc.local"
+
+# added by travis gem
+[ -f /Users/jgdavey/.travis/travis.sh ] && source /Users/jgdavey/.travis/travis.sh
