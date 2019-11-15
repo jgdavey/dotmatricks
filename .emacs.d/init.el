@@ -367,6 +367,9 @@
         deft-use-filter-string-for-filename t
         deft-auto-save-interval 0))
 
+(use-package es-mode
+  :ensure t)
+
 (use-package org
   :ensure t
   :bind (("C-c c" . org-capture)
@@ -426,7 +429,8 @@
                                  (shell . t)
                                  (http . t)
                                  (ruby . t)
-                                 (emacs-lisp . t)))
+                                 (emacs-lisp . t)
+                                 (elasticsearch . t)))
   (add-to-list 'org-agenda-files org-directory 'append)
 
   (require 'ob-sql)
