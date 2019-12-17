@@ -190,10 +190,15 @@
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 (use-package go-mode
-  :ensure t)
-
-(use-package inf-ruby
-  :ensure t)
+  :ensure t
+  :init
+  (defun jd/go-mode-hook ()
+    (add-hook 'before-save-hook 'gofmt-before-save)
+    (whitespace-mode -1)
+    (setq indent-tabs-mode +1)
+    (setq-local whitespace-style '(face trailing))
+    (whitespace-mode +1))
+  (add-hook 'go-mode-hook 'jd/go-mode-hook))
 
 (use-package yaml-mode
   :ensure t)
@@ -343,13 +348,13 @@
           ivy-count-format "%d/%d "
           ivy-height 12
           ivy-display-style 'fancy)
-    (defun my/ivy-kill-buffer ()
+    (defun jd/ivy-kill-buffer ()
       (interactive)
       (ivy-set-action 'kill-buffer)
       (ivy-done))
     (bind-keys
      :map ivy-switch-buffer-map
-     ("C-k" . my/ivy-kill-buffer))))
+     ("C-k" . jd/ivy-kill-buffer))))
 
 (use-package smex
   :ensure t)
@@ -399,7 +404,7 @@
   :bind (("C-c c" . org-capture)
          ("C-c a" . org-agenda)
          :map org-mode-map
-         ("C-c C-o" . my/org-open-at-point))
+         ("C-c C-o" . jd/org-open-at-point))
   :pin org
   :init
   (use-package org-bullets
@@ -467,7 +472,19 @@
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-  (defun my/org-open-at-point (&optional arg)
+  (defun jd/toggle-org-pdf-export-on-save ()
+    "Enable or disable export PDF when saving current buffer."
+    (interactive)
+    (when (not (eq major-mode 'org-mode))
+      (error "Not an org-mode file!"))
+    (if (memq 'org-html-export-to-html after-save-hook)
+        (progn (remove-hook 'after-save-hook 'org-latex-export-to-pdf t)
+               (message "Disabled org html export on save"))
+      (add-hook 'after-save-hook 'org-latex-export-to-pdf nil t)
+      (set-buffer-modified-p t)
+      (message "Enabled org PDF export on save")))
+
+  (defun jd/org-open-at-point (&optional arg)
     "Wrapper for mu4e-view-go-to-url to use eww instead of default browser"
     (interactive "P")
     (if arg
@@ -487,7 +504,7 @@
   :config
   (require 'wgrep-ag)
   :init
-  (defun my-project-root-fn (file-path)
+  (defun jd/ag-project-root-fn (file-path)
     (or (ag/longest-string
          (vc-find-root file-path "build.boot")
          (vc-git-root file-path)
@@ -496,7 +513,7 @@
         file-path))
   (setq ag-highlight-search t
         ag-reuse-window t
-        ag-project-root-function 'my-project-root-fn)
+        ag-project-root-function 'jd/ag-project-root-fn)
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
 (use-package rg
@@ -545,7 +562,7 @@
 ;; Silence compiler warnings
 (require 'sql)
 
-(defun my-sql-interactive-mode-hook ()
+(defun jd/sql-interactive-mode-hook ()
   "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
   (toggle-truncate-lines t)
   (when (eq sql-product 'postgres)
@@ -555,7 +572,7 @@
       (comint-send-string proc "\\set ECHO queries\n")
       (comint-send-string proc "\\pset pager off\n"))))
 
-(add-hook 'sql-interactive-mode-hook 'my-sql-interactive-mode-hook)
+(add-hook 'sql-interactive-mode-hook 'jd/sql-interactive-mode-hook)
 ;; (add-hook 'sql-mode-hook 'display-line-numbers-mode)
 
 ;; Use postgres as default .sql file type
