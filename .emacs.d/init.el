@@ -392,6 +392,7 @@
         deft-auto-save-interval 0))
 
 (use-package es-mode
+  :pin melpa
   :ensure t)
 
 (use-package org
