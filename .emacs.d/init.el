@@ -2,13 +2,13 @@
 ;; avoid visual thrashing.
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
 
 (when (not window-system)
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (require 'mouse)
   (xterm-mouse-mode t)
   (setq mouse-sel-mode t)
@@ -234,9 +234,7 @@
                   cider-repl-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
 
-(use-package jsx
-  :ensure jsx-mode
-  :mode ("\\.jsx\\'" . jsx-mode))
+(use-package rjsx-mode)
 
 (use-package magit
   :ensure t
