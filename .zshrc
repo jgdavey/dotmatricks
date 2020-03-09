@@ -69,6 +69,8 @@ l.() {
   ls -ld "${1:-$PWD}"/.[^.]*
 }
 
+(( ${+aliases[e]} )) && unalias e
+
 # prompt
 p=
 if [ -n "$SSH_CONNECTION" ]; then
