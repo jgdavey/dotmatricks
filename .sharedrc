@@ -97,10 +97,10 @@ alias E="SUDO_EDITOR=\"$EDITOR\" sudoedit"
 
 e() {
     nowindow=
-    if [ -e "$TMUX" ]; then
-        nowindow=="-nw"
+    if [ -n "$TMUX" ]; then
+        nowindow="-nw"
     fi
-    emacsclient -a'' "$nowindow" -c "$@"
+    emacsclient --alternate-editor='' ${nowindow} -c $@
 }
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
