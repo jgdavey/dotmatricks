@@ -1,3 +1,5 @@
 FILES
 .vim/bundle
 /.emacs.d/*
+!/.emacs.d/lib
+!/.emacs.d/layers

@@ -76,6 +76,11 @@
   (untabify (point-min) (point-max))
   (delete-trailing-whitespace))
 
+(defun load-file-if-exists (file)
+  (if (file-exists-p file)
+      (load-file file)
+    nil))
+
 ;; Packages
 (require 'package)
 
@@ -95,12 +100,8 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar base-packages '(ample-theme
-                        color-theme-sanityinc-tomorrow
-                        monokai-theme
-                        railscasts-reloaded-theme
-                        use-package
-                        zenburn-theme)
+(defvar base-packages '(color-theme-sanityinc-tomorrow
+                        use-package)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p base-packages)
@@ -123,123 +124,14 @@
 (use-package diminish
   :ensure t)
 
-(use-package powerline
-  ;; disabled by default. Enable with (powerline-default-theme)
-  :ensure t
-  :init (setq powerline-default-separator 'utf-8))
+(add-to-list 'load-path "~/.emacs.d/lib")
 
 (use-package browse-kill-ring
   :ensure t
   :config
   (browse-kill-ring-default-keybindings))
 
-(use-package exec-path-from-shell
-  :ensure t
-  :init (when (memq window-system '(mac ns x))
-          (exec-path-from-shell-initialize)))
-
 (use-package expand-region
-  :ensure t)
-
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-toggle-key "C-c C-z"
-        evil-cross-lines t
-        evil-default-state 'emacs))
-
-(use-package evil-surround
-  :ensure t)
-
-(use-package default-text-scale
-  :ensure t
-  :bind (:map default-text-scale-mode-map
-              ("s-0" . default-text-scale-reset)
-              ("s-=" . default-text-scale-increase)
-              ("s--" . default-text-scale-decrease))
-  :init
-  (default-text-scale-mode))
-
-(use-package gist
-  :ensure t)
-
-(use-package git-link
-  :ensure t)
-
-(use-package inf-ruby
-  :ensure t
-  :init
-  (add-hook 'after-init-hook 'inf-ruby-switch-setup)
-  (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter))
-
-(use-package ruby-mode)
-
-(use-package enh-ruby-mode
-  :ensure t
-  :init
-  (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
-  (add-to-list 'auto-mode-alist
-               '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
-
-(use-package robe
-  :ensure
-  :init
-  (add-hook 'ruby-mode-hook 'robe-mode)
-  (add-hook 'enh-ruby-mode-hook 'robe-mode))
-
-(use-package rspec-mode
-  :ensure t
-  ;; mimic rust mode mappings
-  :bind (:map rspec-mode-verifiable-keymap
-              ("C-t" . rspec-verify)
-              ("C-c" . rspec-rerun))
-  :init
-  (setq rspec-key-command-prefix (kbd "C-c C-C")))
-
-(use-package rust-mode
-  :ensure t)
-
-(use-package cargo
-  :ensure t
-  :init
-  (add-hook 'rust-mode-hook 'cargo-minor-mode))
-
-(use-package racer
-  :ensure t
-  :init
-  (add-hook 'rust-mode-hook #'racer-mode)
-  (add-hook 'racer-mode-hook #'eldoc-mode)
-  (add-hook 'racer-mode-hook #'company-mode))
-
-(use-package flycheck-rust
-  :ensure t
-  :init
-  (add-hook 'rust-mode-hook #'flycheck-mode)
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-
-(use-package go-mode
-  :ensure t
-  :init
-  (defun jd/go-mode-hook ()
-    (add-hook 'before-save-hook 'gofmt-before-save)
-    (whitespace-mode -1)
-    (setq indent-tabs-mode +1)
-    (setq-local whitespace-style '(face trailing))
-    (whitespace-mode +1))
-  (add-hook 'go-mode-hook 'jd/go-mode-hook))
-
-(use-package yaml-mode
-  :ensure t)
-
-(use-package js2-mode
-  :ensure t)
-
-(use-package json
-  :ensure json-mode
-  :config
-  (setq js-indent-level 2))
-
-(use-package markdown-mode
   :ensure t)
 
 (use-package smartparens
@@ -266,80 +158,6 @@
                   clojure-mode-hook
                   cider-repl-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
-
-(use-package rjsx-mode)
-
-(use-package magit
-  :ensure t
-  :pin melpa
-  :bind (("C-c g" . magit-status)
-         :map git-commit-mode-map
-         ("C-c C-a" . git-commit-co-authored-by))
-  :config
-  (add-to-list 'git-commit-known-pseudo-headers "Co-authored-by")
-  (defun git-commit-co-authored-by (name mail)
-    "Insert a header mentioning a co-author"
-    (interactive (git-commit-read-ident))
-    (git-commit-insert-header "Co-authored-by" name mail))
-  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-completing-read-function 'ivy-completing-read)
-  (magit-define-popup-switch 'magit-log-popup
-                             ?m "Omit merge commits" "--no-merges"))
-
-(use-package magit-popup
-  :ensure t)
-
-(use-package forge
-  :after magit
-  :pin melpa
-  :ensure t
-  :config
-  ;; These two setting make the list look more like GitHub's default PR list
-  (setq forge-topic-list-order '(created . string>))
-  (setq forge-topic-list-limit '(50 . 0)))
-
-(use-package clojure-mode
-  :ensure t
-  :config
-  (require 'flycheck-clj-kondo)
-  (define-clojure-indent
-    (defroutes 'defun)
-    (defui '(1 nil (1)))))
-
-(use-package flycheck-clj-kondo
-  :ensure t)
-
-(use-package inf-clojure
-  :ensure t)
-
-(use-package cider
-  :ensure t
-  :pin melpa-stable
-  :config
-  (defvar cider-clojure-cli-global-options-history '("-A:dev"))
-  (defun set-cider-clojure-cli-global-options ()
-    (interactive)
-    (setq cider-clojure-cli-global-options
-          (read-string "Additional CLI options: "
-                       (car cider-clojure-cli-global-options-history)
-                       'cider-clojure-cli-global-options-history)))
-  (setq org-babel-clojure-backend 'cider)
-  (setq cider-prompt-for-symbol nil)
-  (setq cider-mode-line-show-connection nil)
-  (setq cider-repl-display-help-banner nil))
-
-(use-package clj-refactor
-  :ensure t
-  :pin melpa-stable
-  :after cider
-  :config
-  (setq cljr-favor-prefix-notation nil
-        cljr-eagerly-build-asts-on-startup nil
-        cljr-auto-sort-ns nil
-        cljr-favor-private-functions nil)
-  (add-hook 'clojure-mode-hook (lambda ()
-                                 (clj-refactor-mode 1)
-                                 (cljr-add-keybindings-with-prefix "C-c C-m"))))
 
 (use-package projectile
   :ensure t
@@ -411,114 +229,6 @@
   :init
   (global-company-mode 1))
 
-(use-package deft
-  :ensure t
-  :bind ("C-c d" . deft)
-  :init
-  (setq deft-extensions '("org" "md")
-        deft-default-extension "org"
-        deft-directory "~/notes"
-        deft-use-filename-as-title t
-        deft-use-filter-string-for-filename t
-        deft-auto-save-interval 0))
-
-(use-package es-mode
-  :pin melpa
-  :ensure t)
-
-(use-package org
-  :ensure t
-  :bind (("C-c c" . org-capture)
-         ("C-c a" . org-agenda)
-         :map org-mode-map
-         ("C-c C-o" . jd/org-open-at-point))
-  :pin org
-  :init
-  (use-package org-bullets
-    :ensure t)
-  (use-package ob-http
-    :ensure t)
-  (use-package ox-pandoc
-    :defer t
-    :ensure t)
-  (use-package ob-sql-mode
-    :ensure t
-    :config
-    ;; Override so that session can link to existing SQL sessions
-    (defun org-babel-sql-mode--buffer-name (params)
-      (format "%s" (cdr (assoc :session params))))
-    ;; This plugin adds an invalid entry
-    (custom-reevaluate-setting 'org-structure-template-alist))
-
-  (setq org-directory (expand-file-name "~/org"))
-  (setq org-babel-clojure-backend 'cider)
-  (setq org-export-backends '(ascii html icalendar latex md odt))
-  ;; Let's have pretty source code blocks
-  (setq org-edit-src-content-indentation 0
-        org-src-tab-acts-natively t
-        org-src-fontify-natively t
-        org-confirm-babel-evaluate nil
-        org-support-shift-select 'always)
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
-  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-  (setq org-log-done t)
-  (setq org-refile-use-outline-path 'file)
-  (setq org-refile-targets '((nil :maxlevel . 9)
-                             (org-agenda-files :maxlevel . 3)))
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
-  (setq org-capture-templates
-        `(("t" "Todo" entry (file ,(concat org-directory "/todo.org"))
-           "* TODO %?\n  %i")
-          ("l" "Linked Todo" entry (file ,(concat org-directory "/todo.org"))
-           "* TODO %?\n  %i\n  %A")
-          ("s" "Scheduled Todo" entry (file ,(concat org-directory "/todo.org"))
-           "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
-  (setq org-todo-keywords
-        '((sequence "TODO" "|" "DONE" "DELEGATED")))
-  :config
-  (when (version<= "9.2.0" (org-version))
-    (add-to-list 'org-modules 'org-tempo))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((clojure . t)
-                                 (shell . t)
-                                 (http . t)
-                                 (ruby . t)
-                                 (emacs-lisp . t)
-                                 (elasticsearch . t)))
-  (add-to-list 'org-agenda-files org-directory 'append)
-
-  (require 'ob-sql)
-  (require 'ox-latex)
-  (add-to-list 'org-latex-classes
-               '("letter"
-                 "\\documentclass{letter}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-  (defun jd/toggle-org-pdf-export-on-save ()
-    "Enable or disable export PDF when saving current buffer."
-    (interactive)
-    (when (not (eq major-mode 'org-mode))
-      (error "Not an org-mode file!"))
-    (if (memq 'org-html-export-to-html after-save-hook)
-        (progn (remove-hook 'after-save-hook 'org-latex-export-to-pdf t)
-               (message "Disabled org html export on save"))
-      (add-hook 'after-save-hook 'org-latex-export-to-pdf nil t)
-      (set-buffer-modified-p t)
-      (message "Enabled org PDF export on save")))
-
-  (defun jd/org-open-at-point (&optional arg)
-    "Wrapper for mu4e-view-go-to-url to use eww instead of default browser"
-    (interactive "P")
-    (if arg
-        (let ((browse-url-browser-function 'eww-browse-url))
-          (org-open-at-point))
-      (org-open-at-point))))
-
 (use-package wgrep
   :ensure t
   :init
@@ -552,21 +262,6 @@
 (use-package visual-fill-column
   :ensure t)
 
-(use-package web-mode
-  :ensure t
-  :init
-  ;; (add-hook 'web-mode-hook 'display-line-numbers-mode)
-  :config
-  (use-package company-web
-    :ensure t)
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (setq web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2
-        css-indent-offset 2))
-
 (use-package winner
   :ensure t
   :config
@@ -576,82 +271,6 @@
   :ensure t
   :config (which-key-mode)
   :diminish which-key-mode)
-
-(defun replace-smart-quotes (beg end)
-  "Replace 'smart quotes' in buffer or region with ascii quotes."
-  (interactive "r")
-  (format-replace-strings '(("\x201C" . "\"")
-                            ("\x201D" . "\"")
-                            ("\x2018" . "'")
-                            ("\x2019" . "'"))
-                          nil beg end))
-
-;; Make SQL mode usable
-
-;; Silence compiler warnings
-(require 'sql)
-
-(defun jd/sql-interactive-mode-hook ()
-  "Custom interactive SQL mode behaviours. See `sql-interactive-mode-hook'."
-  (toggle-truncate-lines t)
-  (when (eq sql-product 'postgres)
-    (let ((proc (get-buffer-process (current-buffer))))
-      ;; Output each query before executing it. (n.b. this also avoids
-      ;; the psql prompt breaking the alignment of query results.)
-      (comint-send-string proc "\\set ECHO queries\n")
-      (comint-send-string proc "\\pset pager off\n"))))
-
-(add-hook 'sql-interactive-mode-hook 'jd/sql-interactive-mode-hook)
-;; (add-hook 'sql-mode-hook 'display-line-numbers-mode)
-
-;; Use postgres as default .sql file type
-(sql-set-product "postgres")
-
-(sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
-(sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\-:]*[-(][#>] *")
-
-;; (setq sql-interactive-mode-hook nil)
-
-(defun sql-postgres-connect-url (url)
-  (interactive "sDB URL: ")
-  (let ((parsed (url-generic-parse-url url)))
-    (let ((sql-product   (url-type parsed)) ;; postgres
-          (sql-user      "")
-          (sql-password  "")
-          (sql-server    "")
-          (sql-database  url)
-          (sql-port      0)
-          (sql-postgres-login-params '()))
-      (sql-product-interactive 'postgres (car (url-path-and-query parsed))))))
-
-(defun sql-postgres-connect-sshx (host dbname)
-  (interactive "sSSH: \nsDatabase: ")
-  (let ((default-directory (format "/sshx:%s:" host)))
-    (let ((sql-product  'postgres) ;; postgres
-          (sql-user     "")
-          (sql-password "")
-          (sql-server   "")
-          (sql-database dbname)
-          (sql-port     0)
-          (sql-postgres-login-params '()))
-      (sql-product-interactive 'postgres (format "%s:%s" host dbname)))))
-
-(defun sql-heroku-connect (app-name)
-  (interactive "sHeroku App: ")
-  (let* ((s (split-string app-name ":+"))
-         (app (car s))
-         (db (cadr s))
-         (progopts (seq-filter 'stringp (list "pg:psql" db "-a" app))))
-    (let ((sql-product 'postgres)
-          (sql-user      "")
-          (sql-password  "")
-          (sql-server    "")
-          (sql-database  "")
-          (sql-port      0)
-          (sql-postgres-login-params '())
-          (sql-postgres-program "heroku")
-          (sql-postgres-options progopts))
-      (sql-product-interactive 'postgres app-name))))
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
@@ -663,14 +282,6 @@
       '(("github\\.com" . browse-url-default-browser)
         ("postgres\\.org" . eww-browse-url)
         ("." . browse-url-default-browser)))
-
-(defun unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive (progn (barf-if-buffer-read-only) '(t)))
-  (let ((fill-column (point-max))
-        ;; This would override `fill-column' if it's an integer.
-        (emacs-lisp-docstring-fill-column t))
-    (fill-paragraph nil region)))
 
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
@@ -716,55 +327,14 @@
         (message "Deleted file %s" filename)
         (kill-buffer)))))
 
-
-(when (executable-find "prose")
-  (defun jd/prose-fill-region (begin end)
-    "Use `prose' executable to fill region between BEGIN and END."
-    (interactive (if (use-region-p)
-                     (list (region-beginning) (region-end))
-                   (list (point-min) (point-max))))
-    (let* ((width-str (number-to-string fill-column))
-           (err-buf "*prose Error*")
-           (existed (if (get-buffer err-buf)
-                        (kill-buffer err-buf)))
-           (prose-cmd (concat "prose -w" width-str " "))
-           (before-text (buffer-substring-no-properties begin end))
-           prose-ret
-           ;; Do the formatting in a temp buffer so that the text in the original
-           ;; buffer doesn't get corrupted in case `prose' fails due to some error.
-           (after-text (with-temp-buffer
-                         (insert before-text)
-                         (setq prose-ret (shell-command-on-region
-                                          (point-min) (point-max)
-                                          prose-cmd nil :replace
-                                          err-buf :display-error-buffer))
-                         (buffer-substring-no-properties (point-min) (point-max)))))
-      (if (get-buffer err-buf)
-          (save-excursion
-            (switch-to-buffer-other-window err-buf)
-            (special-mode))) ; Set this mode so that you can quit it quickly using C-u q
-      ;; If 1 is returned, error occurred in the cmd execution; 0 - no error
-      (if (= 1 prose-ret)
-          nil
-        ;; If no error occurred, do below in the original buffer
-        (delete-region begin end)
-        (insert after-text))
-      (message "Executed `%s' on the region" prose-cmd)))
-  ;; Rationale for the below binding is that it flows very well when selecting a
-  ;; paragraph and then filling that region: "M-h M-H"
-  (global-set-key (kbd "M-H") #'jd/prose-fill-region))
-(mark-paragraph)
-(fill-paragraph)
+;; load all (or configured) files in ~/.emacs.d/layers
+(require 'layers)
 
 ;; additional (local) config
 (dolist (extra-file '("~/.emacs.d/default.el" "~/.emacs.d/local.el"))
-  (if (file-exists-p extra-file)
-      (load-file extra-file)
-    nil))
+  (load-file-if-exists extra-file))
 
 ;; set custom file
 (let ((custom "~/.emacs.d/custom.el"))
   (setq custom-file custom)
-  (if (file-exists-p custom)
-      (load-file custom)
-    nil))
+  (load-file-if-exists custom))
