@@ -3,3 +3,4 @@ FILES
 /.emacs.d/*
 !/.emacs.d/lib
 !/.emacs.d/layers
+*.elc
