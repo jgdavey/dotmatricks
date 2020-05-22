@@ -30,3 +30,6 @@
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2
         css-indent-offset 2))
+
+(use-package ggtags
+  :ensure t)

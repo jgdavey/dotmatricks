@@ -124,6 +124,11 @@
 (use-package diminish
   :ensure t)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :init (when (memq window-system '(mac ns x))
+          (exec-path-from-shell-initialize)))
+
 (add-to-list 'load-path "~/.emacs.d/lib")
 
 (use-package browse-kill-ring

@@ -3,11 +3,6 @@
   :ensure t
   :init (setq powerline-default-separator 'utf-8))
 
-(use-package exec-path-from-shell
-  :ensure t
-  :init (when (memq window-system '(mac ns x))
-          (exec-path-from-shell-initialize)))
-
 (use-package default-text-scale
   :ensure t
   :bind (:map default-text-scale-mode-map
