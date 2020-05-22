@@ -139,6 +139,9 @@
 (use-package expand-region
   :ensure t)
 
+(use-package buffer-move
+  :ensure t)
+
 (use-package smartparens
   :ensure t
   :bind (:map smartparens-strict-mode-map
@@ -331,6 +334,12 @@
         (delete-file filename)
         (message "Deleted file %s" filename)
         (kill-buffer)))))
+
+(defun copy-full-path-to-kill-ring ()
+  "Copy buffer file's full path to kill ring"
+  (interactive)
+  (when buffer-file-name
+    (kill-new (file-truename buffer-file-name))))
 
 ;; load all (or configured) files in ~/.emacs.d/layers
 (require 'layers)

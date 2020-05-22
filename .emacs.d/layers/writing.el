@@ -65,3 +65,5 @@
                             ("\x2018" . "'")
                             ("\x2019" . "'"))
                           nil beg end))
+
+(setq sentence-end-double-space nil)
