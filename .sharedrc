@@ -84,10 +84,6 @@ alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
-# RVM exectuble path for scripting, when available
-if [[ -s "$HOME/.rvm/bin" ]] ; then export PATH="$PATH:$HOME/.rvm/bin" ; fi
-if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then source "$HOME/.rvm/scripts/rvm" ; fi
-
 [ -n "$VISUAL" ] || VISUAL="emacsclient --alternate-editor='' -nw -c"
 [ -n "$EDITOR" ] || EDITOR="$VISUAL"
 [ -n "$PSQL_EDITOR" ] || PSQL_EDITOR='vim -c"setf sql"'
@@ -114,6 +110,4 @@ export ZLS_COLORS=$LSCOLORS
 export RI="--format ansi -T"
 export GREP_COLOR='1;32'
 export LESS=FRX
-export GOPATH="$SOURCE_DIR/go"
-export PATH="$PATH:$GOPATH/bin"
 export JRUBY_OPTS="-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify"
