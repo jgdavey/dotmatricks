@@ -111,3 +111,12 @@ export RI="--format ansi -T"
 export GREP_COLOR='1;32'
 export LESS=FRX
 export JRUBY_OPTS="-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify"
+
+fix-branch-name() {
+    local BRANCH="${1:-main}"
+    git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
+    git push -u origin "$BRANCH:$BRANCH" >/dev/null
+    hub api 'repos/{owner}/{repo}' -X PATCH -F default_branch="$BRANCH" >/dev/null
+    git branch -D master 2>/dev/null
+    git push origin :master 2>/dev/null
+}
