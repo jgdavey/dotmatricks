@@ -174,15 +174,11 @@
   :config
   (setq projectile-mode-line-function
         (lambda () (format " [%s]" (projectile-project-name))))
-  (setq projectile-completion-system 'ivy))
+  (setq projectile-completion-system 'ivy)
+  (projectile-mode +1))
 
 (use-package projectile-ripgrep
   :ensure t)
-
-(use-package counsel-projectile
-  :ensure t
-  :config
-  (counsel-projectile-mode))
 
 (use-package ivy
   :ensure t

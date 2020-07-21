@@ -32,4 +32,6 @@
         css-indent-offset 2))
 
 (use-package ggtags
-  :ensure t)
+  :ensure t
+  :config
+  (setq ggtags-enable-navigation-keys nil))
