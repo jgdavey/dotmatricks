@@ -39,7 +39,7 @@ debug() {
 # Defaults
 b="$(git symbolic-ref HEAD 2>/dev/null)"
 branch="`basename $b`"
-range="origin/${branch-master}..${branch-master}"
+range="origin/${branch-main}..${branch-main}"
 verbose=
 quiet=
 
