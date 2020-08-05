@@ -1,4 +1,5 @@
 (use-package js2-mode
+  :pin melpa
   :ensure t)
 
 (use-package json

@@ -8,6 +8,7 @@
 
 (use-package racer
   :ensure t
+  :pin melpa
   :config
   (setq racer-rust-src-path
         (or

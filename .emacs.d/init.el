@@ -106,7 +106,6 @@
 
 (dolist (p base-packages)
   (when (not (package-installed-p p))
-    (require 'cl)
     (package-install p)))
 
 (when (version<= "26.0.50" emacs-version)
@@ -141,6 +140,7 @@
 
 (use-package smartparens
   :ensure t
+  :pin melpa
   :bind (:map smartparens-strict-mode-map
               ("M-)" . sp-forward-slurp-sexp)
               ("M-(" . sp-wrap-from-point)
