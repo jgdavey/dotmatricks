@@ -136,9 +136,6 @@
   :config
   (browse-kill-ring-default-keybindings))
 
-(use-package expand-region
-  :ensure t)
-
 (use-package buffer-move
   :ensure t)
 

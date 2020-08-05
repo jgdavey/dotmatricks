@@ -27,8 +27,5 @@
   (setq forge-topic-list-order '(created . string>))
   (setq forge-topic-list-limit '(50 . 0)))
 
-(use-package gist
-  :ensure t)
-
 (use-package git-link
   :ensure t)

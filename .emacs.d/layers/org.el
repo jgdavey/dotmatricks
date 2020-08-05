@@ -6,8 +6,6 @@
          ("C-c C-o" . jd/org-open-at-point))
   :pin org
   :init
-  (use-package org-bullets
-    :ensure t)
   (use-package ob-http
     :ensure t)
   (use-package ox-pandoc
