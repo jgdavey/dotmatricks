@@ -31,7 +31,20 @@
         web-mode-code-indent-offset 2
         css-indent-offset 2))
 
-(use-package ggtags
+(setq lsp-keymap-prefix "C-c l")
+
+(use-package lsp-mode
+  :pin melpa
   :ensure t
-  :config
-  (setq ggtags-enable-navigation-keys nil))
+  :hook ((enh-ruby-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+(use-package lsp-ui
+  :pin melpa
+  :ensure t
+  :commands lsp-ui-mode)
+
+(use-package lsp-ivy
+  :ensure t
+  :commands lsp-ivy-workspace-symbol)
