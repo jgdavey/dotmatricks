@@ -5,9 +5,10 @@
 export SOURCE_DIR
 
 export GOPATH="$SOURCE_DIR/go"
+export WASMTIME_HOME="$HOME/.wasmtime"
 
 # Paths for prepending
-for dir in "$GOPATH/bin" /usr/local/bin "$HOME/.cargo/bin:$PATH" "$HOME/bin" .git/safe/../../bin; do
+for dir in "$WASMTIME_HOME/bin" "$GOPATH/bin" /usr/local/bin "$HOME/.cargo/bin:$PATH" "$HOME/bin" .git/safe/../../bin; do
   case "$PATH:" in
     *:"$dir":*) PATH="`echo "$PATH"|sed -e "s#:$dir##"`" ;;
   esac
