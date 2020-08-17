@@ -1,5 +1,7 @@
 (use-package rust-mode
-  :ensure t)
+  :ensure t
+  :config
+  (setq lsp-rust-server 'rust-analyzer))
 
 (use-package cargo
   :ensure t
@@ -7,6 +9,7 @@
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package racer
+  :disabled
   :ensure t
   :pin melpa
   :config
@@ -22,7 +25,6 @@
                src-path)
              src-path))))
   :init
-  (add-hook 'rust-mode-hook #'racer-mode)
   (add-hook 'racer-mode-hook #'eldoc-mode)
   (add-hook 'racer-mode-hook #'company-mode))
 

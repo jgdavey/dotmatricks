@@ -37,6 +37,7 @@
   :pin melpa
   :ensure t
   :hook ((enh-ruby-mode . lsp)
+         (rust-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp)
 
