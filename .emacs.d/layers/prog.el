@@ -49,3 +49,7 @@
 (use-package lsp-ivy
   :ensure t
   :commands lsp-ivy-workspace-symbol)
+
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
