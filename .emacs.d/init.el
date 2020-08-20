@@ -1,8 +1,6 @@
 ;; Turn off useless UI elements -- do this as early as possible to
 ;; avoid visual thrashing.
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-echo-area-message t)
@@ -17,6 +15,7 @@
     ;; terminal mode
     (with-selected-frame frame
       (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+      (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
       (require 'mouse)
       (xterm-mouse-mode t)
       (setq mouse-sel-mode t)
@@ -26,6 +25,8 @@
       (global-set-key (kbd "<mouse-5>") 'scroll-up-line))))
 
 (add-hook 'after-make-frame-functions #'jd/setup-frame)
+
+(jd/setup-frame (selected-frame))
 
 (defun debug-on-load-obsolete (filename)
   (when (equal (car (last (split-string filename "[/\\]") 2))
