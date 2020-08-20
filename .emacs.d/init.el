@@ -214,6 +214,7 @@
 (use-package swiper
   :ensure t
   :bind (("C-s" . swiper-isearch)
+         ("C-c s" . isearch-forward)
          :map isearch-mode-map
          ("C-c s" . swiper-isearch-toggle)
          :map swiper-map
@@ -221,7 +222,7 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-c C-l" . mc/edit-lines)))
+  :bind (("C-c e" . mc/edit-lines)))
 
 (use-package company
   :ensure t
