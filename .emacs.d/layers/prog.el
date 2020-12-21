@@ -36,15 +36,20 @@
 (use-package lsp-mode
   :pin melpa
   :ensure t
-  :hook ((enh-ruby-mode . lsp)
-         (rust-mode . lsp)
+  :hook ((rust-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
+  :commands lsp
+  :config
+  (setq lsp-response-timeout 2
+        lsp-completion-enable t
+        lsp-enable-snippet t))
 
 (use-package lsp-ui
   :pin melpa
   :ensure t
-  :commands lsp-ui-mode)
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-sideline-show-code-actions nil))
 
 (use-package lsp-ivy
   :ensure t
@@ -53,3 +58,12 @@
 (use-package lsp-treemacs
   :ensure t
   :commands lsp-treemacs-errors-list)
+
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :config
+  (use-package yasnippet-snippets
+    :ensure t)
+  :init
+  (yas-global-mode 1))

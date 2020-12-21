@@ -11,6 +11,9 @@
   (use-package ox-pandoc
     :defer t
     :ensure t)
+  (use-package ox-gfm
+    :defer t
+    :ensure t)
   (use-package ob-sql-mode
     :ensure t
     :config

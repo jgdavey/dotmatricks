@@ -1,6 +1,7 @@
 ;; Turn off useless UI elements -- do this as early as possible to
 ;; avoid visual thrashing.
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-echo-area-message t)
@@ -15,7 +16,6 @@
     ;; terminal mode
     (with-selected-frame frame
       (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-      (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
       (require 'mouse)
       (xterm-mouse-mode t)
       (setq mouse-sel-mode t)
@@ -222,13 +222,16 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-c e" . mc/edit-lines)))
+  :bind (("C-c e" . mc/edit-lines)
+         ("C-c w" . mc/edit-ends-of-lines)))
 
 (use-package company
   :ensure t
   :diminish company-mode
   :config
   (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 2
+        company-idle-delay 0.1)
   :init
   (global-company-mode 1))
 

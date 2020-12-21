@@ -30,6 +30,7 @@
 
 (use-package flycheck-rust
   :ensure t
+  :pin melpa
   :init
   (add-hook 'rust-mode-hook #'flycheck-mode)
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))

@@ -86,7 +86,7 @@ alias vi='vim'
 
 [ -n "$VISUAL" ] || VISUAL="emacsclient --alternate-editor='' -nw -c"
 [ -n "$EDITOR" ] || EDITOR="$VISUAL"
-[ -n "$PSQL_EDITOR" ] || PSQL_EDITOR='vim -c"setf sql"'
+#[ -n "$PSQL_EDITOR" ] || PSQL_EDITOR='vim -c"setf sql"'
 export VISUAL EDITOR PSQL_EDITOR
 
 alias sudoedit="sudo -e"
@@ -96,11 +96,13 @@ E() {
 }
 
 e() {
-    nowindow=
+    extra=
     if [ -n "$TMUX" ]; then
-        nowindow="-nw"
+        extra="-nw"
+    else
+        extra="-n"
     fi
-    emacsclient --alternate-editor='' ${nowindow} -c $@
+    emacsclient --alternate-editor='' ${extra} -c $@
 }
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html

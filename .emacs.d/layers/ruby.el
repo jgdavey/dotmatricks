@@ -26,13 +26,6 @@
   (add-to-list 'auto-mode-alist
                '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
-(use-package robe
-  :ensure
-  :init
-  ;;(add-hook 'ruby-mode-hook 'robe-mode)
-  ;;(add-hook 'enh-ruby-mode-hook 'robe-mode)
-  )
-
 (use-package rspec-mode
   :ensure t
   ;; mimic rust mode mappings
