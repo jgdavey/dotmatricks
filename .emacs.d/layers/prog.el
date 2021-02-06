@@ -37,6 +37,10 @@
   :pin melpa
   :ensure t
   :hook ((rust-mode . lsp)
+         ;;(clojure-mode . lsp)
+         ;;(clojurescript-mode . lsp)
+         ;;(clojurec-mode . lsp)
+         ;;(enh-ruby-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp
   :config

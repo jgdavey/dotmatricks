@@ -15,6 +15,13 @@
 (use-package cider
   :ensure t
   :pin melpa-stable
+  :hook (cider-mode . jd/prefer-cider-to-lsp)
+  :init
+  (defun jd/prefer-cider-to-lsp ()
+    (setq-local
+     lsp-signature-auto-activate nil
+     lsp-enable-indentation nil
+     lsp-enable-completion-at-point nil))
   :config
   (defvar cider-clojure-cli-global-options-history '("-A:dev"))
   (defun set-cider-clojure-cli-global-options ()
