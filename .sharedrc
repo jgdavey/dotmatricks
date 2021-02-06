@@ -102,6 +102,10 @@ e() {
     else
         extra="-n"
     fi
+
+    if [ -n "$EMACS_SOCKET_NAME" ]; then
+        extra="$extra -s $EMACS_SOCKET_NAME"
+    fi
     emacsclient --alternate-editor='' ${extra} -c $@
 }
 
