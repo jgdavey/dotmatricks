@@ -151,10 +151,11 @@
   (require 'smartparens-config)
   :init
   (setq sp-base-key-bindings 'paredit
-        sp-autoskip-closing-pair 'always)
+        sp-autoskip-closing-pair 'always-end)
   (setq blink-matching-paren nil)
   (smartparens-global-mode +1)
   (show-smartparens-global-mode +1)
+  (define-key smartparens-mode-map (read-kbd-macro "M-?") nil)
   (dolist (hook '(inferior-emacs-lisp-mode-hook
                   emacs-lisp-mode-hook
                   eval-expression-minibuffer-setup-hook

@@ -34,4 +34,3 @@
               ("C-c" . rspec-rerun))
   :init
   (setq rspec-key-command-prefix (kbd "C-c C-C")))
-
