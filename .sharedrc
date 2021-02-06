@@ -84,10 +84,34 @@ alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
-[ -n "$VISUAL" ] || VISUAL="emacsclient --alternate-editor='' -nw -c"
-[ -n "$EDITOR" ] || EDITOR="$VISUAL"
-#[ -n "$PSQL_EDITOR" ] || PSQL_EDITOR='vim -c"setf sql"'
-export VISUAL EDITOR PSQL_EDITOR
+editor() {
+    window=
+    alt=
+    if [ -n "$TMUX" ]; then
+        window=" -nw"
+    elif [ -z "$SSH_CONNECTION" ]; then
+        window=" -n"
+    fi
+
+    if [ -e "$EMACS_SOCKET_NAME" ]; then
+        alt="-s$EMACS_SOCKET_NAME"
+    else
+        alt="--alternate-editor=''"
+    fi
+    echo emacsclient ${alt}${window} -c $@
+}
+
+setup-editor-vars() {
+    export VISUAL=$(editor)
+    export EDITOR="$VISUAL"
+    alias e="$VISUAL"
+}
+
+if [ -z "$VISUAL" ]; then
+    setup-editor-vars
+else
+    alias e="$VISUAL"
+fi
 
 alias sudoedit="sudo -e"
 
@@ -95,18 +119,12 @@ E() {
     SUDO_EDITOR="$EDITOR" sudoedit $@
 }
 
-e() {
-    extra=
-    if [ -n "$TMUX" ]; then
-        extra="-nw"
-    elif [ -z "$SSH" ]; then
-        extra="-n"
+emacs-set-socket-name() {
+    socket=$(lsof -c emacs | grep server | tr -s " " | cut -d' ' -f9)
+    if [ "$EMACS_SOCKET_NAME" != "$socket" ]; then
+        export EMACS_SOCKET_NAME="$socket"
+        setup-editor-vars
     fi
-
-    if [ -n "$EMACS_SOCKET_NAME" ]; then
-        extra="$extra -s $EMACS_SOCKET_NAME"
-    fi
-    emacsclient --alternate-editor='' ${extra} -c $@
 }
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
