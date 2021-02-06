@@ -99,7 +99,7 @@ e() {
     extra=
     if [ -n "$TMUX" ]; then
         extra="-nw"
-    else
+    elif [ -z "$SSH" ]; then
         extra="-n"
     fi
 
