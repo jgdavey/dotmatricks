@@ -5,6 +5,8 @@
 
 (use-package cargo
   :ensure t
+  :config
+  (setq cargo-process--enable-rust-backtrace t)
   :init
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
