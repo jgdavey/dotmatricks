@@ -84,7 +84,7 @@ alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
-editor() {
+emacsclient-args() {
     window=
     alt=
     if [ -n "$TMUX" ]; then
@@ -98,25 +98,24 @@ editor() {
     else
         alt="--alternate-editor=''"
     fi
-    echo emacsclient ${alt}${window} -c $@
+    echo "${alt}${window} -c"
 }
 
 setup-editor-vars() {
-    export VISUAL=$(editor)
+    export VISUAL="emacsclient $(emacsclient-args)"
     export EDITOR="$VISUAL"
-    alias e="$VISUAL"
 }
 
-if [ -z "$VISUAL" ]; then
-    setup-editor-vars
-else
-    alias e="$VISUAL"
-fi
+setup-editor-vars
 
 alias sudoedit="sudo -e"
 
 E() {
     SUDO_EDITOR="$EDITOR" sudoedit $@
+}
+
+e() {
+    emacsclient $(emacsclient-args) "$@"
 }
 
 emacs-set-socket-name() {
