@@ -84,25 +84,30 @@ alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
-emacsclient-args() {
-    window=
-    alt=
+editor() {
+    args=(-c)
+
     if [ -n "$TMUX" ]; then
-        window=" -nw"
+        args+=(-nw)
     elif [ -z "$SSH_CONNECTION" ]; then
-        window=" -n"
+        args+=(-n)
     fi
 
     if [ -e "$EMACS_SOCKET_NAME" ]; then
-        alt="-s$EMACS_SOCKET_NAME"
+        args+=("-s" "$EMACS_SOCKET_NAME")
     else
-        alt="--alternate-editor=''"
+        args+=("-a" "")
     fi
-    echo "${alt}${window} -c"
+
+    if [ "--echo-command" = "$1" ]; then
+        echo emacsclient "${args[@]}"
+    else
+        command emacsclient "${args[@]}" "$@"
+    fi
 }
 
 setup-editor-vars() {
-    export VISUAL="emacsclient $(emacsclient-args)"
+    export VISUAL="$(editor --echo-command)"
     export EDITOR="$VISUAL"
 }
 
@@ -115,7 +120,7 @@ E() {
 }
 
 e() {
-    emacsclient $(emacsclient-args) "$@"
+    editor "$@"
 }
 
 emacs-set-socket-name() {
