@@ -62,12 +62,3 @@
 (use-package lsp-treemacs
   :ensure t
   :commands lsp-treemacs-errors-list)
-
-(use-package yasnippet
-  :ensure t
-  :diminish yas-minor-mode
-  :config
-  (use-package yasnippet-snippets
-    :ensure t)
-  :init
-  (yas-global-mode 1))

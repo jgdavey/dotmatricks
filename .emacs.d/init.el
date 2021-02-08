@@ -279,6 +279,15 @@
   :config (which-key-mode)
   :diminish which-key-mode)
 
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :init
+  (yas-global-mode 1))
+
+(use-package yasnippet-snippets
+  :ensure t)
+
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
           'browse-url-default-macosx-browser
