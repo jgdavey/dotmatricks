@@ -77,11 +77,6 @@
   (untabify (point-min) (point-max))
   (delete-trailing-whitespace))
 
-(defun load-file-if-exists (file)
-  (if (file-exists-p file)
-      (load-file file)
-    nil))
-
 ;; Packages
 (require 'package)
 
@@ -129,7 +124,7 @@
   :init (when (memq window-system '(mac ns x))
           (exec-path-from-shell-initialize)))
 
-(add-to-list 'load-path "~/.emacs.d/lib")
+(add-to-list 'load-path (expand-file-name "lib" user-emacs-directory))
 
 (use-package browse-kill-ring
   :ensure t
@@ -354,9 +349,9 @@
 
 ;; additional (local) config
 (dolist (extra-file '("~/.emacs.d/default.el" "~/.emacs.d/local.el"))
-  (load-file-if-exists extra-file))
+  (jd/load-file-if-exists extra-file))
 
 ;; set custom file
 (let ((custom "~/.emacs.d/custom.el"))
   (setq custom-file custom)
-  (load-file-if-exists custom))
+  (jd/load-file-if-exists custom))
