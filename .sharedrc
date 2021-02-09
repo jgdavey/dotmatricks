@@ -123,14 +123,6 @@ e() {
     editor "$@"
 }
 
-emacs-set-socket-name() {
-    socket=$(lsof -c emacs | grep server | tr -s " " | cut -d' ' -f9)
-    if [ "$EMACS_SOCKET_NAME" != "$socket" ]; then
-        export EMACS_SOCKET_NAME="$socket"
-        setup-editor-vars
-    fi
-}
-
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
 export CLICOLOR=1
 export LSCOLORS=Dxfxcxdxbxegedabadacad
