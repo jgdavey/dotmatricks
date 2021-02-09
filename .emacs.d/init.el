@@ -131,9 +131,6 @@
   :config
   (browse-kill-ring-default-keybindings))
 
-(use-package buffer-move
-  :ensure t)
-
 (use-package smartparens
   :ensure t
   :pin melpa
@@ -264,11 +261,6 @@
 (use-package visual-fill-column
   :ensure t)
 
-(use-package winner
-  :ensure t
-  :config
-  (winner-mode 1))
-
 (use-package which-key
   :ensure t
   :config (which-key-mode)
@@ -293,56 +285,6 @@
       '(("github\\.com" . browse-url-default-browser)
         ("postgres\\.org" . eww-browse-url)
         ("." . browse-url-default-browser)))
-
-(defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
-
-(defun move-buffer-file (dir)
-  "Moves both current buffer and file it's visiting to DIR."
-  (interactive "DNew directory: ")
-  (let* ((name (buffer-name))
-         (filename (buffer-file-name))
-         (dir
-          (if (string-match dir "\\(?:/\\|\\\\)$")
-              (substring dir 0 -1) dir))
-         (newname (concat dir "/" name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (progn
-        (copy-file filename newname 1)
-        (delete-file filename)
-        (set-visited-file-name newname)
-        (set-buffer-modified-p nil)
-        t))))
-
-(defun delete-file-and-buffer ()
-  "Kills the current buffer and deletes the file it is visiting."
-  (interactive)
-  (let ((filename (buffer-file-name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" (buffer-name))
-      (progn
-        (delete-file filename)
-        (message "Deleted file %s" filename)
-        (kill-buffer)))))
-
-(defun copy-full-path-to-kill-ring ()
-  "Copy buffer file's full path to kill ring"
-  (interactive)
-  (when buffer-file-name
-    (kill-new (file-truename buffer-file-name))))
 
 ;; load all (or configured) files in ~/.emacs.d/layers
 (require 'layers)
