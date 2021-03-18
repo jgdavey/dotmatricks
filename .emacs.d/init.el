@@ -117,6 +117,7 @@
 
 ;; Has to be first to use :diminish option
 (use-package diminish
+  :pin melpa
   :ensure t)
 
 (use-package exec-path-from-shell
@@ -127,6 +128,7 @@
 (add-to-list 'load-path (expand-file-name "lib" user-emacs-directory))
 
 (use-package browse-kill-ring
+  :pin melpa
   :ensure t
   :config
   (browse-kill-ring-default-keybindings))
