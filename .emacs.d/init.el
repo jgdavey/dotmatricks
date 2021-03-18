@@ -105,8 +105,7 @@
     (package-install p)))
 
 (when (version<= "26.0.50" emacs-version)
-  ;; (global-display-line-numbers-mode)
-  (set-face-attribute 'line-number-current-line nil :background "color-237")
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
 
 ;;(load-theme 'railscasts-reloaded t)
