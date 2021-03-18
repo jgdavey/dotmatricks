@@ -54,3 +54,5 @@
 	prune = true
 [magit]
 	hideCampaign = true
+[init]
+	defaultBranch = main
