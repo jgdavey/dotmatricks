@@ -97,6 +97,8 @@
   (package-refresh-contents))
 
 (defvar base-packages '(color-theme-sanityinc-tomorrow
+                        monokai-pro-theme
+                        zenburn-theme
                         use-package)
   "A list of packages to ensure are installed at launch.")
 
@@ -108,8 +110,8 @@
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
 
-;;(load-theme 'railscasts-reloaded t)
-(load-theme 'sanityinc-tomorrow-eighties t)
+;;(load-theme 'sanityinc-tomorrow-eighties t)
+(load-theme 'zenburn t)
 
 ;; Package setup
 (require 'use-package)
