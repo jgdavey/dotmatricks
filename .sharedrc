@@ -86,22 +86,25 @@ alias vi='vim'
 
 editor() {
     args=(-c)
-
-    if [ -n "$TMUX" ]; then
+    alt=""
+    if [[ -n "$TMUX" ]]; then
         args+=(-nw)
-    elif [ -z "$SSH_CONNECTION" ]; then
+    elif [[ -z "$SSH_CONNECTION" ]]; then
         args+=(-n)
     fi
 
-    if [ -e "$EMACS_SOCKET_NAME" ]; then
+    if [[ -e "$EMACS_SOCKET_NAME" ]]; then
         args+=("-s" "$EMACS_SOCKET_NAME")
     else
-        args+=("-a" "")
+        alt=" --alternate-editor=''"
     fi
 
-    if [ "--echo-command" = "$1" ]; then
-        echo emacsclient "${args[@]}"
+    if [[ "--echo-command" = "$1" ]]; then
+        echo emacsclient "${args[@]}""$alt"
     else
+        if [[ -n "$alt" ]]; then
+            args+=("-a" "")
+        fi
         command emacsclient "${args[@]}" "$@"
     fi
 }
