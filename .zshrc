@@ -71,14 +71,12 @@ l.() {
 
 (( ${+aliases[e]} )) && unalias e
 
-# prompt
-p=
-if [ -n "$SSH_CONNECTION" ]; then
-  p='%{$fg_bold[yellow]%}%n@%m'
-else
-  p='%{$fg_bold[green]%}%n@%m'
-fi
-PROMPT="$p%{\$reset_color%}:%{\$fg[cyan]%}%~ %{\$reset_color%}\$(git_prompt_info)%{\$fg_bold[yellow]%}%# %{\$reset_color%}"
+export EXTENDED_PROMPT_COMMAND=""
+extended_prompt() {
+    if [ -n "$EXTENDED_PROMPT_COMMAND" ]; then
+        $EXTENDED_PROMPT_COMMAND
+    fi
+}
 
 # show non-success exit code in right prompt
 RPROMPT="%(?..{%{$fg[red]%}%?%{$reset_color%}})"
@@ -86,9 +84,22 @@ RPROMPT="%(?..{%{$fg[red]%}%?%{$reset_color%}})"
 # default apps
 (( ${+PAGER}   )) || export PAGER='less'
 
+ORIGINAL_PROMPT="$PROMPT"
+
 # import local zsh customizations, if present
 zrcl="$HOME/.zshrc.local"
 [[ ! -a $zrcl ]] || source $zrcl
+
+# prompt
+if [ "$PROMPT" = "$ORIGINAL_PROMPT" ]; then
+    p=
+    if [ -n "$SSH_CONNECTION" ]; then
+        p='%{$fg_bold[yellow]%}%n@%m'
+    else
+        p='%{$fg_bold[green]%}%n@%m'
+    fi
+    PROMPT="$p%{\$reset_color%}:%{\$fg[cyan]%}%~ %{\$reset_color%}\$(git_prompt_info)\$(extended_prompt)%{\$reset_color%}%{\$fg_bold[yellow]%}%# %{\$reset_color%}"
+fi
 
 # remove duplicates in $PATH
 typeset -aU path
