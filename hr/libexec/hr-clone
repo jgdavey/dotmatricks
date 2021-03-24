@@ -14,7 +14,8 @@ if [ -z "$SOURCE_DIR" ]; then
 fi
 
 if [ "$1" = "--complete" ]; then
-  echo "-f"
+  echo "--force"
+  echo "--email"
   [ -f "$HOME/.repos" ] && cat "$HOME/.repos"
   exit 0
 fi
@@ -28,20 +29,37 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-if [ "x-f" = "x$1" ]; then
+# Defaults
+email=
+force=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -e|--email) email=$2; shift ;;
+    -f|--force) force=1 ;;
+    (--) shift; break ;;
+    (*) break ;;
+  esac
   shift
-  rm -rf "$SOURCE_DIR/`basename $1 .git`"
-fi
+done
 
 basename="`basename $1 .git`"
 path="$SOURCE_DIR/$basename"
+
+if [ -n "$force" ]; then
+  shift
+  rm -rf "$path"
+fi
+
+# echo "ARGS: path $path, email $email, force $force" >&2
+
 new=
 url=
 
 case "$1" in
   *:*) url="$1" ;;
   */*) url="git@github.com:$1.git" ;;
-  *)   url="git@github.com:$ORGANIZATION_NAME/$1.git" ;;
+  *)   url="git@github.com:$GITHUB_NAME/$1.git" ;;
 esac
 
 if [ ! -d "$path" ]; then
@@ -55,15 +73,8 @@ setup_bin_path() {
 }
 
 clone_if_necessary() {
-  local example
   if [ -n "$new" ]; then
     git clone "$url" "$path" || return 1
-    for example in "$path"/config/*.example.yml; do
-      cp "$example" "${example%.example.yml}.yml"
-    done 2>/dev/null
-    if [ -f "$path/.rvmrc" ] && command -v __rvm_trust_rvmrc >/dev/null; then
-      __rvm_trust_rvmrc "$path/.rvmrc"
-    fi
   fi
   return 0
 }
@@ -77,15 +88,27 @@ script_setup() {
 }
 
 setup_git_submodules() {
-  cd "$path"
-  git submodule init
-  git submodule update
-  cd ..
+  (
+    cd "$path"
+    git submodule init
+    git submodule update
+  )
+}
+
+setup_git_email () {
+  if [ -n "$email" ]; then
+    echo "Using $email instead of global $(git config user.email)"
+    (
+      cd "$path"
+      git config --local user.email "$email"
+    )
+  fi
 }
 
 hclone() {
   clone_if_necessary || return 1
   setup_git_submodules
+  setup_git_email
   setup_bin_path
   script_setup
 }

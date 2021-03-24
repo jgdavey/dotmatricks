@@ -2,6 +2,9 @@
 
 # Delegate to "real" command
 path="$(hr-clone "$@" | tail -1)"
+
+#echo "RESULTS: $path" >&2
+
 if [ ! "$?" = "0" ]; then
   exit $?
 fi
