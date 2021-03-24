@@ -31,6 +31,15 @@
         web-mode-code-indent-offset 2
         css-indent-offset 2))
 
+(use-package dumb-jump
+  :ensure t
+  :init
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
+(use-package imenu-anywhere
+  :ensure t
+  :bind (("C-." . imenu-anywhere)))
+
 (setq lsp-keymap-prefix "C-c l")
 
 (use-package lsp-mode

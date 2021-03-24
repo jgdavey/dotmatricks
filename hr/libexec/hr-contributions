@@ -28,13 +28,16 @@ log = `git log --format="%an|||%b##END##" #{args}`.split("##END##\n")
 
 total = log.length
 
+to_username = ->(str) {
+  u = str.strip.gsub(/^"|"$/, "")
+  usernames.fetch(u, u)
+}
+
 names = log.flat_map do |line|
   authors, message = line.split("|||", 2)
-  names = authors.split(/,? and |, /).map { |n| usernames.fetch(n, n) }
+  names = authors.split(/,? and |, /).map(&to_username)
   names += message.scan(/Co-authored-by: ?([^<]*) ?<.*$/).flat_map { |md|
-    md.map { |n|
-      n.strip.gsub(/^"|"$/, "")
-    }
+    md.map(&to_username)
   }
   names
 end
