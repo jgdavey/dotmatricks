@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+#
+# Usage: jd repos <command>
+#
+# Summary: Run command on series of git revisions to determine atomicity
+#
+# Help: Usually the defaults will work just fine:
+#
+#    $ jd repos
+#
+# The above will download all writable repos to the ~/.repos file
+
+require "tempfile"
+require "fileutils"
+
+# Cross-platform way of finding an executable in the $PATH.
+#
+#   which('ruby') #=> /usr/bin/ruby
+def which(cmd)
+  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts.each do |ext|
+      exe = File.join(path, "#{cmd}#{ext}")
+      return exe if File.executable?(exe) && !File.directory?(exe)
+    end
+  end
+  nil
+end
+
+def get_page(n)
+  `gh api "/user/repos?per_page=50&page=#{n}" --jq '.[].full_name'`.chomp.lines
+end
+
+abort "Please install 'gh' command" unless which("gh")
+
+repos = []
+(1..20).each do |page|
+  print "."
+  this = get_page(page)
+  break if this.empty?
+  repos += this
+end
+puts
+
+GITHUB_NAME = ENV["GITHUB_NAME"] || `git config --get github.user`.chomp
+
+tmp = Tempfile.open(['repos.', '.txt']) do |file|
+  repos.map { |repo|
+    repo.gsub(/^#{GITHUB_NAME}\//, "")
+  }.sort.each do |line|
+    file.puts(line)
+  end
+
+  file
+end
+
+FileUtils.mv tmp.path, "#{ENV['HOME']}/.repos"
