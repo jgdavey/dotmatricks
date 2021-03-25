@@ -126,6 +126,30 @@ e() {
     editor "$@"
 }
 
+__warn__hr() {
+    {
+        echo '*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*'
+        echo '*-*   Hey! the `hr` command is now `jd`, bub.   *-*'
+        echo '*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*'
+        echo
+    } >&2
+}
+
+hr() {
+    __warn__hr
+    jd "$@"
+}
+
+hcd() {
+    __warn__hr
+    jd cd "$@"
+}
+
+hclone() {
+    __warn__hr
+    jd clone "$@"
+}
+
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
 export CLICOLOR=1
 export LSCOLORS=Dxfxcxdxbxegedabadacad
