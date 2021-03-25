@@ -6,7 +6,7 @@ warn() {
 
 
 warn "$0 is deprecated and will be removed."
-warn "Please run \`hr vimbundle\` directly."
+warn "Please run \`jd vimbundle\` directly."
 echo
 
-$PWD/hr/bin/hr vimbundle
+$PWD/jd/bin/jd vimbundle

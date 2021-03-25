@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -e
+echo "Attempting to install jd automatically" >&2
+
+script="${_JD_ROOT}/bin/jd init"
+
+shell="$1"
+if [ -z "$shell" ]; then
+  shell="$(basename "$SHELL")"
+fi
+
+case "$shell" in
+  bash )
+    profile="$HOME/.basjdc.local"
+    ;;
+  zsh )
+    profile="$HOME/.zsjdc.local"
+    ;;
+  * )
+    { echo "ERROR: Unable to autoinstall jd."
+      echo "Run \`$script\` and follow the instructions."
+    } >&2
+
+    exit 1
+    ;;
+esac
+
+if [ ! -e "$profile" ]; then
+  touch $profile
+fi
+
+if grep -q "bin/jd init" "$profile"; then
+  if grep -q "$script" "$profile"; then
+    { echo
+      echo "jd init script detected in $profile"
+    } >&2
+  else
+    { echo
+      echo "WARNING: Old jd detected"
+      echo "Remove the line(s) initializing jd from $profile, then rerun autoinstall."
+      echo
+      echo "In $profile, the following line(s):"
+      grep -n "bin/jd init" "$profile"
+    } >&2
+    exit 1
+  fi
+else
+  {
+    echo
+    echo "Adding initilization script to $profile"
+  } >&2
+  echo 'eval "$('$script' -)"' >> $profile
+fi
+
+echo "All set!" >&2
+exit 0

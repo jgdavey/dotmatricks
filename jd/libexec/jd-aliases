@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Usage: jd commands
+# Summary: List all jd shell aliases
+# Help: Simply lists aliases provided by jd
+
+set -e
+
+if [ "$1" = "--complete" ]; then
+  exit
+fi
+
+cat "${_JD_SHARE}/aliases"

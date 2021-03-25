@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -e
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+export ORIG_PATH="$PATH"
+
+libexec_path="$(abs_dirname "$0")"
+export _JD_ROOT="$(abs_dirname "$libexec_path")"
+export _JD_SHARE="$_JD_ROOT/share"
+
+# JD extensions
+if [ -n "$JD_LIBEXEC_PATH" ]; then
+  export JD_LIBEXEC_PATH=`echo ${JD_LIBEXEC_PATH} | awk -v RS=: -v ORS=: '/^$/ {next} {print}' | sed 's/:*$//'`
+  PATH="${JD_LIBEXEC_PATH}:$PATH"
+fi
+
+shopt -s nullglob
+
+bin_path=$libexec_path
+for plugin_bin in "${_JD_ROOT}/plugins/"*/libexec; do
+  bin_path="${bin_path}:${plugin_bin}"
+done
+export PATH="${bin_path}:${PATH}"
+
+shopt -u nullglob
+
+command="$1"
+case "$command" in
+"" | "-h" | "--help" )
+  exec jd-help
+  ;;
+* )
+  command_path="$(command -v "jd-$command" || true)"
+  if [ ! -x "$command_path" ]; then
+    echo "jd: no such command \`$command'" >&2
+    exit 1
+  fi
+
+  shift
+  exec "$command_path" "$@"
+  ;;
+esac

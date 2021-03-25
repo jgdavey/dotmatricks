@@ -32,4 +32,4 @@ for dotfile in $(./bin/file_list.sh); do
   fi
 done
 
-$PWD/hr/bin/hr autoinstall
+$PWD/jd/bin/jd autoinstall

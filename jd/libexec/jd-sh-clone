@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Delegate to "real" command
+path="$(jd-clone "$@" | tail -1)"
+
+#echo "RESULTS: $path" >&2
+
+if [ ! "$?" = "0" ]; then
+  exit $?
+fi
+
+# Change directories to new repo
+if [ -n "$path" ]; then
+  echo "cd $path"
+fi

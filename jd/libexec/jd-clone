@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Usage: jd clone [-f] <repo>
+#
+# Summary: Clone down a git project into $SOURCE_DIR
+#
+# Help: Clone down a git project into $SOURCE_DIR. If you provide
+# the "-f" flag, the repository will be redownloaded.
+#
+# Note: This command requires $SOURCE_DIR to be set.
+
+GITHUB_NAME="${GITHUB_NAME:-$(git config --get github.user)}"
+
+if [ -z "$SOURCE_DIR" ]; then
+  echo "Error: \$SOURCE_DIR not set" >&2
+  exit 1
+fi
+
+if [ "$1" = "--complete" ]; then
+  echo "--force"
+  echo "--email"
+  [ -f "$HOME/.repos" ] && cat "$HOME/.repos"
+  exit 0
+fi
+
+if [ -z "$1" ]; then
+  {
+    jd-help clone
+    echo
+    echo "ERROR: please provide a repo"
+  } >&2
+  exit 1
+fi
+
+# Defaults
+email=
+force=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -e|--email) email=$2; shift ;;
+    -f|--force) force=1 ;;
+    (--) shift; break ;;
+    (*) break ;;
+  esac
+  shift
+done
+
+basename="`basename $1 .git`"
+path="$SOURCE_DIR/$basename"
+
+if [ -n "$force" ]; then
+  shift
+  rm -rf "$path"
+fi
+
+# echo "ARGS: path $path, email $email, force $force" >&2
+
+new=
+url=
+
+case "$1" in
+  *:*) url="$1" ;;
+  */*) url="git@github.com:$1.git" ;;
+  *)   url="git@github.com:$GITHUB_NAME/$1.git" ;;
+esac
+
+if [ ! -d "$path" ]; then
+  new=1
+fi
+
+setup_bin_path() {
+  cd "$path"
+  ln -sf ../bin .git
+  mkdir -p .git/safe
+}
+
+clone_if_necessary() {
+  if [ -n "$new" ]; then
+    git clone "$url" "$path" || return 1
+  fi
+  return 0
+}
+
+script_setup() {
+  if [ -n "$new" -a -x script/setup ]; then
+    script/setup
+  elif [ -n "$new" -a -x bin/setup ]; then
+    bin/setup
+  fi
+}
+
+setup_git_submodules() {
+  (
+    cd "$path"
+    git submodule init
+    git submodule update
+  )
+}
+
+setup_git_email () {
+  if [ -n "$email" ]; then
+    echo "Using $email instead of global $(git config user.email)"
+    (
+      cd "$path"
+      git config --local user.email "$email"
+    )
+  fi
+}
+
+hclone() {
+  clone_if_necessary || return 1
+  setup_git_submodules
+  setup_git_email
+  setup_bin_path
+  script_setup
+}
+
+hclone "$@" >&2 && echo && echo "$path"

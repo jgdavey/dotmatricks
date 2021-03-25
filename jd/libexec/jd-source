@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Usage: jd source
+# Summary: Output source of jd command <command>
+# Help: Just run jd source <command>, where <command> is the name of the
+# desired jd command.
+
+if [ "$1" = "--complete" ]; then
+  exec jd commands
+fi
+
+if [ -z "$1" ]; then
+  echo "Please provide a command name" >&2
+  exit 1
+fi
+
+bin="jd-$1"
+path="$(which $bin)"
+
+if [ -n "$path" ]; then
+  exec cat $path
+else
+  echo "Could not find command $1" >&2
+  exit 1
+fi
