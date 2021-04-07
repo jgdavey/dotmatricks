@@ -7,6 +7,12 @@
 (setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
 
+(setq visible-bell nil
+      ring-bell-function 'jd/flash-mode-line)
+(defun jd/flash-mode-line ()
+  (invert-face 'mode-line)
+  (run-with-timer 0.1 nil #'invert-face 'mode-line))
+
 (defun jd/setup-frame (frame)
   (if (display-graphic-p frame)
       ;; GUI window mode
