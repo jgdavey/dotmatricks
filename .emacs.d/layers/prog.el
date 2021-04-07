@@ -40,7 +40,6 @@
   :ensure t
   :bind (("C-." . imenu-anywhere)))
 
-(setq lsp-keymap-prefix "C-c l")
 (use-package flycheck
   :ensure t
   :pin melpa)
@@ -56,8 +55,10 @@
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp
   :config
-  (setq lsp-response-timeout 2
+  (setq lsp-keymap-prefix "C-c l"
+        lsp-response-timeout 2
         lsp-completion-enable t
+        lsp-signature-auto-activate nil
         lsp-enable-snippet t))
 
 (use-package lsp-ui
@@ -73,4 +74,6 @@
 
 (use-package lsp-treemacs
   :ensure t
-  :commands lsp-treemacs-errors-list)
+  :commands lsp-treemacs-errors-list
+  :config
+  (setq treemacs-space-between-root-nodes nil))
