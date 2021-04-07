@@ -41,6 +41,9 @@
   :bind (("C-." . imenu-anywhere)))
 
 (setq lsp-keymap-prefix "C-c l")
+(use-package flycheck
+  :ensure t
+  :pin melpa)
 
 (use-package lsp-mode
   :pin melpa
