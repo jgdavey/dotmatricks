@@ -15,7 +15,7 @@ options.field_separator = /,|:|\t/
 options.output_field_separator = "\n"
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: jd vimbundle [options]"
+  opts.banner = "Usage: jd group [options]"
 
   opts.on("-f", "--field-separator [C]", String, "") do |c|
     options.output_field_separator = c or abort("choose a character for output_field_separator")

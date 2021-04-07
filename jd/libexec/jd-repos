@@ -2,7 +2,7 @@
 #
 # Usage: jd repos <command>
 #
-# Summary: Run command on series of git revisions to determine atomicity
+# Summary: Download list of github repos to ~/.repos
 #
 # Help: Usually the defaults will work just fine:
 #
