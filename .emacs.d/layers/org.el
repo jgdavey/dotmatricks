@@ -86,7 +86,7 @@
       (message "Enabled org PDF export on save")))
 
   (defun jd/org-open-at-point (&optional arg)
-    "Wrapper for mu4e-view-go-to-url to use eww instead of default browser"
+    "Wrapper for to use eww instead of default browser. Use prefix to get default behavior"
     (interactive "P")
     (if arg
         (let ((browse-url-browser-function 'eww-browse-url))

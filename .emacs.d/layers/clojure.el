@@ -1,3 +1,7 @@
+(use-package flycheck-clj-kondo
+  :pin melpa
+  :ensure t)
+
 (use-package clojure-mode
   :ensure t
   :config
@@ -6,10 +10,8 @@
     (defroutes 'defun)
     (defui '(1 nil (1)))))
 
-(use-package flycheck-clj-kondo
-  :ensure t)
-
 (use-package inf-clojure
+  :pin melpa
   :ensure t)
 
 (use-package cider
