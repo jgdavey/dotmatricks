@@ -145,9 +145,12 @@
   :pin melpa
   :bind (:map smartparens-strict-mode-map
               ("M-)" . sp-forward-slurp-sexp)
-              ("M-(" . sp-wrap-from-point)
+              ;;("M-(" . sp-wrap-round)
+              ("M-(" . sp-wrap)
               ("M-J" . sp-join-sexp)
-              ("M-q" . sp-indent-defun))
+              ("M-q" . sp-indent-defun)
+              :map smartparens-mode-map
+              ("M-)" . sp-forward-slurp-sexp))
   :config
   (require 'smartparens-config)
   :init
