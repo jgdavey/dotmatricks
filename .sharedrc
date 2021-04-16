@@ -85,11 +85,16 @@ alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
 editor() {
+    echoc=
+    if [[ "--echo-command" = "$1" ]]; then
+        echoc=1
+    fi
+
     args=(-c)
     alt=""
     if [[ -n "$TMUX" ]]; then
         args+=(-nw)
-    elif [[ -z "$SSH_CONNECTION" ]]; then
+    elif [ -z "$SSH_CONNECTION" ] && [ -z "$echoc" ]; then
         args+=(-n)
     fi
 
@@ -99,7 +104,7 @@ editor() {
         alt=" --alternate-editor=''"
     fi
 
-    if [[ "--echo-command" = "$1" ]]; then
+    if [[ -n "$echoc" ]]; then
         echo emacsclient "${args[@]}""$alt"
     else
         if [[ -n "$alt" ]]; then
