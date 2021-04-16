@@ -9,3 +9,7 @@
 
 (use-package rjsx-mode
   :ensure t)
+
+(use-package counsel-jq
+  :ensure t
+  :after counsel)
