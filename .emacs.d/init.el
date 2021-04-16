@@ -219,11 +219,12 @@
 (use-package swiper
   :ensure t
   :bind (("C-s" . swiper-isearch)
-         ("C-c s" . isearch-forward)
+         ("C-r" . swiper-isearch-backward)
+         ("C-c C-s" . isearch-forward)
          :map isearch-mode-map
-         ("C-c s" . swiper-isearch-toggle)
+         ("C-c C-s" . swiper-isearch-toggle)
          :map swiper-map
-         ("C-c s" . swiper-isearch-toggle)))
+         ("C-c C-s" . swiper-isearch-toggle)))
 
 (use-package multiple-cursors
   :ensure t
