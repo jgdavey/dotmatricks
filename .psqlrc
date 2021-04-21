@@ -1,4 +1,6 @@
 \set QUIET 1
 \pset null 'ø'
 \x auto
+\set ON_ERROR_ROLLBACK interactive
+\set HISTCONTROL ignoredups
 \set QUIET 0

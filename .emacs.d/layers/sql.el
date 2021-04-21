@@ -6,10 +6,7 @@
   (toggle-truncate-lines t)
   (when (eq sql-product 'postgres)
     (let ((proc (get-buffer-process (current-buffer))))
-      ;; Output each query before executing it. (n.b. this also avoids
-      ;; the psql prompt breaking the alignment of query results.)
-      (comint-send-string proc "\\set ECHO queries\n")
-      (comint-send-string proc "\\pset pager off\n"))))
+      (comint-send-string proc "\\x auto\n"))))
 
 (add-hook 'sql-interactive-mode-hook 'jd/sql-interactive-mode-hook)
 ;; (add-hook 'sql-mode-hook 'display-line-numbers-mode)
@@ -20,7 +17,13 @@
 (sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
 (sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\-:]*[-(][#>] *")
 
-;; (setq sql-interactive-mode-hook nil)
+
+;; psql -X --pset=null='ø' --set=ON_ERROR_ROLLBACK=interactive
+(setq sql-postgres-options
+      (append sql-postgres-options '("-X"
+                                     "-e"
+                                     "--pset" "null=ø"
+                                     "--set" "ON_ERROR_ROLLBACK=interactive")))
 
 (defun sql-postgres-connect-url (url)
   (interactive "sDB URL: ")
@@ -30,7 +33,7 @@
           (sql-password  "")
           (sql-server    "")
           (sql-database  url)
-          (sql-port      0)
+          (sql-port      0) ;; (or (url-portspec parsed) 0)
           (sql-postgres-login-params '()))
       (sql-product-interactive 'postgres (car (url-path-and-query parsed))))))
 
