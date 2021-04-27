@@ -178,7 +178,8 @@
   (setq projectile-mode-line-function
         (lambda () (format " [%s]" (projectile-project-name))))
   (setq projectile-completion-system 'ivy)
-  (projectile-mode +1))
+  ;;(projectile-mode +1)
+  (counsel-projectile-mode +1))
 
 (use-package projectile-ripgrep
   :ensure t)
@@ -215,6 +216,10 @@
   :bind (("M-x" . counsel-M-x)
          ("C-c i" . counsel-imenu)
          ("C-x C-f" . counsel-find-file)))
+
+(use-package counsel-projectile
+  :ensure t
+  :pin melpa)
 
 (use-package swiper
   :ensure t
