@@ -228,8 +228,12 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-c e" . mc/edit-lines)
-         ("C-c w" . mc/edit-ends-of-lines)))
+  :bind (("C-c m l" . mc/edit-lines)
+         ("C-c m e" . mc/edit-ends-of-lines)
+         ("C-c m b" . mc/edit-beginnings-of-lines)
+         ("C-c m a" . mc/mark-all-like-this-dwim)
+         ("C-c m n" . mc/mark-next-like-this)
+         ("C-c m u" . mc/unmark-next-like-this)))
 
 (use-package company
   :ensure t
