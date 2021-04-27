@@ -1,17 +1,6 @@
 (use-package markdown-mode
   :ensure t)
 
-(use-package deft
-  :ensure t
-  :bind ("C-c d" . deft)
-  :init
-  (setq deft-extensions '("org" "md")
-        deft-default-extension "org"
-        deft-directory "~/notes"
-        deft-use-filename-as-title t
-        deft-use-filter-string-for-filename t
-        deft-auto-save-interval 0))
-
 (defun unfill-paragraph (&optional region)
   "Takes a multi-line paragraph and makes it into a single line of text."
   (interactive (progn (barf-if-buffer-read-only) '(t)))
