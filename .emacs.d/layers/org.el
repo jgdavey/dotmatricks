@@ -1,14 +1,12 @@
 (use-package org
   :ensure t
-  :bind (("C-c c" . org-capture)
+  :bind (("C-c c" . counsel-projectile-org-capture)
          ("C-c a" . org-agenda)
          :map org-mode-map
          ("C-c C-o" . jd/org-open-at-point))
   :pin org
   :init
   (use-package ob-http
-    :ensure t)
-  (use-package ox-pandoc
     :ensure t)
   (use-package ox-gfm
     :ensure t
@@ -34,8 +32,6 @@
         org-confirm-babel-evaluate nil
         org-support-shift-select 'always)
   (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
-  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
   (setq org-log-done t)
   (setq org-refile-use-outline-path 'file)
   (setq org-refile-targets '((nil :maxlevel . 9)
