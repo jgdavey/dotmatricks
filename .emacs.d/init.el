@@ -17,6 +17,7 @@
   (if (display-graphic-p frame)
       ;; GUI window mode
       (with-selected-frame frame
+        (exec-path-from-shell-initialize)
         (if (fboundp 'menu-bar-mode) (menu-bar-mode +1))
         (set-frame-size frame 187 56))
     ;; terminal mode
@@ -130,9 +131,7 @@
   :ensure t)
 
 (use-package exec-path-from-shell
-  :ensure t
-  :init (when (memq window-system '(mac ns x))
-          (exec-path-from-shell-initialize)))
+  :ensure t)
 
 (add-to-list 'load-path (expand-file-name "lib" user-emacs-directory))
 
