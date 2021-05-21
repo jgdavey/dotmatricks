@@ -241,6 +241,12 @@
          ("C-c m n" . mc/mark-next-like-this)
          ("C-c m u" . mc/unmark-next-like-this)))
 
+(use-package expand-region
+  :pin melpa
+  :ensure t
+;;  :bind ;;(("C-c e e" . er/))
+  )
+
 (use-package company
   :ensure t
   :diminish company-mode
