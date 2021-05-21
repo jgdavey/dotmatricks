@@ -25,13 +25,13 @@
      lsp-enable-indentation nil
      lsp-enable-completion-at-point nil))
   :config
-  (defvar cider-clojure-cli-global-options-history '("-A:dev"))
-  (defun set-cider-clojure-cli-global-options ()
+  (defvar jd/cider-clojure-cli-global-options-history '("-A:dev"))
+  (defun jd/set-cider-clojure-cli-global-options ()
     (interactive)
     (setq cider-clojure-cli-global-options
           (read-string "Additional CLI options: "
-                       (car cider-clojure-cli-global-options-history)
-                       'cider-clojure-cli-global-options-history)))
+                       (car jd/cider-clojure-cli-global-options-history)
+                       'jd/cider-clojure-cli-global-options-history)))
   (setq org-babel-clojure-backend 'cider)
   (setq cider-prompt-for-symbol nil)
   (setq cider-mode-line-show-connection nil)
@@ -46,6 +46,7 @@
         cljr-eagerly-build-asts-on-startup nil
         cljr-auto-sort-ns nil
         cljr-favor-private-functions nil)
-  (add-hook 'clojure-mode-hook (lambda ()
-                                 (clj-refactor-mode 1)
-                                 (cljr-add-keybindings-with-prefix "C-c C-m"))))
+  (defun jd/cider-use-clj-refactor ()
+    (clj-refactor-mode 1)
+    (cljr-add-keybindings-with-prefix "C-c C-m"))
+  (add-hook 'clojure-mode-hook 'jd/cider-use-clj-refactor))
