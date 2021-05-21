@@ -14,8 +14,8 @@
 ;; Use postgres as default .sql file type
 (sql-set-product "postgres")
 
-(sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
-(sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\-:]*[-(][#>] *")
+(sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\\-:]*=\\*?[#>] *")
+(sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\\-:]*[-(]\\*?[#>] *")
 
 
 ;; psql -X --pset=null='ø' --set=ON_ERROR_ROLLBACK=interactive
