@@ -304,6 +304,14 @@
 (use-package yasnippet-snippets
   :ensure t)
 
+(use-package doom-modeline
+  :ensure t
+  :init
+  (doom-modeline-mode 1))
+
+(use-package all-the-icons
+  :ensure t)
+
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
           'browse-url-default-macosx-browser
