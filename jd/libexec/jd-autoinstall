@@ -11,10 +11,10 @@ fi
 
 case "$shell" in
   bash )
-    profile="$HOME/.basjdc.local"
+    profile="$HOME/.bashrc.local"
     ;;
   zsh )
-    profile="$HOME/.zsjdc.local"
+    profile="$HOME/.zshrc.local"
     ;;
   * )
     { echo "ERROR: Unable to autoinstall jd."
