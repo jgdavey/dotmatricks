@@ -16,8 +16,18 @@ fi
 bin="jd-$1"
 path="$(which $bin)"
 
+cmd=
+
+if command -v bat; then
+    cmd="bat"
+elif [ -n "$PAGER" ]; then
+    cmd="$PAGER"
+else
+    cmd="cat"
+fi
+
 if [ -n "$path" ]; then
-  exec cat $path
+  exec $cmd $path
 else
   echo "Could not find command $1" >&2
   exit 1
