@@ -1,8 +1,3 @@
-(use-package powerline
-  ;; disabled by default. Enable with (powerline-default-theme)
-  :ensure t
-  :init (setq powerline-default-separator 'utf-8))
-
 (use-package default-text-scale
   :ensure t
   :bind (:map default-text-scale-mode-map

@@ -7,21 +7,17 @@
 (setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
 
-(setq visible-bell nil
-      ring-bell-function 'jd/flash-mode-line)
-(defun jd/flash-mode-line ()
-  (invert-face 'mode-line)
-  (run-with-timer 0.1 nil #'invert-face 'mode-line))
-
 (defun jd/setup-frame (frame)
   (if (display-graphic-p frame)
       ;; GUI window mode
       (with-selected-frame frame
+        (setq doom-modeline-icon t)
         (exec-path-from-shell-initialize)
         (if (fboundp 'menu-bar-mode) (menu-bar-mode +1))
         (set-frame-size frame 187 56))
     ;; terminal mode
     (with-selected-frame frame
+      (setq doom-modeline-icon nil)
       (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
       (require 'mouse)
       (xterm-mouse-mode t)
@@ -107,6 +103,7 @@
 
 (defvar base-packages '(color-theme-sanityinc-tomorrow
                         monokai-pro-theme
+                        doom-themes
                         zenburn-theme
                         use-package)
   "A list of packages to ensure are installed at launch.")
@@ -119,8 +116,16 @@
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
 
-;;(load-theme 'sanityinc-tomorrow-eighties t)
-(load-theme 'zenburn t)
+(load-theme 'doom-opera t)
+
+(doom-themes-visual-bell-config)
+
+;; (setq visible-bell nil
+;;       ring-bell-function 'jd/flash-mode-line)
+;; (defun jd/flash-mode-line ()
+;;   (invert-face 'mode-line)
+;;   (run-with-timer 0.1 nil #'invert-face 'mode-line))
+
 
 ;; Package setup
 (require 'use-package)
