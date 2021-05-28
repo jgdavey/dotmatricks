@@ -96,39 +96,43 @@
         ("gnu" . 5)
         ("melpa" . 0)))
 
-(package-initialize)
-
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-(defvar base-packages '(color-theme-sanityinc-tomorrow
-                        monokai-pro-theme
-                        doom-themes
-                        zenburn-theme
-                        use-package)
+(defvar base-packages
+  '((color-theme-sanityinc-tomorrow . "melpa-stable")
+    (monokai-pro-theme . "melpa-stable")
+    (all-the-icons . "melpa")
+    (zenburn-theme . "melpa-stable")
+    (use-package . "melpa-stable"))
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p base-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+  (add-to-list 'package-pinned-packages p))
+
+(package-initialize)
+
+(dolist (p base-packages)
+  (let* ((pkg (car p)))
+    (when (not (package-installed-p pkg))
+      (package-install pkg))))
 
 (when (version<= "26.0.50" emacs-version)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
 
-(load-theme 'doom-opera t)
-
-(doom-themes-visual-bell-config)
-
-;; (setq visible-bell nil
-;;       ring-bell-function 'jd/flash-mode-line)
-;; (defun jd/flash-mode-line ()
-;;   (invert-face 'mode-line)
-;;   (run-with-timer 0.1 nil #'invert-face 'mode-line))
-
-
 ;; Package setup
 (require 'use-package)
+
+(use-package doom-themes
+  :ensure t
+  :pin melpa
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic nil)
+  (load-theme 'doom-opera t)
+  (doom-themes-visual-bell-config)
+  (setq doom-themes-treemacs-theme "doom-colors")
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
 
 ;; Has to be first to use :diminish option
 (use-package diminish
@@ -310,12 +314,10 @@
   :ensure t)
 
 (use-package doom-modeline
+  :pin melpa
   :ensure t
   :init
   (doom-modeline-mode 1))
-
-(use-package all-the-icons
-  :ensure t)
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)

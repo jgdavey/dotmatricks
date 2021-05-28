@@ -56,6 +56,7 @@
   :commands lsp
   :config
   (setq lsp-keymap-prefix "C-c l"
+        lsp-headerline-breadcrumb-enable nil
         lsp-response-timeout 2
         lsp-completion-enable t
         lsp-signature-auto-activate nil
@@ -70,10 +71,18 @@
 
 (use-package lsp-ivy
   :ensure t
+  :pin melpa
   :commands lsp-ivy-workspace-symbol)
+
+(use-package treemacs
+  :ensure t
+  :pin melpa
+  :config
+  (treemacs-load-all-the-icons-with-workaround-font "Menlo"))
 
 (use-package lsp-treemacs
   :ensure t
+  :pin melpa
   :commands lsp-treemacs-errors-list
-  :config
+  :init
   (setq treemacs-space-between-root-nodes nil))
