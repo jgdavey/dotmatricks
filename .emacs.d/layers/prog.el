@@ -74,12 +74,6 @@
   :pin melpa
   :commands lsp-ivy-workspace-symbol)
 
-(use-package treemacs
-  :ensure t
-  :pin melpa
-  :config
-  (treemacs-load-all-the-icons-with-workaround-font "Menlo"))
-
 (use-package lsp-treemacs
   :ensure t
   :pin melpa

@@ -320,6 +320,29 @@
   :init
   (doom-modeline-mode 1))
 
+(use-package treemacs
+  :ensure t
+  :pin melpa
+  :config
+  (treemacs-load-all-the-icons-with-workaround-font "Menlo"))
+
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
+
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after (treemacs dired)
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+;; (use-package vterm
+;;   :pin melpa
+;;   :ensure t)
+
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
           'browse-url-default-macosx-browser
