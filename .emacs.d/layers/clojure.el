@@ -18,6 +18,7 @@
   :ensure t
   :pin melpa-stable
   :hook (cider-mode . jd/prefer-cider-to-lsp)
+  :commands cider-connect-clj
   :init
   (defun jd/prefer-cider-to-lsp ()
     (setq-local
@@ -36,17 +37,3 @@
   (setq cider-prompt-for-symbol nil)
   (setq cider-mode-line-show-connection nil)
   (setq cider-repl-display-help-banner nil))
-
-(use-package clj-refactor
-  :ensure t
-  :pin melpa-stable
-  :after cider
-  :config
-  (setq cljr-favor-prefix-notation nil
-        cljr-eagerly-build-asts-on-startup nil
-        cljr-auto-sort-ns nil
-        cljr-favor-private-functions nil)
-  (defun jd/cider-use-clj-refactor ()
-    (clj-refactor-mode 1)
-    (cljr-add-keybindings-with-prefix "C-c C-m"))
-  (add-hook 'clojure-mode-hook 'jd/cider-use-clj-refactor))
