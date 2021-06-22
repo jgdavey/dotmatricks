@@ -33,6 +33,7 @@
 
 (use-package dumb-jump
   :ensure t
+  :pin melpa
   :init
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 

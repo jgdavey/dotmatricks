@@ -34,19 +34,26 @@
   (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-log-done t)
   (setq org-refile-use-outline-path 'file)
+  ;;(setq org-agenda-todo-list-sublevels nil)
   (setq org-refile-targets '((nil :maxlevel . 9)
                              (org-agenda-files :maxlevel . 3)))
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq counsel-projectile-org-capture-templates
+        `(("p" "[${name}] Task" entry
+           (file+headline "${root}/notes.org" "Tasks")
+           "* TODO %?\n  %u\n  %a\n  %i")))
   (setq org-capture-templates
-        `(("t" "Todo" entry (file ,(concat org-directory "/todo.org"))
+        `(("t" "Todo" entry "todo.org"
            "* TODO %?\n  %i")
-          ("l" "Linked Todo" entry (file ,(concat org-directory "/todo.org"))
+          ("n" "Pending Todo (waiting on something else)" entry "todo.org"
+           "* PENDING %?\n  %i")
+          ("l" "Linked Todo" entry "todo.org"
            "* TODO %?\n  %i\n  %A")
-          ("s" "Scheduled Todo" entry (file ,(concat org-directory "/todo.org"))
-           "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n  %i\n  %a\n")))
+          ("s" "Scheduled Todo" entry "todo.org"
+           "* TODO %?\n  SCHEDULED: %^t\n  %i\n  %a\n")))
   (setq org-todo-keywords
-        '((sequence "TODO" "|" "DONE" "DELEGATED")))
+        '((sequence "PENDING" "TODO" "|" "DONE" "DELEGATED")))
   :config
   (when (version<= "9.2.0" (org-version))
     (add-to-list 'org-modules 'org-tempo))
