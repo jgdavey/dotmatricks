@@ -56,7 +56,7 @@
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp
   :config
-  (setq lsp-keymap-prefix "C-c l"
+  (setq ;; lsp-keymap-prefix "C-c l"
         lsp-headerline-breadcrumb-enable nil
         lsp-response-timeout 2
         lsp-completion-enable t
@@ -68,7 +68,14 @@
   :ensure t
   :commands lsp-ui-mode
   :config
-  (setq lsp-ui-sideline-show-code-actions nil))
+  (setq lsp-ui-sideline-show-code-actions nil
+        ;; lsp-ui-doc-header nil
+        ;; lsp-ui-sideline-show-diagnostics t
+        ;; lsp-ui-doc-position 'top
+        ;; lsp-ui-doc-alignment 'frame
+        lsp-ui-sideline-delay 0.4
+        lsp-ui-doc-delay 0.4
+        ))
 
 (use-package lsp-ivy
   :ensure t
