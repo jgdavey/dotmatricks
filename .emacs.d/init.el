@@ -67,6 +67,12 @@
       uniquify-separator "/"
       uniquify-trailing-separator-p 't)
 
+(setq mac-option-modifier 'meta
+      mac-command-modifier 'super)
+
+(global-set-key (kbd "s-c") 'clipboard-kill-ring-save)
+(global-set-key (kbd "s-v") 'clipboard-yank)
+
 (setq whitespace-style '(face trailing tabs))
 
 (global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
@@ -128,6 +134,7 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic nil)
+  ;;(load-theme 'doom-gruvbox t)
   (load-theme 'doom-opera t)
   (doom-themes-visual-bell-config)
   (setq doom-themes-treemacs-theme "doom-colors")
