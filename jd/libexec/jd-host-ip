@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+#
+# Usage: jd host-ip <address>
+#
+# Summary: Resolve IP address for given host name (respects /etc/hosts)
+
+host = ARGV[0].to_s.strip
+
+case host
+when "--complete"
+  exit
+when ""
+  abort "You must provide a hostname to resolve"
+end
+
+require "socket"
+
+begin
+  puts Addrinfo.ip(host).ip_address
+rescue SocketError => e
+  $stderr.puts "ERROR unable to resolve '#{host}'"
+end
