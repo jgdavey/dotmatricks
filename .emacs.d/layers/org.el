@@ -44,13 +44,13 @@
            (file+headline "${root}/notes.org" "Tasks")
            "* TODO %?\n  %u\n  %a\n  %i")))
   (setq org-capture-templates
-        `(("t" "Todo" entry "todo.org"
+        `(("t" "Todo" entry (file "todo.org")
            "* TODO %?\n  %i")
-          ("n" "Pending Todo (waiting on something else)" entry "todo.org"
+          ("n" "Pending Todo (waiting on something else)" entry (file "todo.org")
            "* PENDING %?\n  %i")
-          ("l" "Linked Todo" entry "todo.org"
+          ("l" "Linked Todo" entry (file "todo.org")
            "* TODO %?\n  %i\n  %A")
-          ("s" "Scheduled Todo" entry "todo.org"
+          ("s" "Scheduled Todo" entry (file "todo.org")
            "* TODO %?\n  SCHEDULED: %^t\n  %i\n  %a\n")))
   (setq org-todo-keywords
         '((sequence "PENDING" "TODO" "|" "DONE" "DELEGATED")))
