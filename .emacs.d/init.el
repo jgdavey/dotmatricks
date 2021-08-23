@@ -7,14 +7,18 @@
 (setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
 
+(add-to-list 'default-frame-alist '(width . 1.0))
+(add-to-list 'default-frame-alist '(height . 1.0))
+(add-to-list 'default-frame-alist '(top . 0))
+(add-to-list 'default-frame-alist '(left . 0))
+
 (defun jd/setup-frame (frame)
   (if (display-graphic-p frame)
       ;; GUI window mode
       (with-selected-frame frame
         (setq doom-modeline-icon t)
         (exec-path-from-shell-initialize)
-        (if (fboundp 'menu-bar-mode) (menu-bar-mode +1))
-        (set-frame-size frame 187 56))
+        (if (fboundp 'menu-bar-mode) (menu-bar-mode +1)))
     ;; terminal mode
     (with-selected-frame frame
       (setq doom-modeline-icon nil)
