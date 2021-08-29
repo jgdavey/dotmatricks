@@ -101,6 +101,12 @@ if [ "$PROMPT" = "$ORIGINAL_PROMPT" ]; then
     PROMPT="$p%{\$reset_color%}:%{\$fg[cyan]%}%~ %{\$reset_color%}\$(git_prompt_info)\$(extended_prompt)%{\$reset_color%}%{\$fg_bold[yellow]%}%# %{\$reset_color%}"
 fi
 
+if [[ "$INSIDE_EMACS" = 'vterm' ]] \
+    && [[ -n ${EMACS_VTERM_PATH} ]] \
+    && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh ]]; then
+	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh
+fi
+
 # remove duplicates in $PATH
 typeset -aU path
 
