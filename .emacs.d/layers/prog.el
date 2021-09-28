@@ -16,6 +16,12 @@
   :pin melpa
   :ensure t)
 
+(use-package nginx-mode
+  :ensure t)
+
+(use-package company-nginx
+  :ensure t)
+
 (use-package web-mode
   :ensure t
   :init
