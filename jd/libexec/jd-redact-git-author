@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+#
+# Usage: jd redact-git-author
+#
+# Summary: Fix wrong author name/email in git history (destructively)
+
+require 'optparse'
+require 'ostruct'
+
+if ARGV[0] == "--complete"
+  puts <<~COMPLETIONS
+    --old-email
+    --new-email
+    --new-name
+  COMPLETIONS
+  exit
+end
+
+
+options = OpenStruct.new
+
+options.old_author_email
+options.new_author_name = `git config user.name`.chomp
+options.new_author_email = `git config user.email`.chomp
+
+unless $?.success?
+  abort "ERROR: Not in a git repo"
+end
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: jd redact-git-author [options]"
+
+  opts.on("-o", "--old-email [EMAIL]", String, "") do |ae|
+    options.old_author_email = ae
+  end
+
+  opts.on("-n", "--new-name [NAME]", String, "") do |an|
+    options.new_author_name = an
+  end
+
+  opts.on("-e", "--new-email [EMAIL]", String, "") do |ae|
+    options.new_author_email = ae
+  end
+end.parse!
+
+unless `git status --porcelain`.chomp.empty?
+  abort "ERROR: You have a dirty working copy. This command would remove any files not already checked in"
+end
+
+unless options.old_author_email && !options.old_author_email.empty?
+  abort "ERROR: No old email specified"
+end
+
+prog = <<~PROGRAM
+WRONG_EMAIL="#{options.old_author_email}"
+NEW_NAME="#{options.new_author_name}"
+NEW_EMAIL="#{options.new_author_email}"
+
+if [ "$GIT_COMMITTER_EMAIL" = "$WRONG_EMAIL" ]
+then
+    export GIT_COMMITTER_NAME="$NEW_NAME"
+    export GIT_COMMITTER_EMAIL="$NEW_EMAIL"
+fi
+if [ "$GIT_AUTHOR_EMAIL" = "$WRONG_EMAIL" ]
+then
+    export GIT_AUTHOR_NAME="$NEW_NAME"
+    export GIT_AUTHOR_EMAIL="$NEW_EMAIL"
+fi
+PROGRAM
+
+puts prog
+
+system("git", "filter-branch", "--env-filter", prog, "--tag-name-filter", "cat", "--", "--branches", "--tags")
