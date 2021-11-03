@@ -6,6 +6,7 @@
   :ensure t
   :config
   (require 'flycheck-clj-kondo)
+  (require 'cider)
   (define-clojure-indent
     (defroutes 'defun)
     (defui '(1 nil (1)))))

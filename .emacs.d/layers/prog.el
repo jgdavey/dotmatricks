@@ -16,6 +16,14 @@
   :pin melpa
   :ensure t)
 
+;; (use-package restclient
+;;   :pin melpa
+;;   :ensure t)
+
+;; (use-package ob-restclient
+;;   :pin melpa
+;;   :ensure t)
+
 (use-package nginx-mode
   :ensure t)
 
