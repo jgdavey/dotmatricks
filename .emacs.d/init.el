@@ -335,21 +335,33 @@
   (treemacs-load-all-the-icons-with-workaround-font "Menlo"))
 
 (use-package treemacs-magit
+  :pin melpa
   :after (treemacs magit)
   :ensure t)
 
 (use-package treemacs-projectile
+  :pin melpa
   :after (treemacs projectile)
   :ensure t)
 
 (use-package treemacs-icons-dired
+  :pin melpa
   :after (treemacs dired)
   :ensure t
   :config (treemacs-icons-dired-mode))
 
-;; (use-package vterm
-;;   :pin melpa
-;;   :ensure t)
+(use-package all-the-icons-ivy-rich
+  :pin melpa
+  :ensure t
+  :init (all-the-icons-ivy-rich-mode 1))
+
+(use-package all-the-icons-ibuffer
+  :pin melpa
+  :ensure t
+  :init (all-the-icons-ibuffer-mode 1))
+
+(use-package vterm
+  :pin melpa)
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
@@ -360,6 +372,7 @@
 (setq browse-url-browser-function
       '(("github\\.com" . browse-url-default-browser)
         ("postgres\\.org" . eww-browse-url)
+        ("docs\\.oracle\\.com" . eww-browse-url)
         ("." . browse-url-default-browser)))
 
 ;; load all (or configured) files in ~/.emacs.d/layers
