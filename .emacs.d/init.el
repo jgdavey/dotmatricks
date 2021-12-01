@@ -100,13 +100,11 @@
 (setq package-archives
       '(("melpa-stable" . "https://stable.melpa.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
-        ("gnu" . "https://elpa.gnu.org/packages/")
-        ("org" . "https://orgmode.org/elpa/"))
+        ("gnu" . "https://elpa.gnu.org/packages/"))
       package-archive-priorities
-      '(("org" . 20)
-        ("melpa-stable" . 10)
+      '(("melpa-stable" . 10)
         ("gnu" . 5)
-        ("melpa" . 0)))
+        ("melpa" . 1)))
 
 (defvar base-packages
   '((color-theme-sanityinc-tomorrow . "melpa-stable")

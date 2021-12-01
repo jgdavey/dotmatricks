@@ -4,11 +4,11 @@
          ("C-c a" . org-agenda)
          :map org-mode-map
          ("C-c C-o" . jd/org-open-at-point))
-  :pin org
   :init
   (use-package ob-http
     :ensure t)
   (use-package ox-gfm
+    :pin melpa
     :ensure t
     :init
     (eval-after-load "org"
