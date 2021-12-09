@@ -369,11 +369,14 @@
         'browse-url-chrome))
 
 ;; use browser depending on url
-(setq browse-url-browser-function
+(setq browse-url-handlers
       '(("github\\.com" . browse-url-default-browser)
         ("postgres\\.org" . eww-browse-url)
-        ("docs\\.oracle\\.com" . eww-browse-url)
-        ("." . browse-url-default-browser)))
+        ("docs\\.oracle\\.com" . eww-browse-url)))
+
+(when (version<= emacs-version "28.0.0")
+  (add-to-list 'browse-url-handlers '("." . browse-url-default-browser) t)
+  (setq browse-url-browser-function browse-url-handlers))
 
 ;; load all (or configured) files in ~/.emacs.d/layers
 (require 'layers)
