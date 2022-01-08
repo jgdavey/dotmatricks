@@ -378,6 +378,8 @@
   (add-to-list 'browse-url-handlers '("." . browse-url-default-browser) t)
   (setq browse-url-browser-function browse-url-handlers))
 
+(setq sh-basic-offset 2)
+
 ;; load all (or configured) files in ~/.emacs.d/layers
 (require 'layers)
 
