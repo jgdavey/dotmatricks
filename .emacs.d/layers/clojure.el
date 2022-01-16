@@ -25,7 +25,12 @@
     (setq-local
      lsp-signature-auto-activate nil
      lsp-enable-indentation nil
-     lsp-enable-completion-at-point nil))
+     lsp-enable-completion-at-point nil)
+    ;; Override to allow lsp fallback when not connected
+    (defun cider--xref-backend ()
+      "Used for xref integration."
+      (when (cider-current-repl nil)
+        'cider)))
   :config
   (defvar jd/cider-clojure-cli-global-options-history '("-A:dev"))
   (defun jd/set-cider-clojure-cli-global-options ()

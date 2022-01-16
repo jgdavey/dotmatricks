@@ -109,7 +109,8 @@
         lsp-response-timeout 2
         lsp-completion-enable t
         lsp-signature-auto-activate nil
-        lsp-enable-snippet t))
+        lsp-enable-snippet t)
+  (setq lsp-enable-xref t))
 
 (use-package lsp-ui
   :pin melpa
