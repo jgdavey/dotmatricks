@@ -1,0 +1,40 @@
+#compdef jd
+
+local curcontext="$curcontext" state line _opts ret=1
+local -a list
+local comps
+
+_arguments -C \
+           '1: :->cmds' \
+           '*:: :->args' && ret=0
+
+# Special-case some sub-commands
+case "${line[1]}" in
+  cd)
+    _files -W "$SOURCE_DIR" -/
+    return 0
+  ;;
+esac
+
+# Or use the commands themselves
+case $state in
+  cmds)
+    comps="$(jd completions --commands)"
+    ;;
+  args)
+    comps="$(jd completions $line[@])"
+    ;;
+esac
+
+list=("${(ps:\n:)comps}")
+
+_values "jd command" "${list[@]}"
+
+return ret
+# Local Variables:
+# mode: Shell-Script
+# sh-indentation: 2
+# indent-tabs-mode: nil
+# sh-basic-offset: 2
+# End:
+# vim: ft=zsh sw=2 ts=2 et

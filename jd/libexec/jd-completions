@@ -1,14 +1,41 @@
 #!/usr/bin/env bash
 set -e
 
+command_path() {
+  command -v "jd-$command" || command -v "jd-sh-$command" || true
+}
+
+summary() {
+  sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1"
+}
+
+print_summaries() {
+  for command in $(jd-commands); do
+    local file="$(command_path "$command")"
+    if [ ! -h "$file" ]; then
+      local summary="$(summary "$file")"
+      if [ -n "$summary" ]; then
+        printf "%s[%s]\n" "$command" "$summary"
+      else
+        echo "$command"
+      fi
+    fi
+  done
+}
+
 COMMAND="$1"
+if [ "$COMMAND" = "--commands" ]; then
+  print_summaries
+  exit
+fi
+
 if [ -z "$COMMAND" ]; then
   echo "usage: jd completions COMMAND [arg1 arg2...]" >&2
   exit 1
 fi
 
 COMMAND_PATH="$(command -v "jd-$COMMAND")"
-if grep -iq "\-\-complete" "$COMMAND_PATH" >/dev/null; then
+if grep "\--complete" "$COMMAND_PATH" >/dev/null; then
   shift
   exec "$COMMAND_PATH" --complete "$@"
 fi
