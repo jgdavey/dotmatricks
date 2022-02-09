@@ -1,28 +1,29 @@
 [alias]
-	aliases=!git config -l | grep '^alias' | cut -c 7- | sort
 	aa = add -A .
+	add-untracked = !"git status --porcelain | awk '/\\?\\?/{ print $2 }' | xargs git add"
+	aliases=!git config -l | grep '^alias' | cut -c 7- | sort
 	b  = branch
-	st = status
-	cheddar = commit --amend -CHEAD
+	br = branch
 	change-commits = "!f() { VAR1=$1; VAR='$'$1; OLD=$2; NEW=$3; echo \"Are you sure for replace $VAR  $OLD => $NEW ?(Y/N)\";read OK;if [ \"$OK\" = 'Y' ] ; then shift 3; git filter-branch --env-filter \"if [ \\\"${VAR}\\\" = '$OLD' ]; then export $VAR1='$NEW';echo 'to $NEW'; fi\" $@; fi;};  f "
+	cheddar = commit --amend -CHEAD
 	ci = commit
 	co = checkout
 	cp = cherry-pick
-	put = push origin HEAD
+	doff = reset HEAD^
 	find = !sh -c 'git ls-files | grep --color=always -i "$@" | less -FRSX' -
 	fixup = commit --fixup
-	squash = commit --squash
-	doff = reset HEAD^
-	ri = rebase --interactive
-	br = branch
 	pruneremote = remote prune origin
+	put = push origin HEAD
+	reset-authors = commit --amend --reset-author -CHEAD
+	ri = rebase --interactive
+	rmbranch = "!f(){ git branch -d ${1} && git push origin --delete ${1}; };f"
+	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+	squash = commit --squash
+	st = status
 	tr = log --graph --oneline --decorate --color
 	tre = log --pretty=format:'%C(auto)%h%d%Creset %s  %C(auto,bold blue)%an%Creset %C(auto,green)(%ar)%Creset' --graph
 	tree = tre --all
-	add-untracked = !"git status --porcelain | awk '/\\?\\?/{ print $2 }' | xargs git add"
-	reset-authors = commit --amend --reset-author -CHEAD
-	rmbranch = "!f(){ git branch -d ${1} && git push origin --delete ${1}; };f"
-	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+    br-clean-merged = "!f() { defaultbranch=\"$(git config init.defaultbranch)\"; defaultbranch=\"${defaultbranch:-MAIN}\"; git branch --merged | grep -v master | grep -v \"$defaultbranch\" | while read br; do git branch -d $br; done; }; f"
 [branch]
 	autosetuprebase = always
 [color]
