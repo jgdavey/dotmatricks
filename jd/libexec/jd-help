@@ -43,6 +43,8 @@ print_help() {
 
   if [ -n "$usage" ]; then
     echo "$usage"
+    local summary="$(summary "$file")"
+    [ -n "$summary" ] && echo "Summary: $summary"
 
     local help="$(help "$file")"
     [ -n "$help" ] && echo && echo "$help"
@@ -54,17 +56,16 @@ print_help() {
 command_path() {
   command -v "jd-$command" || command -v "jd-sh-$command" || true
 }
-
 summary() {
-  sed -n "s/^# Summary: \(.*\)/\1/p" "$1"
+  sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1"
 }
 
 usage() {
-  sed -n "s/^# \(Usage: .*\)/\1/p" "$1"
+  sed -n "s/^[#;];* \(Usage: .*\)/\1/p" "$1"
 }
 
 help() {
-  awk '/^[^#]/{p=0} /^# Help:/{p=1} p' "$1" | sed "s/^# Help: //;s/^# //;s/^#//"
+  awk '/^[^#;]/{p=0} /^[#;];* Help:/{p=1} p' "$1" | sed "s/^[#;];* Help: //;s/^[#;];* //;s/^[#;];*//"
 }
 
 truncate() {
@@ -79,9 +80,16 @@ truncate() {
   fi
 }
 
-# Provide jd completions
+# Provide jd completions, only for documented commands
 if [ "$1" = "--complete" ]; then
-  exec "jd-commands"
+  for command in $(jd-commands); do
+    file="$(command_path "$command")"
+    if [ -n "$file" ]; then
+      if [ -n "$(usage $file)" ]; then
+        echo "$command"
+      fi
+    fi
+  done
   exit
 fi
 
