@@ -1,11 +1,8 @@
 #!/usr/bin/env ruby
-#
 # Usage: jd group
-#
 # Summary: Print a table under a grouped heading
-#
-# Help:  Given a flat table of information, group by the first "column" and print beneath it as a heading
-#
+# Help: Given a flat table of information, group by the first "column"
+# and print beneath it as a heading
 
 require 'optparse'
 require 'ostruct'
@@ -14,17 +11,28 @@ options = OpenStruct.new
 options.field_separator = /,|:|\t/
 options.output_field_separator = "\n"
 
-OptionParser.new do |opts|
+parser = OptionParser.new do |opts|
   opts.banner = "Usage: jd group [options]"
 
-  opts.on("-f", "--field-separator [C]", String, "") do |c|
+  opts.on("-f", "--field-separator C", "Field separator") do |c|
     options.output_field_separator = c or abort("choose a character for output_field_separator")
   end
 
-  opts.on("-o", "--output-field-separator [C]", String, "") do |c|
+  opts.on("-o", "--output-field-separator C", "Output field separator") do |c|
     options.output_field_separator = c or abort("choose a character for output_field_separator")
   end
-end.parse!
+end
+
+if ARGV[0] == "--complete"
+  ARGV.shift
+  parser.top.compsys({}, {}) do |o, d|
+    desc = d.split("(", 2).first.gsub(/[\[\]]/, '\\\\\&')
+    puts "#{o}[#{desc}]"
+  end
+  exit 0
+end
+
+parser.parse!
 
 all = []
 ARGF.each_line do |line|
