@@ -25,12 +25,7 @@
     (setq-local
      lsp-signature-auto-activate nil
      lsp-enable-indentation nil
-     lsp-enable-completion-at-point nil)
-    ;; Override to allow lsp fallback when not connected
-    (defun cider--xref-backend ()
-      "Used for xref integration."
-      (when (cider-current-repl nil)
-        'cider)))
+     lsp-enable-completion-at-point nil))
   :config
   (defvar jd/cider-clojure-cli-global-options-history '("-A:dev"))
   (defun jd/set-cider-clojure-cli-global-options ()
@@ -40,6 +35,6 @@
                        (car jd/cider-clojure-cli-global-options-history)
                        'jd/cider-clojure-cli-global-options-history)))
   (setq org-babel-clojure-backend 'cider)
+  (setq cider-eval-result-duration 'command) ;; 'change
   (setq cider-prompt-for-symbol nil)
-  (setq cider-mode-line-show-connection nil)
   (setq cider-repl-display-help-banner nil))

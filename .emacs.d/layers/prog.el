@@ -109,7 +109,10 @@
         lsp-response-timeout 2
         lsp-completion-enable t
         lsp-signature-auto-activate nil
-        lsp-enable-snippet t)
+        lsp-enable-snippet t
+        lsp-idle-delay 0.5)
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/public\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/cluvio\\'")
   (setq lsp-enable-xref t))
 
 (use-package lsp-ui
@@ -122,8 +125,8 @@
         ;; lsp-ui-sideline-show-diagnostics t
         ;; lsp-ui-doc-position 'top
         ;; lsp-ui-doc-alignment 'frame
-        lsp-ui-sideline-delay 0.4
-        lsp-ui-doc-delay 0.4
+        lsp-ui-sideline-delay 0.5
+        lsp-ui-doc-delay 0.5
         ))
 
 (use-package lsp-ivy
