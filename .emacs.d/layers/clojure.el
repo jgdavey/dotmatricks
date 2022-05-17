@@ -27,13 +27,6 @@
      lsp-enable-indentation nil
      lsp-enable-completion-at-point nil))
   :config
-  (defvar jd/cider-clojure-cli-global-options-history '("-A:dev"))
-  (defun jd/set-cider-clojure-cli-global-options ()
-    (interactive)
-    (setq cider-clojure-cli-global-options
-          (read-string "Additional CLI options: "
-                       (car jd/cider-clojure-cli-global-options-history)
-                       'jd/cider-clojure-cli-global-options-history)))
   (setq org-babel-clojure-backend 'cider)
   (setq cider-eval-result-duration 'command) ;; 'change
   (setq cider-prompt-for-symbol nil)
