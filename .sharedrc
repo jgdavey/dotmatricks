@@ -42,15 +42,26 @@ git_prompt_info () {
     fi
 
     # Dirty Branch
-    local newfile='?? '
-    if [ -n "$ZSH_VERSION" ]; then
-      newfile='\?\? '
-    fi
-    d=''
-    s=$(command git status --porcelain 2> /dev/null)
-    [[ $s =~ "^$newfile" ]] && d+='+'
-    [[ $s =~ "^M " ]] && d+='*'
-    [[ $s =~ "^D " ]] && d+='-'
+    local modified=
+    local untracked=
+    local deleted=
+    local conflicted=
+    while read -r primary secondary rest; do
+      case "$primary" in
+        "?" ) untracked=1 ;;
+        "u" ) conflicted=1 ;;
+        "1" | "2" ) case "$secondary" in
+                      *M*) modified=1 ;;
+                      *D*) deleted=1 ;;
+                    esac;;
+      esac
+    done < <(command git --no-optional-locks status --porcelain=2 2> /dev/null)
+
+    d=""
+    [[ -z "$conflicted" ]] || d+='!'
+    [[ -z "$untracked" ]] || d+='+'
+    [[ -z "$modified" ]]  || d+='*'
+    [[ -z "$deleted" ]] || d+='-'
 
     printf "${1-"(%s) "}" "${b##refs/heads/}$r$d"
   fi
