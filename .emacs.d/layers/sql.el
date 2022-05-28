@@ -65,3 +65,39 @@
           (sql-postgres-program "heroku")
           (sql-postgres-options progopts))
       (sql-product-interactive 'postgres app-name))))
+
+(when (executable-find "pg_format")
+  (defun jd/reformat-sql (begin end)
+    "Use `pg_format' executable to reformat sql between BEGIN and END."
+    (interactive (if (use-region-p)
+                     (list (region-beginning) (region-end))
+                   (list (point-min) (point-max))))
+    (let* ((width-str (number-to-string fill-column))
+           (err-buf "*pg_format Error*")
+           (existed (if (get-buffer err-buf)
+                        (kill-buffer err-buf)))
+           (pg-format-cmd (concat "pg_format"
+                                  " -u 0 -U 0"
+                                  " -W1"
+                                  " -s2"
+                                  " -C "))
+           (before-text (buffer-substring-no-properties begin end))
+           pg-format-ret
+           (after-text (with-temp-buffer
+                         (insert before-text)
+                         (setq pg-format-ret (shell-command-on-region
+                                          (point-min) (point-max)
+                                          pg-format-cmd nil :replace
+                                          err-buf :display-error-buffer))
+                         (buffer-substring-no-properties (point-min) (point-max)))))
+      (if (get-buffer err-buf)
+          (save-excursion
+            (switch-to-buffer-other-window err-buf)
+            (special-mode))) ; Set this mode so that you can quit it quickly using C-u q
+      ;; If 1 is returned, error occurred in the cmd execution; 0 - no error
+      (if (= 1 pg-format-ret)
+          nil
+        ;; If no error occurred, do below in the original buffer
+        (delete-region begin end)
+        (insert after-text))
+      (message "Executed `%s' on the region" pg-format-cmd))))
