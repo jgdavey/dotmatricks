@@ -7,6 +7,7 @@
   :config
   (require 'flycheck-clj-kondo)
   (require 'cider)
+  (require 'ob-babashka)
   (define-clojure-indent
     (defroutes 'defun)
     (defui '(1 nil (1)))))
@@ -23,6 +24,7 @@
   :init
   (defun jd/prefer-cider-to-lsp ()
     (setq-local
+     lsp-eldoc-enable-hover nil
      lsp-signature-auto-activate nil
      lsp-enable-indentation nil
      lsp-enable-completion-at-point nil))
@@ -30,4 +32,5 @@
   (setq org-babel-clojure-backend 'cider)
   (setq cider-eval-result-duration 'command) ;; 'change
   (setq cider-prompt-for-symbol nil)
-  (setq cider-repl-display-help-banner nil))
+  (setq cider-repl-display-help-banner nil)
+  (setq cider-use-tooltips nil))
