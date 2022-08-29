@@ -9,6 +9,10 @@
     (whitespace-mode +1))
   (add-hook 'go-mode-hook 'jd/go-mode-hook))
 
+(use-package applescript-mode
+  :pin melpa
+  :ensure t)
+
 (use-package yaml-mode
   :ensure t)
 
