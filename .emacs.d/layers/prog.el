@@ -144,3 +144,10 @@
   :commands lsp-treemacs-errors-list
   :init
   (setq treemacs-space-between-root-nodes nil))
+
+(use-package lsp-java
+  :ensure t
+  :pin melpa
+  :config
+  (setq lsp-java-java-path "/usr/local/opt/java/bin/java")
+  )
