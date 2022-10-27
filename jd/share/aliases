@@ -1,3 +1,4 @@
 alias jcd="jd cd"
 alias jclone="jd clone"
 alias mux="jd mux"
+alias git-br-clean-merged="jd git-br-clean-merged"
