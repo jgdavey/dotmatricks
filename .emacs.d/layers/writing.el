@@ -19,7 +19,7 @@
            (err-buf "*prose Error*")
            (existed (if (get-buffer err-buf)
                         (kill-buffer err-buf)))
-           (prose-cmd (concat "prose -w" width-str " "))
+           (prose-cmd (concat "prose -c -w" width-str " "))
            (before-text (buffer-substring-no-properties begin end))
            prose-ret
            ;; Do the formatting in a temp buffer so that the text in the original
