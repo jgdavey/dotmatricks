@@ -4,7 +4,7 @@
 	aliases=!git config -l | grep '^alias' | cut -c 7- | sort
 	b  = branch
 	br = branch
-    bs = "!git for-each-ref --sort='-authordate' --format='%(refname:lstrip=2)|%(authordate:short)|%(authoremail:localpart)|%(subject)' refs/heads | column -t -s'|'"
+    bs = "!git for-each-ref --sort='-authordate' --format='%(HEAD)|%(refname:lstrip=2)|%(authordate:short)|%(authoremail:localpart)|%(subject)' refs/heads | column -t -s'|'"
     br-clean-merged = "!jd git-br-clean-merged"
 	change-commits = "!f() { VAR1=$1; VAR='$'$1; OLD=$2; NEW=$3; echo \"Are you sure for replace $VAR  $OLD => $NEW ?(Y/N)\";read OK;if [ \"$OK\" = 'Y' ] ; then shift 3; git filter-branch --env-filter \"if [ \\\"${VAR}\\\" = '$OLD' ]; then export $VAR1='$NEW';echo 'to $NEW'; fi\" $@; fi;};  f "
 	cheddar = commit --amend -CHEAD
@@ -22,6 +22,7 @@
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
 	squash = commit --squash
 	st = status
+    tracking = "!f() { git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | egrep -v ':$'; }; f"
 	tr = log --graph --oneline --decorate --color
 	tre = log --pretty=format:'%C(auto)%h%d%Creset %s  %C(auto,bold blue)%an%Creset %C(auto,green)(%ar)%Creset' --graph
 	tree = tre --all
