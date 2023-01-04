@@ -151,3 +151,13 @@
   :config
   (setq lsp-java-java-path "/usr/local/opt/java/bin/java")
   )
+
+(use-package lsp-tailwindcss
+  :ensure t
+  :pin melpa
+  :init
+  (setq lsp-tailwindcss-add-on-mode t)
+  :config
+  ;; doesn't seem to work yet
+  ;(add-to-list 'lsp-tailwindcss-major-modes 'clojurescript-mode)
+  )
