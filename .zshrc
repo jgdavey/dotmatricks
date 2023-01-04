@@ -44,11 +44,20 @@ autoload colors; colors
 # just say no to zle vim mode:
 bindkey -e
 
-# history options
-setopt appendhistory extended_history histignoredups inc_append_history share_history
-HISTFILE=~/.zsh_history
-HISTSIZE=5000
-SAVEHIST=10000
+## History file configuration
+[ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
+[ "$HISTSIZE" -lt 50000 ] && HISTSIZE=50000
+[ "$SAVEHIST" -lt 50000 ] && SAVEHIST=50000
+
+## History command configuration
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt share_history          # share command history data
+setopt appendhistory
+setopt inc_append_history     # incrementally flush history (immediate)
 
 # options
 setopt extendedglob interactivecomments prompt_subst no_list_beep no_bg_nice always_to_end nonomatch
@@ -66,7 +75,7 @@ bindkey '\ew' kill-region
 
 alias lsd='ls -ld *(-/DN)'
 l.() {
-  ls -ld "${1:-$PWD}"/.[^.]*
+  ls -ld "${1:-.}"/.[^.]*
 }
 
 (( ${+aliases[e]} )) && unalias e
@@ -82,7 +91,7 @@ extended_prompt() {
 RPROMPT="%(?..{%{$fg[red]%}%?%{$reset_color%}})"
 
 # default apps
-(( ${+PAGER}   )) || export PAGER='less'
+(( ${+PAGER} )) || export PAGER='less'
 
 ORIGINAL_PROMPT="$PROMPT"
 
@@ -109,6 +118,3 @@ fi
 
 # remove duplicates in $PATH
 typeset -aU path
-
-# added by travis gem
-[ -f /Users/jgdavey/.travis/travis.sh ] && source /Users/jgdavey/.travis/travis.sh
