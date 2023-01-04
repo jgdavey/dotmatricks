@@ -163,13 +163,16 @@
   :ensure t
   :pin melpa
   :bind (:map smartparens-strict-mode-map
-              ("M-)" . sp-forward-slurp-sexp)
-              ;;("M-(" . sp-wrap-round)
-              ("M-(" . sp-wrap)
-              ("M-J" . sp-join-sexp)
-              ("M-q" . sp-indent-defun)
-              :map smartparens-mode-map
-              ("M-)" . sp-forward-slurp-sexp))
+         ("M-)" . sp-forward-slurp-sexp)
+         ;;("M-(" . sp-wrap-round)
+         ("M-(" . sp-wrap)
+         ("M-J" . sp-join-sexp)
+         :map smartparens-mode-map
+         ("M-)" . sp-forward-slurp-sexp)
+         :map emacs-lisp-mode-map
+         ("M-q" . sp-indent-defun)
+         :map lisp-mode-map
+         ("M-q" . sp-indent-defun))
   :config
   (require 'smartparens-config)
   :init

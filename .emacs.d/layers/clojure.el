@@ -2,8 +2,27 @@
   :pin melpa
   :ensure t)
 
+(defun jd/lsp-indent-defun (&optional arg)
+  "Reindent the current defun.
+
+If point is inside a string or comment, fill the current
+paragraph instead, and with ARG, justify as well (with
+`fill-paragraph')
+
+Otherwise, reindent the current defun, and adjust the position
+of the point."
+  (interactive "P")
+  (if (sp-point-in-string-or-comment)
+      (fill-paragraph arg)
+    (save-excursion
+      (mark-defun)
+      (deactivate-mark)
+      (lsp-format-region (point) (mark)))))
+
 (use-package clojure-mode
   :ensure t
+  :bind (:map clojure-mode-map
+              ("M-q" . jd/lsp-indent-defun))
   :config
   (require 'flycheck-clj-kondo)
   (require 'cider)
@@ -26,7 +45,6 @@
     (setq-local
      lsp-eldoc-enable-hover nil
      lsp-signature-auto-activate nil
-     lsp-enable-indentation nil
      lsp-enable-completion-at-point nil))
   :config
   (setq org-babel-clojure-backend 'cider)
