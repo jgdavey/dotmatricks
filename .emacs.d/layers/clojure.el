@@ -52,3 +52,7 @@ of the point."
   (setq cider-prompt-for-symbol nil)
   (setq cider-repl-display-help-banner nil)
   (setq cider-use-tooltips nil))
+
+(use-package jet
+  :pin melpa
+  :ensure t)
