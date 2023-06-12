@@ -47,7 +47,9 @@
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2
-        css-indent-offset 2))
+        css-indent-offset 2
+        web-mode-content-types-alist '(("sql" . "\\.sql\\.erb\\'"))
+        ))
 
 (use-package dumb-jump
   :ensure t
@@ -122,6 +124,7 @@
 (use-package lsp-ui
   :pin melpa
   :ensure t
+  :after lsp-mode
   :commands lsp-ui-mode
   :config
   (setq lsp-ui-sideline-show-code-actions nil
@@ -140,6 +143,7 @@
 
 (use-package lsp-treemacs
   :ensure t
+  :after lsp-mode
   :pin melpa
   :commands lsp-treemacs-errors-list
   :init
@@ -147,6 +151,7 @@
 
 (use-package lsp-java
   :ensure t
+  :after lsp-mode
   :pin melpa
   :config
   (setq lsp-java-java-path "/usr/local/opt/java/bin/java")
@@ -154,6 +159,7 @@
 
 (use-package lsp-tailwindcss
   :ensure t
+  :after lsp-mode
   :pin melpa
   :init
   (setq lsp-tailwindcss-add-on-mode t)
