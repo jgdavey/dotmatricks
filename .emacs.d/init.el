@@ -93,10 +93,6 @@
   (untabify (point-min) (point-max))
   (delete-trailing-whitespace))
 
-;;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-;;(setq gnutls-algorithm-priority nil)
-
-
 ;; Packages
 (require 'package)
 
@@ -111,8 +107,6 @@
 
 (defvar base-packages
   '((color-theme-sanityinc-tomorrow . "melpa-stable")
-    (monokai-pro-theme . "melpa-stable")
-    (all-the-icons . "melpa")
     (zenburn-theme . "melpa-stable")
     (use-package . "melpa-stable"))
   "A list of packages to ensure are installed at launch.")
