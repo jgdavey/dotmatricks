@@ -77,6 +77,9 @@
 (global-set-key (kbd "s-c") 'clipboard-kill-ring-save)
 (global-set-key (kbd "s-v") 'clipboard-yank)
 
+;; Use ibuffer instead of buff-menu
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 (setq whitespace-style '(face trailing tabs))
 
 (global-set-key (kbd "C-c C-o C-w") 'whitespace-mode)
