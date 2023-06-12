@@ -75,7 +75,11 @@ bindkey '\ew' kill-region
 
 alias lsd='ls -ld *(-/DN)'
 l.() {
-  ls -ld "${1:-.}"/.[^.]*
+  prefix=
+  if [ -n "$1" ]; then
+    prefix="${1%/}/"
+  fi
+  ls -ld -F ${prefix}.[^.]*
 }
 
 (( ${+aliases[e]} )) && unalias e
