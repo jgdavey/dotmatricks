@@ -341,11 +341,6 @@
   :config
   (treemacs-load-all-the-icons-with-workaround-font "Menlo"))
 
-(use-package treemacs-magit
-  :pin melpa
-  :after (treemacs magit)
-  :ensure t)
-
 (use-package treemacs-projectile
   :pin melpa
   :after (treemacs projectile)

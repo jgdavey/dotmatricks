@@ -15,6 +15,11 @@
   (magit-define-popup-switch 'magit-log-popup
                              ?m "Omit merge commits" "--no-merges"))
 
+(use-package treemacs-magit
+  :pin melpa
+  :after (treemacs magit)
+  :ensure t)
+
 (use-package magit-popup
   :ensure t)
 
