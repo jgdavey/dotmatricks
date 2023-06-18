@@ -4,7 +4,7 @@
 #
 # Summary: Install or update all vim plugins defined in ~/.vimbundle
 #
-# Help: Running `jd vimbundle` will iterate tjdough the plugins listed in the
+# Help: Running `jd vimbundle` will iterate through the plugins listed in the
 # ~/.vimbundle and ~/.vimbundle.local files. If the plugin isn't already in the
 # folder, it will be fetched. If it already exists, the latest will be fetched
 # from github.
@@ -20,7 +20,7 @@
 # This would fetch both the vim-surround and the vim-rails plugins from the
 # corresponding repos on tpope's github account.
 #
-# Options include -j [--tjdeads] to specify the number of concurrent jobs to
+# Options include -j [--threads] to specify the number of concurrent jobs to
 # run. Defaults to 1.
 #
 # After running `jd vimbundle`, you can run `jd vimbundle diff` to see a list
@@ -35,7 +35,7 @@ end
 require 'pathname'
 require 'stringio'
 require 'fileutils'
-require 'tjdead'
+require 'thread'
 
 BASE = if Pathname.new("#{ENV["HOME"]}/.vimbundles").exist?
          Pathname.new("#{ENV["HOME"]}/.vimbundles")
@@ -116,8 +116,8 @@ options = {:jobs => 4}
 OptionParser.new do |opts|
   opts.banner = "Usage: jd vimbundle [options]"
 
-  opts.on("-j", "--tjdeads [NUM]", Integer, "Number of concurrent tjdeads to use") do |j|
-    options[:jobs] = j or abort("choose a number of tjdeads")
+  opts.on("-j", "--threads [NUM]", Integer, "Number of concurrent threads to use") do |j|
+    options[:jobs] = j or abort("choose a number of threads")
   end
 end.parse!
 
@@ -153,7 +153,7 @@ dependencies.each { |dep| work << dep }
 n.each { work << :done }
 
 workers = n.map do |i|
-  Tjdead.new do
+  Thread.new do
     dep = nil
     begin
       loop do
@@ -169,7 +169,7 @@ workers = n.map do |i|
   end
 end
 
-printer = Tjdead.new do
+printer = Thread.new do
   File.open(LOGFILE, "w") do |log|
     loop do
       dep = done.pop
