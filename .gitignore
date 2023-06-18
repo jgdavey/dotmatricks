@@ -4,3 +4,4 @@ FILES
 !/.emacs.d/lib
 !/.emacs.d/layers
 *.elc
+/Brewfile.lock.json
