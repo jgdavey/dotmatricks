@@ -17,7 +17,7 @@
       ;; GUI window mode
       (with-selected-frame frame
         (setq doom-modeline-icon t)
-        (exec-path-from-shell-initialize)
+        ;;(exec-path-from-shell-initialize)
         (if (fboundp 'menu-bar-mode) (menu-bar-mode +1)))
     ;; terminal mode
     (with-selected-frame frame
@@ -357,6 +357,7 @@
   :init (all-the-icons-ibuffer-mode 1))
 
 (use-package vterm
+  :ensure t
   :pin melpa)
 
 (setq browse-url-default-browser
