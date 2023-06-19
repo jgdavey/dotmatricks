@@ -356,6 +356,10 @@
   :ensure t
   :init (all-the-icons-ibuffer-mode 1))
 
+(use-package treemacs-all-the-icons
+  :pin melpa
+  :ensure t)
+
 (use-package vterm
   :ensure t
   :pin melpa)
