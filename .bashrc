@@ -1,6 +1,5 @@
 # vim:set ft=sh sw=2 sts=2:
 
-[ ! -f "$HOME/.path" ] || source "$HOME/.path"
 [ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # Store 10,000 history entries
@@ -36,6 +35,3 @@ if [ -f '/usr/local/etc/bash_completion.d/git-completion.bash' ]; then
 fi
 
 [ ! -f "$HOME/.bashrc.local" ] || . "$HOME/.bashrc.local"
-
-# added by travis gem
-[ -f /Users/jgdavey/.travis/travis.sh ] && source /Users/jgdavey/.travis/travis.sh

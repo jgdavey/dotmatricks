@@ -7,8 +7,16 @@ export SOURCE_DIR
 export GOPATH="$SOURCE_DIR/go"
 export WASMTIME_HOME="$HOME/.wasmtime"
 
+# Homebrew stuff
+export HOMEBREW_PREFIX="/opt/homebrew";
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+export HOMEBREW_REPOSITORY="/opt/homebrew";
+export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
+export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
+# end Homebrew stuff
+
 # Paths for prepending
-for dir in "$WASMTIME_HOME/bin" "$GOPATH/bin" /usr/local/bin "$HOME/.cargo/bin:$PATH" "$HOME/bin" .git/safe/../../bin; do
+for dir in /usr/local/bin "$HOMEBREW_PREFIX/bin" "$WASMTIME_HOME/bin" "$GOPATH/bin" "$HOME/.cargo/bin" "$HOME/bin" ".git/safe/../../bin" ; do
   case "$PATH:" in
     *:"$dir":*) PATH="`echo "$PATH"|sed -e "s#:$dir##"`" ;;
   esac
@@ -19,7 +27,7 @@ for dir in "$WASMTIME_HOME/bin" "$GOPATH/bin" /usr/local/bin "$HOME/.cargo/bin:$
 done
 
 # Paths for appending
-for dir in /usr/local/sbin /opt/local/sbin /usr/X11/bin; do
+for dir in /usr/local/sbin /opt/local/sbin /usr/X11/bin "$HOMEBREW_PREFIX/sbin"; do
   case ":$PATH:" in
     *:"$dir":*) ;;
     *) [ ! -d "$dir" ] || PATH="$PATH:$dir" ;;

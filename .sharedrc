@@ -81,6 +81,7 @@ alias ..='cd ..'
 alias ll="ls $lsc -l"
 alias l="ls $lsc -F -lah"
 alias la="ls $lsc -a"
+
 alias gap='git add -p'
 alias gb='git branch'
 alias gc='git commit -v'
@@ -92,6 +93,7 @@ alias gst='git status'
 alias grc='git rebase --continue'
 alias gra='git rebase --abort'
 alias grep='command grep --color=auto'
+
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
