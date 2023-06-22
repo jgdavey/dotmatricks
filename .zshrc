@@ -1,8 +1,7 @@
 fpath=(
   $fpath
-  ~/.rvm/scripts/zsh/Completion
   ~/.zsh/functions
-  /usr/local/share/zsh/site-functions
+  $HOMEBREW_PREFIX/share/zsh/site-functions
 )
 
 [ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
