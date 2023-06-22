@@ -17,7 +17,6 @@
       ;; GUI window mode
       (with-selected-frame frame
         (setq doom-modeline-icon t)
-        ;;(exec-path-from-shell-initialize)
         (if (fboundp 'menu-bar-mode) (menu-bar-mode +1)))
     ;; terminal mode
     (with-selected-frame frame
@@ -146,7 +145,10 @@
   :ensure t)
 
 (use-package exec-path-from-shell
-  :ensure t)
+  :ensure t
+  :if (display-graphic-p)
+  :config
+  (exec-path-from-shell-initialize))
 
 (add-to-list 'load-path (expand-file-name "lib" user-emacs-directory))
 
