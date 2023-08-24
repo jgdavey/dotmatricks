@@ -32,14 +32,8 @@ of the point."
     (defui '(1 nil (1)))))
 
 (use-package clojure-ts-mode
-  :ensure t
-  :config
-  (require 'flycheck-clj-kondo)
-  (require 'cider)
-  (require 'ob-babashka)
-  (define-clojure-indent
-   (defroutes 'defun)
-   (defui '(1 nil (1)))))
+  :pin melpa
+  :ensure t)
 
 (use-package inf-clojure
   :pin melpa

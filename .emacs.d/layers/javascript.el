@@ -13,3 +13,13 @@
 (use-package counsel-jq
   :ensure t
   :after counsel)
+
+(use-package typescript-mode
+  :ensure t
+  :after tree-sitter
+  :config
+  (define-derived-mode typescriptreact-mode typescript-mode
+    "TypeScript TSX")
+  ;; use our derived mode for tsx files
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  )

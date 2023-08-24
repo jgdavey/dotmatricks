@@ -1,13 +1,26 @@
 (use-package go-mode
   :ensure t
+  :hook ((go-mode . jd/go-mode-hook)
+         (go-ts-mode . jd/go-mode-hook))
   :init
   (defun jd/go-mode-hook ()
-    (add-hook 'before-save-hook 'gofmt-before-save)
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t)
     (whitespace-mode -1)
+    (setq tab-width 4)
     (setq indent-tabs-mode +1)
-    (setq-local whitespace-style '(face trailing))
-    (whitespace-mode +1))
-  (add-hook 'go-mode-hook 'jd/go-mode-hook))
+    (setq-local electric-indent-inhibit t)
+    (setq-local
+     whitespace-style
+     '(face ; viz via faces
+       trailing ; trailing blanks visualized
+       space-before-tab
+       space-after-tab
+       newline ; lines with only blanks
+       indentation ; spaces used for indent
+       empty ; empty lines at beginning or end
+       ))
+    (whitespace-mode +1)))
 
 (use-package applescript-mode
   :pin melpa
@@ -106,9 +119,12 @@
          (clojure-mode . lsp)
          (clojurescript-mode . lsp)
          (clojurec-mode . lsp)
+         (go-ts-mode . lsp-deferred)
+         (go-mode . lsp-deferred)
          ;;(enh-ruby-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp
+  :autoload lsp-deferred
   :config
   (setq ;; lsp-keymap-prefix "C-c l"
         lsp-headerline-breadcrumb-enable nil
@@ -119,6 +135,8 @@
         lsp-idle-delay 0.5)
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/public\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/cluvio\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].datomic-local\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo\\'")
   (setq lsp-enable-xref t))
 
 (use-package lsp-ui
@@ -168,6 +186,12 @@
   ;(add-to-list 'lsp-tailwindcss-major-modes 'clojurescript-mode)
   )
 
+(use-package docker
+  :ensure t)
+
+(use-package dockerfile-mode
+  :ensure t)
+
 ;; Taken from:
 ;; https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 (setq treesit-language-source-alist
@@ -193,6 +217,7 @@
         (bash-mode . bash-ts-mode)
         (js2-mode . js-ts-mode)
         (typescript-mode . typescript-ts-mode)
+        (typescriptreact-mode . typescript-ts-mode)
         (json-mode . json-ts-mode)
         (css-mode . css-ts-mode)
         (rust-mode . rust-ts-mode)
