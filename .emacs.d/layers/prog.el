@@ -134,9 +134,9 @@
         lsp-enable-snippet t
         lsp-idle-delay 0.5)
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/public\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/cluvio\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].datomic-local\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]data/batches\\'")
   (setq lsp-enable-xref t))
 
 (use-package lsp-ui
