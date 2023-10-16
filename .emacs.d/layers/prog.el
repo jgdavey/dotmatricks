@@ -187,9 +187,6 @@
   ;(add-to-list 'lsp-tailwindcss-major-modes 'clojurescript-mode)
   )
 
-(use-package docker
-  :ensure t)
-
 (use-package dockerfile-mode
   :ensure t)
 
