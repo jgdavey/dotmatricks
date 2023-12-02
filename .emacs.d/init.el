@@ -85,6 +85,8 @@
 
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
+(delete-selection-mode t)
+
 (defun cleanup-buffer ()
   "Perform a bunch of operations on the whitespace content of a buffer."
   (interactive)

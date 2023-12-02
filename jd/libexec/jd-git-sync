@@ -34,7 +34,7 @@ confirm() {
   done
 }
 
-git fetch --all
+git fetch --all -Pp
 
 git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | egrep -v ':$' | while IFS=: read local remote; do
   echo "Syncing ${local} with ${remote}"
