@@ -19,27 +19,16 @@ abs_dirname() {
   cd "$cwd"
 }
 
-export ORIG_PATH="$PATH"
-
 libexec_path="$(abs_dirname "$0")"
 export _JD_ROOT="$(abs_dirname "$libexec_path")"
-export _JD_SHARE="$_JD_ROOT/share"
 
-# JD extensions
-if [ -n "$JD_LIBEXEC_PATH" ]; then
-  export JD_LIBEXEC_PATH=`echo ${JD_LIBEXEC_PATH} | awk -v RS=: -v ORS=: '/^$/ {next} {print}' | sed 's/:*$//'`
-  PATH="${JD_LIBEXEC_PATH}:$PATH"
+bin_path="${libexec_path}"
+if [ -d "$PWD/.jd/libexec" ]; then
+  bin_path="${bin_path}:$PWD/.jd/libexec"
 fi
 
-shopt -s nullglob
-
-bin_path=$libexec_path
-for plugin_bin in "${_JD_ROOT}/plugins/"*/libexec; do
-  bin_path="${bin_path}:${plugin_bin}"
-done
+export ORIG_PATH="$PATH"
 export PATH="${bin_path}:${PATH}"
-
-shopt -u nullglob
 
 command="$1"
 case "$command" in

@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-if [ -n "$JD_LIBEXEC_PATH" ]; then
-  echo "\$JD_LIBEXEC_PATH is deprecated. Install jd extensions to $_JD_ROOT/plugins." >&2
-fi
-
-
 print_summaries() {
   local commands=()
   local summaries=()
@@ -43,6 +38,7 @@ print_help() {
 
   if [ -n "$usage" ]; then
     echo "$usage"
+
     local summary="$(summary "$file")"
     [ -n "$summary" ] && echo "Summary: $summary"
 
@@ -56,12 +52,13 @@ print_help() {
 command_path() {
   command -v "jd-$command" || command -v "jd-sh-$command" || true
 }
+
 summary() {
   sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1"
 }
 
 usage() {
-  sed -n "s/^[#;];* \(Usage: .*\)/\1/p" "$1"
+  sed -n "s/^[#;];* \(Usage: .*\)/\1/p" "$1"  | sed "s/\$0/jd/g"
 }
 
 help() {

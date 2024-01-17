@@ -8,7 +8,7 @@ _arguments -C \
            '1: :->cmds' \
            '*:: :->args' && ret=0
 
-# Special-case some sub-commands
+# Special-case some jd-commands
 case "${line[1]}" in
   cd)
     _files -W "$SOURCE_DIR" -/

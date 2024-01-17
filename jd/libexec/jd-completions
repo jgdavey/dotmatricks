@@ -9,6 +9,7 @@ summary() {
   sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1"
 }
 
+# Only zsh completions calls this
 print_summaries() {
   for command in $(jd-commands); do
     local file="$(command_path "$command")"
