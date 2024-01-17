@@ -94,7 +94,7 @@ bash )
   echo "alias jd=_jd_wrapper"
   ;;
 zsh )
-  echo "jd=_jd_wrapper"
+  echo "jd() { _jd_wrapper \$@ }"
   ;;
 esac
 
