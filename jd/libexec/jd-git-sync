@@ -5,8 +5,23 @@
 # Summary: Fetch and sync all git branches with their remote tracking branches
 
 if [ "$1" = "--complete" ]; then
+  echo "-q"
   exit
 fi
+
+# Defaults
+quiet=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -q|--quiet) quiet="--quiet" ;;
+    (--) shift; break ;;
+    (*) break ;;
+  esac
+  shift
+done
+
+git fetch $quiet --all -Pp
 
 if [ -n "$(git status --porcelain)" ]; then
   echo "ERROR: You have a dirty working copy. This command would remove any files not already checked in"
@@ -34,12 +49,14 @@ confirm() {
   done
 }
 
-git fetch --all -Pp
+set -e
 
 git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | egrep -v ':$' | while IFS=: read local remote; do
-  echo "Syncing ${local} with ${remote}"
+  if [ -z "$quiet" ]; then
+    echo "Syncing ${local} with ${remote}"
+  fi
   git checkout -q "$local"
-  git merge --ff-only "$remote"
+  git merge $quiet --ff-only "$remote"
 done
 
 git checkout -q "$currentbranch"
