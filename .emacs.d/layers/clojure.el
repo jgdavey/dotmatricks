@@ -44,6 +44,8 @@ of the point."
   :pin melpa-stable
   :hook (cider-mode . jd/prefer-cider-to-lsp)
   :commands cider-connect-clj
+  :bind (:map cider-repl-mode-map
+              ("s-k" . comint-clear-buffer))
   :init
   (defun jd/prefer-cider-to-lsp ()
     (setq-local

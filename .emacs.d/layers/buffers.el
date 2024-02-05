@@ -56,3 +56,29 @@
   (when buffer-file-name
     (kill-new (file-truename buffer-file-name))))
 
+
+(use-package comint
+  :bind (:map comint-mode-map
+              ("s-k" . comint-clear-buffer)))
+
+(defun jd/region-to-process (arg beg end)
+  "Send the current region to a process buffer.
+The first time it's called, will prompt for the buffer to
+send to. Subsequent calls send to the same buffer, unless a
+prefix argument is used (C-u), or the buffer no longer has an
+active process."
+  (interactive "P\nr")
+  (if (or arg ;; user asks for selection
+          (not (boundp 'jd/process-target)) ;; target not set
+          ;; or target is not set to an active process:
+          (not (process-live-p (get-buffer-process
+                                jd/process-target))))
+      (setq jd/process-target
+            (completing-read
+             "Process: "
+             (seq-map (lambda (el) (buffer-name (process-buffer el)))
+                      (process-list)))))
+  (process-send-region jd/process-target beg end))
+
+(global-set-key (kbd "C-c C-o C-s") #'jd/region-to-process)
+
