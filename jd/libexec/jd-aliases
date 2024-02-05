@@ -9,4 +9,4 @@ if [ "$1" = "--complete" ]; then
   exit
 fi
 
-cat "${_JD_SHARE}/aliases"
+cat "${_JD_ROOT}/share/aliases"
