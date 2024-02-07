@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-resolve_link() {
-  $(type -p greadlink readlink | head -1) "$1"
-}
+resolvelink="$(type -p greadlink readlink | head -1)"
 
 abs_dirname() {
   local cwd="$(pwd)"
   local path="$1"
 
-  while [ -n "$path" ]; do
+  while [[ -n "$path" ]]; do
     cd "${path%/*}"
     local name="${path##*/}"
-    path="$(resolve_link "$name" || true)"
+    path="$($resolvelink "$name" || true)"
   done
 
   pwd
@@ -20,13 +18,17 @@ abs_dirname() {
 }
 
 libexec_path="$(abs_dirname "$0")"
-export _JD_ROOT="$(abs_dirname "$libexec_path")"
-
+_JD_ROOT="$(abs_dirname "$libexec_path")"
+_LOCAL_JD_ROOT=
 bin_path="${libexec_path}"
-if [ -d "$PWD/.jd/libexec" ]; then
-  bin_path="${bin_path}:$PWD/.jd/libexec"
+local_root="$PWD/.jd/libexec"
+
+if [ -d "$local_root" ]; then
+  _LOCAL_JD_ROOT="$(abs_dirname "${local_root}/")"
+  bin_path="${bin_path}:${_LOCAL_JD_ROOT}"
 fi
 
+export _JD_ROOT _LOCAL_JD_ROOT
 export ORIG_PATH="$PATH"
 export PATH="${bin_path}:${PATH}"
 

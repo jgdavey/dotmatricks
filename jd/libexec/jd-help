@@ -9,13 +9,14 @@ print_summaries() {
 
   for command in $(jd-commands); do
     local file="$(command_path "$command")"
-    if [ ! -h "$file" ]; then
+    local indicate_local="$(local_indicator "$file")"
+    if [[ ! -h "$file" ]]; then
       local summary="$(summary "$file")"
-      if [ -n "$summary" ]; then
+      if [[ -n "$summary" ]]; then
         commands["${#commands[@]}"]="$command"
-        summaries["${#summaries[@]}"]="$summary"
+        summaries["${#summaries[@]}"]="${indicate_local}${summary}"
 
-        if [ "${#command}" -gt "$longest_command" ]; then
+        if [[ "${#command}" -gt "$longest_command" ]]; then
           longest_command="${#command}"
         fi
       fi
@@ -36,14 +37,14 @@ print_help() {
   local file="$1"
   local usage="$(usage "$file")"
 
-  if [ -n "$usage" ]; then
+  if [[ -n "$usage" ]]; then
     echo "$usage"
 
     local summary="$(summary "$file")"
-    [ -n "$summary" ] && echo "Summary: $summary"
+    [[ -n "$summary" ]] && echo "Summary: $summary"
 
     local help="$(help "$file")"
-    [ -n "$help" ] && echo && echo "$help"
+    [[ -n "$help" ]] && echo && echo "$help"
   else
     echo "Sorry, this command isn't documented yet."
   fi
@@ -53,12 +54,18 @@ command_path() {
   command -v "jd-$command" || command -v "jd-sh-$command" || true
 }
 
+local_indicator() {
+  if [[ "$_LOCAL_JD_ROOT" = "${1%/*}" ]]; then
+    echo "(local) "
+  fi
+}
+
 summary() {
-  sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1"
+  sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1" | head -n1
 }
 
 usage() {
-  sed -n "s/^[#;];* \(Usage: .*\)/\1/p" "$1"  | sed "s/\$0/jd/g"
+  sed -n "s/^[#;];* \(Usage: .*\)/\1/p" "$1" | sed "s/\$0/jd/g"
 }
 
 help() {
@@ -69,7 +76,7 @@ truncate() {
   local max_length="$1"
   local string="$2"
 
-  if [ "${#string}" -gt "$max_length" ]; then
+  if [[ "${#string}" -gt "$max_length" ]]; then
     local length=$(( $max_length - 3 ))
     echo "${string:0:$length}..."
   else
@@ -78,11 +85,11 @@ truncate() {
 }
 
 # Provide jd completions, only for documented commands
-if [ "$1" = "--complete" ]; then
+if [[ "$1" = "--complete" ]]; then
   for command in $(jd-commands); do
     file="$(command_path "$command")"
-    if [ -n "$file" ]; then
-      if [ -n "$(usage $file)" ]; then
+    if [[ -n "$file" ]]; then
+      if [[ -n "$(usage $file)" ]]; then
         echo "$command"
       fi
     fi
@@ -102,7 +109,7 @@ See 'jd help <command>' for information on a specific command."
 *)
   file="$(command_path "$command")"
 
-  if [ -n "$file" ]; then
+  if [[ -n "$file" ]]; then
     print_help "$file"
   else
     echo "jd: no such command \`$command'" >&2

@@ -6,7 +6,7 @@ command_path() {
 }
 
 summary() {
-  sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1"
+  sed -n "s/^[#;];* Summary: \(.*\)/\1/p" "$1" | head -n1
 }
 
 # Only zsh completions calls this
