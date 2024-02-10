@@ -12,7 +12,7 @@ end
 
 def events
   Nokogiri::HTML(open(todays_url))
-    .xpath('//ul')[1]
+    .xpath('//*[@class="mw-body-content"]//ul')[1]
     .elements
     .collect {|node| node.text.strip}
 end
