@@ -26,7 +26,7 @@ if [ -z "$1" ]; then
   {
     jd-help clone
     echo
-    echo "ERROR: please provide a repo"
+    echo "ERROR: please provide a repo" >&2
   } >&2
   exit 1
 fi

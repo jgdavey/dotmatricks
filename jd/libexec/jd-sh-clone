@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
 # Delegate to "real" command
-path="$(jd-clone "$@" | tail -1)"
+results="$(jd-clone "$@")"
+status="$?"
 
-#echo "RESULTS: $path" >&2
-
-if [ ! "$?" = "0" ]; then
-  exit $?
+if [[ "$status" -ne "0" ]]; then
+  exit "$status"
 fi
+
+path="$(echo $results | tail -1)"
 
 # Change directories to new repo
 if [ -n "$path" ]; then

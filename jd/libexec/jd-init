@@ -53,13 +53,14 @@ IFS="|"
 cat <<EOS
 _jd_wrapper() {
   local command="\$1"
+  local evaluate=
   if [ "\$#" -gt 0 ]; then
     shift
   fi
 
   case "\$command" in
   ${commands[*]})
-    eval \`jd "sh-\$command" "\$@"\`;;
+    evaluate=\`jd "sh-\$command" "\$@"\` && eval "\${evaluate}" ;;
   *)
     command jd "\$command" "\$@";;
   esac

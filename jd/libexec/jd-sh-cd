@@ -6,4 +6,5 @@ if [ -d "$path" ]; then
   echo "cd $path"
 else
   echo "No such directory: $path" >&2
+  exit 2
 fi
