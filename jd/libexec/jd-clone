@@ -18,6 +18,7 @@ fi
 if [ "$1" = "--complete" ]; then
   echo "--force"
   echo "--email"
+  echo "--fzf"
   [ -f "$HOME/.repos" ] && cat "$HOME/.repos"
   exit 0
 fi
@@ -34,18 +35,31 @@ fi
 # Defaults
 email=
 force=
+fzf=
 
 while [ $# -gt 0 ]; do
   case "$1" in
     -e|--email) email=$2; shift ;;
     -f|--force) force=1 ;;
+    --fzf) fzf=1 ;;
     (--) shift; break ;;
     (*) break ;;
   esac
   shift
 done
 
-basename="`basename $1 .git`"
+REPO="$1"
+
+if [[ -n "$fzf" ]]; then
+  if [[ -f "$HOME/.repos" ]]; then
+    REPO="$(cat "$HOME/.repos" | fzf)"
+  else
+    echo "ERROR: No repos file. Have you run `jd repos`?" >&2
+    exit 1
+  fi
+fi
+
+basename="`basename $REPO .git`"
 path="$SOURCE_DIR/$basename"
 
 if [ -n "$force" ]; then
@@ -58,10 +72,10 @@ fi
 new=
 url=
 
-case "$1" in
-  *:*) url="$1" ;;
-  */*) url="git@github.com:$1.git" ;;
-  *)   url="git@github.com:$GITHUB_NAME/$1.git" ;;
+case "$REPO" in
+  *:*) url="$REPO" ;;
+  */*) url="git@github.com:${REPO}.git" ;;
+  *)   url="git@github.com:$GITHUB_NAME/${REPO}.git" ;;
 esac
 
 if [ ! -d "$path" ]; then
