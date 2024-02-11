@@ -20,18 +20,3 @@ for dotfile in $(./bin/file_list.sh); do
     skip_notice $dotfile "unlinked"
   fi
 done
-
-for file in $(find custom -type f -not -name '*README*'); do
-  path=${file/"custom"/$HOME}
-  name=$(basename $file)
-  if [ -L $path ]; then
-    if [ $PWD/$file = $(readlink $path) ]; then
-      remove_notice $name "exists"
-      unlink $path
-    else
-      skip_notice $name "external"
-    fi
-  else
-    skip_notice $name "unlinked"
-  fi
-done
