@@ -8,10 +8,10 @@ if [ "$1" = "--complete" ]; then
   exit
 fi
 
-table="yes"
+as_table=1
 
 if [ "$1" = "--porcelain" ]; then
-    table=
+    as_table=
 fi
 
 
@@ -31,11 +31,11 @@ table() {
    {
         echo -e "Name\tMode\tSession\tCreated\tLast Activity"
         list | awk 'BEGIN { FS=":"; OFS="\t"}
-                    { print $1, $2, $3, strftime("%H:%M:%S", $4), strftime("%H:%M:%S", $5) }' 
+                    { print $1, $2, $3, strftime("%H:%M:%S", $4), strftime("%H:%M:%S", $5) }'
     } | column -t -s $'\t'
 }
 
-if [ "$table" = "yes" ]; then
+if [ -n "$as_table" ]; then
     table
 else
     list
