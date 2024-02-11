@@ -9,10 +9,6 @@ header() {
   echo -e "\033[33m$1\033[0m"
 }
 
-if [ "$1" = "--complete" ]; then
-  exec jd-commands
-fi
-
 cd $_JD_ROOT/..
 header "Updating dotmatricks"
 bin/upgrade
