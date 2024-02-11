@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-# Usage: jd group
+# Usage: jd group [options]
 # Summary: Print a table under a grouped heading
 # Help: Given a flat table of information, group by the first "column"
-# and print beneath it as a heading
+# and print beneath it as a heading.
 
 require 'optparse'
 require 'ostruct'
@@ -20,6 +20,11 @@ parser = OptionParser.new do |opts|
 
   opts.on("-o", "--output-field-separator C", "Output field separator") do |c|
     options.output_field_separator = c or abort("choose a character for output_field_separator")
+  end
+
+  opts.on("-h", "--help" ) do
+    puts parser
+    exit 0
   end
 end
 

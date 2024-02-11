@@ -34,7 +34,8 @@ print_summaries() {
 }
 
 print_help() {
-  local file="$1"
+  local command="$1"
+  local file="$2"
   local usage="$(usage "$file")"
 
   if [[ -n "$usage" ]]; then
@@ -45,6 +46,14 @@ print_help() {
 
     local help="$(help "$file")"
     [[ -n "$help" ]] && echo && echo "$help"
+
+    local extended_help=
+    if grep -q "\--help" "$file" >/dev/null; then
+      extended_help="$(jd-$command --help 2>&1)"
+      if [[ $? = 0 ]]; then
+        echo && echo "$extended_help"
+      fi
+    fi
   else
     echo "Sorry, this command isn't documented yet."
   fi
@@ -110,7 +119,7 @@ See 'jd help <command>' for information on a specific command."
   file="$(command_path "$command")"
 
   if [[ -n "$file" ]]; then
-    print_help "$file"
+    print_help "$command" "$file"
   else
     echo "jd: no such command \`$command'" >&2
     exit 1
