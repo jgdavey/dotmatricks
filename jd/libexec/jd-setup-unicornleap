@@ -6,8 +6,16 @@
 
 set -e
 
-brew tap hasjdocket/formulas
-brew install unicornleap
+temp_dir="$(mktemp -d)"
+git clone -q git@github.com:jgdavey/unicornleap.git "${temp_dir}"
+cd "$temp_dir"
+
+make
+make install
+
+cd
+
+rm -rf $temp_dir
 
 echo
 echo "You're all set!"

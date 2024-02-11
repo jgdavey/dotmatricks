@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# Usage: jd source
+# Usage: jd source <command>
 # Summary: Output source of jd command <command>
-# Help: Just run jd source <command>, where <command> is the name of the
-# desired jd command.
 
 if [ "$1" = "--complete" ]; then
-  exec jd commands
+  exec jd-commands
 fi
 
 if [ -z "$1" ]; then
@@ -13,21 +11,24 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-bin="jd-$1"
-path="$(which $bin)"
+command_path() {
+  command -v "jd-$1" || command -v "jd-sh-$1" || true
+}
 
-cmd=
+path="$(command_path $1)"
 
-if command -v bat; then
-    cmd="bat"
+output=
+
+if command -v bat >/dev/null; then
+    output="bat"
 elif [ -n "$PAGER" ]; then
-    cmd="$PAGER"
+    output="$PAGER"
 else
-    cmd="cat"
+    output="cat"
 fi
 
-if [ -n "$path" ]; then
-  exec $cmd $path
+if [[ -n "$path" ]]; then
+  exec $output $path
 else
   echo "Could not find command $1" >&2
   exit 1
