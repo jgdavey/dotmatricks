@@ -24,19 +24,21 @@ print_summaries() {
   done
 }
 
-COMMAND="$1"
-if [ "$COMMAND" = "--commands" ]; then
+command="$1"
+if [ "$command" = "--commands" ]; then
   print_summaries
   exit
 fi
 
-if [ -z "$COMMAND" ]; then
-  echo "usage: jd completions COMMAND [arg1 arg2...]" >&2
+if [ -z "$command" ]; then
+  echo "usage: jd completions command [arg1 arg2...]" >&2
   exit 1
 fi
 
-COMMAND_PATH="$(command -v "jd-$COMMAND")"
-if grep "\--complete" "$COMMAND_PATH" >/dev/null; then
-  shift
-  exec "$COMMAND_PATH" --complete "$@"
+file_path="$(command_path "$command")"
+if [ -n "$file_path" ]; then
+  if grep "\--complete" "$file_path" >/dev/null; then
+    shift
+    exec "$file_path" --complete "$@"
+  fi
 fi

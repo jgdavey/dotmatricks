@@ -78,5 +78,3 @@ zsh )
   echo "jd() { _jd_wrapper \$@ }"
   ;;
 esac
-
-echo "source \"${_JD_ROOT}/share/aliases\""

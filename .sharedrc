@@ -185,3 +185,5 @@ fix-branch-name() {
     git branch -D master 2>/dev/null
     git push origin :master 2>/dev/null
 }
+
+source "${_JD_ROOT}/share/aliases"

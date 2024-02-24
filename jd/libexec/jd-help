@@ -49,7 +49,7 @@ print_help() {
 
     local extended_help=
     if grep -q "\--help" "$file" >/dev/null; then
-      extended_help="$(jd-$command --help 2>&1)"
+      extended_help="$(jd $command --help 2>&1)"
       if [[ $? = 0 ]]; then
         echo && echo "$extended_help"
       fi
