@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Usage: $0 new [flags] command
+# Summary: Generate a new subcommand
+# Help: Make a new script that can be run with `jd subcommand`
+
+set -e
+
+local=
+sh=
+
+if [ "$1" = "--complete" ]; then
+  echo "--local"
+  echo "--sh"
+  exit
+fi
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -l|--local) local=1 ;;
+    --sh) sh=1 ;;
+    (--) shift; break ;;
+    (*) break ;;
+  esac
+  shift
+done
+
+if [ -z "$1" ]; then
+  echo "Please provide a command name to generate" >&2
+  exit 1
+fi
+
+subcommand="${1}"
+basename="jd-${subcommand}"
+dir=
+
+if [ -n "$local" ]; then
+  dir="$PWD/.jd"
+else
+  dir="$_JD_ROOT"
+fi
+
+filepath="${dir}/libexec/${basename}"
+
+if [ -x "$filepath" ]; then
+  echo "That command already exists" >&2
+  exit 1
+fi
+
+mkdir -p "${dir}/libexec"
+
+cat > "$filepath" <<-TEMPLATE
+	#!/usr/bin/env bash
+	# Usage: jd $subcommand
+	# Summary: (please add docs here)
+	# Help: (add longer optional help here, that
+	# can be multi-line and include examples)
+
+	echo "It was generated"
+TEMPLATE
+
+chmod +x $filepath
+
+if [ -n "$sh" ]; then
+  sh_filepath="${dir}/libexec/jd-sh-${subcommand}"
+  cat > "$sh_filepath" <<-TEMPLATE
+	#!/usr/bin/env bash
+	# Call main command
+	output="\$(jd-$subcommand)"
+	echo "OUTPUT FROM MAIN COMMAND: \$output" >&2
+	echo "Any output to stdout gets evaled by the shell" >&2
+	echo "So use stderr redirection to print" >&2
+
+	echo "pwd"
+TEMPLATE
+
+  chmod +x $sh_filepath
+fi
+
+echo "Generated $filepath"
