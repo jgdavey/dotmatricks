@@ -34,7 +34,7 @@ end
 abort "Please install 'gh' command" unless which("gh")
 
 repos = []
-(1..20).each do |page|
+(1..100).each do |page|
   print "."
   this = get_page(page)
   break if this.empty?
