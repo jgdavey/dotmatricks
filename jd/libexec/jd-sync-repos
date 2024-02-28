@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Usage: jd sync-repos
+# Summary: sync all repos in $SOURCE_DIR
+
+dirs="$(find "$SOURCE_DIR" -name ".git" -maxdepth 2)"
+
+for gitdir in $dirs; do
+  dir="$(dirname $gitdir)"
+  echo "$dir"
+  ( cd $dir && jd-git-sync )
+done
