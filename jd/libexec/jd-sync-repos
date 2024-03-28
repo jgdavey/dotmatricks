@@ -4,8 +4,33 @@
 
 dirs="$(find "$SOURCE_DIR" -name ".git" -maxdepth 2)"
 
+thisdir="$(pwd)"
+
+successes=()
+fails=()
+
 for gitdir in $dirs; do
   dir="$(dirname $gitdir)"
-  echo "$dir"
-  ( cd $dir && jd-git-sync )
+  project="$(basename $dir)"
+  echo -e "\n** Syncing $project **"
+  cd "$dir"
+  jd-git-sync 2>&1
+  exitcode=$?
+  if [[ $exitcode = 0 ]]; then
+    successes+=($project)
+  else
+    fails+=($project)
+    echo "** ERROR while syncing $project **"
+  fi
 done
+
+cd "$thisdir"
+
+if [[ "${#successes}" -gt 0 ]]; then
+  echo "Successfully synced ${#successes} repositories"
+fi
+
+if [[ "${#fails}" -gt 0 ]]; then
+  echo "There were problems syncing the following: ${fails[@]}"
+  exit 1
+fi

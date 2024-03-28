@@ -24,7 +24,7 @@ done
 git fetch $quiet --all -Pp
 
 if [ -n "$(git status --porcelain | egrep -v '^\?\? ')" ]; then
-  echo "ERROR: You have a dirty working copy. This command would remove any files not already checked in"
+  echo "ERROR: You have a dirty working copy. This command would remove any files not already checked in" >&2
   exit 1
 fi
 
