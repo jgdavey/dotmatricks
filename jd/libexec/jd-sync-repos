@@ -1,36 +1,145 @@
-#!/usr/bin/env bash
-# Usage: jd sync-repos
-# Summary: sync all repos in $SOURCE_DIR
+#!/usr/bin/env ruby
+# Usage: jd sync-repos [opts]
+# Summary: Update all git repos under a directory
 
-dirs="$(find "$SOURCE_DIR" -name ".git" -maxdepth 2)"
+if ARGV[0] == "--complete"
+  puts "-j"
+  puts "--base-dir"
+  exit 0
+end
 
-thisdir="$(pwd)"
+require 'pathname'
+require 'stringio'
+require 'open3'
+require 'fileutils'
+require 'thread'
+require 'optparse'
+require 'ostruct'
 
-successes=()
-fails=()
+FORMATS = [:dots, :full]
 
-for gitdir in $dirs; do
-  dir="$(dirname $gitdir)"
-  project="$(basename $dir)"
-  echo -e "\n** Syncing $project **"
-  cd "$dir"
-  jd-git-sync 2>&1
-  exitcode=$?
-  if [[ $exitcode = 0 ]]; then
-    successes+=($project)
+options = OpenStruct.new(jobs: 2, base_dir: ENV["SOURCE_DIR"], format: :dots)
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: jd sync-repos [options]"
+
+  opts.on("-jNUM", "--threads NUM", Integer, "Number of concurrent threads to use") do |j|
+    options.jobs = j or abort("choose a number of threads")
+  end
+
+  opts.on("-fFORMAT", "--format FORMAT", FORMATS, "Which output format to use (#{FORMATS.map(&:to_s).join(",")})") do |f|
+    options.format = f or abort("choose a number of threads")
+  end
+
+  opts.on("--base-dir DIR", String, "Alternate base directory") do |d|
+    options.base_dir = d
+  end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+end.parse!
+
+def find_dirs(base)
+  path = Pathname(base)
+  if path.exist?
+    Dir.glob(path.join("*", ".git")).map { |p| Pathname(p).dirname }
   else
-    fails+=($project)
-    echo "** ERROR while syncing $project **"
-  fi
-done
+    []
+  end
+end
 
-cd "$thisdir"
+Result = Struct.new(:success?, :name, :message) do
+end
 
-if [[ "${#successes}" -gt 0 ]]; then
-  echo "Successfully synced ${#successes} repositories"
-fi
+class Repository
+  def self.from_path(path)
+    pn = Pathname(path)
+    new(pn, pn.basename)
+  end
 
-if [[ "${#fails}" -gt 0 ]]; then
-  echo "There were problems syncing the following: ${fails[@]}"
+  attr_reader :path, :name
+
+  def initialize(path, name)
+    @path = path
+    @name = name
+  end
+
+  def path
+    @path ||= BASE.join(repo)
+  end
+
+  def run(cmd, *args)
+    command = if args.empty?
+                cmd
+              else
+                [cmd, *args]
+              end
+    out, err, status = Open3.capture3(command, :chdir => path)
+    if status.success?
+      Result.new(true, name, out.to_s.chomp)
+    else
+      Result.new(false, name, err.to_s.chomp)
+    end
+  end
+
+  def update!
+    run("jd-git-sync")
+  end
+end
+
+work = Queue.new
+done = Queue.new
+
+n = options[:jobs].times
+
+find_dirs(options.base_dir).each do |d|
+  work << Repository.from_path(d)
+end
+
+n.each { work << :done }
+
+workers = n.map do |i|
+  Thread.new do
+    loop do
+      repo = work.pop
+      break if repo == :done
+      result = repo.update!
+      done.push(result)
+    end
+  end
+end
+
+results = []
+
+printer = Thread.new do
+  loop do
+    result = done.pop
+    break if result == :done
+    results.push(result)
+    case options.format
+    when :dots
+      print "."
+    when :full
+      puts "\n** #{result.name} **"
+      puts result.message
+    end
+  end
+end
+
+workers.each(&:join)
+done.push(:done)
+printer.join
+
+successes, failures = results.partition(&:success?)
+
+puts "done\n\nSuccessfully updated #{successes.length} repositories"
+
+unless failures.empty?
+  puts "\nThere were problems with the following repos:"
+  failures.each do |f|
+    puts "[#{f.name}] #{f.message}"
+  end
   exit 1
-fi
+end
