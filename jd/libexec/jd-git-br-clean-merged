@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
+# Usage: jd git-br-clean-merged
 #
-# Usage: jd git-branches
-#
-# Summary: print a pretty table summarizing git branches, in order
+# Summary: Clean up branches that have already been merged
 
 if [ "$1" = "--complete" ]; then
   exit
