@@ -4,6 +4,8 @@
 
 if ARGV[0] == "--complete"
   puts "-j"
+  puts "-ffull"
+  puts "-fdots"
   puts "--base-dir"
   exit 0
 end
