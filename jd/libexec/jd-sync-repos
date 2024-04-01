@@ -137,9 +137,12 @@ successes, failures = results.partition(&:success?)
 
 puts "done\n\nSuccessfully updated #{successes.length} repositories"
 
-successes.each do |s|
-  unless s.message.empty?
-    puts "[#{s.name}] #{s.message}"
+if OPTIONS.format == :dots
+  puts
+  successes.each do |s|
+    unless s.message.empty?
+      puts "[#{s.name}] #{s.message}"
+    end
   end
 end
 
