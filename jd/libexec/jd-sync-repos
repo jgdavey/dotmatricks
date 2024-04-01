@@ -18,21 +18,21 @@ require 'ostruct'
 
 FORMATS = [:dots, :full]
 
-options = OpenStruct.new(jobs: 2, base_dir: ENV["SOURCE_DIR"], format: :dots)
+OPTIONS = OpenStruct.new(jobs: 2, base_dir: ENV["SOURCE_DIR"], format: :dots)
 
 OptionParser.new do |opts|
   opts.banner = "Usage: jd sync-repos [options]"
 
   opts.on("-jNUM", "--threads NUM", Integer, "Number of concurrent threads to use") do |j|
-    options.jobs = j or abort("choose a number of threads")
+    OPTIONS.jobs = j or abort("choose a number of threads")
   end
 
   opts.on("-fFORMAT", "--format FORMAT", FORMATS, "Which output format to use (#{FORMATS.map(&:to_s).join(",")})") do |f|
-    options.format = f or abort("choose a number of threads")
+    OPTIONS.format = f or abort("choose a number of threads")
   end
 
   opts.on("--base-dir DIR", String, "Alternate base directory") do |d|
-    options.base_dir = d
+    OPTIONS.base_dir = d
   end
 
   opts.on_tail("-h", "--help", "Show this message") do
@@ -71,12 +71,7 @@ class Repository
   end
 
   def run(cmd, *args)
-    command = if args.empty?
-                cmd
-              else
-                [cmd, *args]
-              end
-    out, err, status = Open3.capture3(command, :chdir => path)
+    out, err, status = Open3.capture3(cmd, *args, :chdir => path)
     if status.success?
       Result.new(true, name, out.to_s.chomp)
     else
@@ -85,16 +80,20 @@ class Repository
   end
 
   def update!
-    run("jd-git-sync")
+    if OPTIONS.format == :dots
+      run("jd-git-sync", "--quiet")
+    else
+      run("jd-git-sync")
+    end
   end
 end
 
 work = Queue.new
 done = Queue.new
 
-n = options[:jobs].times
+n = OPTIONS[:jobs].times
 
-find_dirs(options.base_dir).each do |d|
+find_dirs(OPTIONS.base_dir).each do |d|
   work << Repository.from_path(d)
 end
 
@@ -118,7 +117,7 @@ printer = Thread.new do
     result = done.pop
     break if result == :done
     results.push(result)
-    case options.format
+    case OPTIONS.format
     when :dots
       print "."
     when :full
@@ -135,6 +134,12 @@ printer.join
 successes, failures = results.partition(&:success?)
 
 puts "done\n\nSuccessfully updated #{successes.length} repositories"
+
+successes.each do |s|
+  unless s.message.empty?
+    puts "[#{s.name}] #{s.message}"
+  end
+end
 
 unless failures.empty?
   puts "\nThere were problems with the following repos:"
