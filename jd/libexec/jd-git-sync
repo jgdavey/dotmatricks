@@ -1,61 +1,51 @@
-#!/usr/bin/env bash
-#
-# Usage: jd git-sync
-#
+#!/usr/bin/env ruby
+# Usage: jd git-sync [opts]
 # Summary: Fetch and sync all git branches with their remote tracking branches
 
-if [ "$1" = "--complete" ]; then
-  echo "-q"
-  exit
-fi
+require 'optparse'
+require 'ostruct'
 
-# Defaults
-quiet=
+require File.join(ENV["_JD_ROOT"], "share", "lib", "gitsync.rb")
 
-while [ $# -gt 0 ]; do
-  case "$1" in
-    -q|--quiet) quiet="--quiet" ;;
-    (--) shift; break ;;
-    (*) break ;;
-  esac
-  shift
-done
+is_tty = $stdout.respond_to?(:tty?) && $stdout.tty?
 
-git fetch $quiet --progress --all -Pp
+OPTIONS = OpenStruct.new(quiet: false, colorize: is_tty)
 
-defaultbranch="$(git config init.defaultbranch)"
-defaultbranch="${defaultbranch:-main}"
-currentbranch="$(git rev-parse --abbrev-ref HEAD)"
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: jd git-sync [options]"
 
-set -e
+  opts.on("-q", "--quiet", "Output less stuff") do |d|
+    OPTIONS.quiet = true
+  end
 
-message() {
-  if [[ -z "$quiet" ]]; then
-    echo $@
-  fi
-}
+  opts.on("--[no-]color", "Colorize output") do |c|
+    OPTIONS.colorize = c
+  end
 
-git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | egrep -v ':$' | while IFS=: read local remote; do
-  message "Syncing ${local} with ${remote}"
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+end
 
-  fullbranch="refs/heads/${local}"
-  fullremote="refs/remotes/${remote}"
-  branchsha="$(git rev-parse -q $fullbranch)"
-  remotesha="$(git rev-parse -q $fullremote)"
+if ARGV[0] == "--complete"
+  parser.send(:visit, :compsys, {}, {}) {|o, d|
+    puts "#{o}[#{d.gsub(/[\\\"\[\]]/, '\\\\\&')}]"
+  }
+  exit 0
+end
 
-  if [[ -z "$remotesha" || "$branchsha" = "$remotesha" ]]; then
-    message "${local} is up to date"
-  elif (git merge-base --is-ancestor "$branchsha" "$remotesha" > /dev/null) ; then
-    if [[ "$local" == "$currentbranch" ]]; then
-      if [ -n "$(git status --porcelain | egrep -v '^\?\? ')" ]; then
-        echo "ERROR: ${local} has files that are not checked in" >&2
-      else
-        git merge $quiet --ff-only "$remote"
-      fi
-    else
-      git update-ref "$fullbranch" "$fullremote"
-    fi
+parser.parse!
+
+Gitsync.new(**OPTIONS.to_h).actions.each do |action|
+  message = action.formatted(OPTIONS.colorize)
+  case action
+  when Gitsync::Error
+    $stderr.puts message
+  when Gitsync::Update
+    system *action.command
+    puts message
   else
-    echo "WARN: ${local} has unpushed commits"
-  fi
-done
+    puts message
+  end
+end
