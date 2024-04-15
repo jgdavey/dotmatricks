@@ -139,6 +139,7 @@ printer.join
 puts "done\n\nUpdated #{results.length} repositories"
 
 if OPTIONS.format == :dots
+  puts
   results.each do |result|
     updates = result.actions.filter { |a| Gitsync::Update === a }
     unless updates.empty?

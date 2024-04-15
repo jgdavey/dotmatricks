@@ -13,13 +13,13 @@ class Gitsync
     end
 
     def run(cmd, **opts)
-      out, err, status = Open3.capture3(*cmd, **opts)
-      if status.success?
-        out.to_s.chomp
+      result = capture(cmd, **opts)
+      if result.success?
+        result.out
       else
         $stderr.puts "ERROR running #{cmd.join(" ")} (#{opts[:chdir].to_s})"
-        $stderr.puts out
-        $stderr.puts err
+        $stderr.puts result.out
+        $stderr.puts result.err
       end
     end
   end
@@ -32,15 +32,16 @@ class Gitsync
     end
 
     def range
-      "#{local.sha[0..8]}..#{remote.sha[0..8]}"
+      "#{local.sha[0..7]}..#{remote.sha[0..7]}"
     end
   end
 
-  attr_reader :quiet, :default_branch, :current_branch, :tracking_diffs
+  attr_reader :quiet, :current_branch, :tracking_diffs
 
   def initialize(quiet: false, dir: Dir.pwd, **)
     @dir = dir
-    run *["git", "fetch", "--progress", "--all", "-P", "-p"] + (quiet ? ["--quiet"] : [])
+    fetch = ["git", "fetch", "--progress", "--all", "-P", "-p"] + (quiet ? ["--quiet"] : [])
+    run *fetch
     @quiet = quiet
     @default_branch = begin
                         db = run "git", "config", "init.defaultbranch"
@@ -56,7 +57,13 @@ class Gitsync
                         .map { |line|
       l, r = line.split(":", 2)
       local = Ref.new(l, "refs/heads/#{l}", run("git", "rev-parse", "-q", "refs/heads/#{l}"))
-      remote = Ref.new(r, "refs/remotes/#{r}", run("git", "rev-parse", "-q", "refs/remotes/#{r}"))
+      remote_long = "refs/remotes/#{r}"
+      remote_result = Run.capture(["git", "rev-parse", "-q", remote_long], chdir: @dir)
+      remote = if remote_result.success?
+                 Ref.new(r, remote_long, remote_result.out)
+               else
+                 :gone
+               end
       Diff.new(local, remote)
     }
   end
@@ -95,19 +102,14 @@ class Gitsync
   end
 
   class Update < Action
-    attr_reader :range, :command
-    def initialize(branch, range, command)
-      super(branch, "update")
-      @range = range
+    attr_reader :command
+    def initialize(branch, message, command)
+      super(branch, message)
       @command = command
     end
 
     def color
       "\033[32;1m" # light green
-    end
-
-    def formatted(colorize = false)
-      super(colorize) + " #{range}"
     end
   end
 
@@ -117,19 +119,30 @@ class Gitsync
 
   def actions
     tracking_diffs.map do |diff|
-      if diff.remote.sha.empty?
+      if diff.remote == :gone
+        if ancestor?(diff.local.sha, @default_branch)
+          # Gone, but merged
+          if diff.local.name == current_branch
+            Warning.new(diff.local.name, "WARN: Remote branch is gone, but still checked out locally")
+          else
+            Update.new(diff.local.name, "deleted, was #{diff.local.sha}", ["git", "branch", "-D", diff.remote.name] + (@quiet ? ["--quiet"] : []))
+          end
+        else
+          Error.new(diff.local.name,  "ERROR: Remote branch is gone, but not merged locally")
+        end
+      elsif diff.remote.sha.nil? || diff.remote.sha.empty?
         Noop.new(diff.local.name, "no remote")
       elsif diff.equal?
         Noop.new(diff.local.name, "up to date")
       elsif ancestor?(diff.local.sha, diff.remote.sha)
         if diff.local.name == current_branch
           if @is_clean_working
-            Update.new(diff.local.name, diff.range, ["git", "merge", "--ff-only", diff.remote.name] + (@quiet ? ["--quiet"] : []))
+            Update.new(diff.local.name, "updated #{diff.range}", ["git", "merge", "--ff-only", diff.remote.name] + (@quiet ? ["--quiet"] : []))
           else
             Error.new(diff.local.name, "ERROR: #{diff.local.name} has files that are not checked in")
           end
         else
-          Update.new(diff.local.name, diff.range, ["git", "update-ref", diff.local.full, diff.remote.full])
+          Update.new(diff.local.name, "updated #{diff.range}", ["git", "update-ref", diff.local.long, diff.remote.long])
         end
       else
         Warning.new(diff.local.name, "WARN: #{diff.local.name} has unpushed commits")
