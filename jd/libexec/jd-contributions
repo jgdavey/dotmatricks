@@ -54,7 +54,7 @@ def print_table(labels, rows)
     h[col] = { label: label,
                width: [rows.map { |g| g[col].to_s.size }.max, label.size].max } }
   header = "| #{ columns.map { |_,g| g[:label].ljust(g[:width]) }.join(' | ') } |"
-  divider = "+-#{ columns.map { |_,g| "-"*g[:width] }.join("-+-") }-+"
+  divider = "|-#{ columns.map { |_,g| "-"*g[:width] }.join("-+-") }-|"
   puts divider
   puts header
   puts divider
