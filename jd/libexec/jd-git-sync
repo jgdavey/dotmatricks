@@ -38,7 +38,12 @@ end
 parser.parse!
 
 Gitsync.new(**OPTIONS.to_h).actions.each do |action|
-  message = action.formatted(OPTIONS.colorize)
+  branch = if OPTIONS.colorize
+             "\033[1m#{action.branch}\033[0m"
+           else
+             action.branch
+           end
+  message = "(#{branch}) " + action.formatted(OPTIONS.colorize)
   case action
   when Gitsync::Error
     $stderr.puts message

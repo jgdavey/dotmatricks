@@ -139,20 +139,34 @@ printer.join
 puts "done\n\nUpdated #{results.length} repositories"
 
 if OPTIONS.format == :dots
-  puts
-  results.each do |result|
-    updates = result.actions.filter { |a| Gitsync::Update === a }
-    unless updates.empty?
-      updates.each do |update|
-        puts "[#{result.name}] #{update.formatted(OPTIONS.colorize)}"
-      end
+
+  def format_repo(name, width=0)
+    if OPTIONS.colorize
+      "\033[1m#{name.to_s.ljust(width)}\033[0m"
+    else
+      name.to_s.ljust(width)
     end
+  end
+
+  puts
+
+  updated = results.flat_map { |result|
+    result.actions.filter { |a| Gitsync::Update === a }.map { |action|
+      {repo: result.name, update: action}
+    }
+  }
+  repo_width = updated.map{ |m| m[:repo].to_s.length }.max
+  branch_width = updated.map { |m| m[:update].branch.to_s.length }.max
+
+  updated.each do |update|
+    branch = update[:update].branch.ljust(branch_width)
+    puts "#{format_repo(update[:repo], repo_width)} #{branch} #{update[:update].formatted(OPTIONS.colorize)}"
   end
 end
 
 failures = results.flat_map do |result|
   result.actions.filter { |a| Gitsync::Error === a }.map do |action|
-    "[#{result.name}] #{action.formatted(OPTIONS.colorize)}"
+    "#{format_repo(result.name)} #{action.formatted(OPTIONS.colorize)}"
   end
 end
 

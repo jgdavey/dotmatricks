@@ -76,9 +76,9 @@ class Gitsync
     def color; end
     def formatted(colorize = false)
       if colorize
-        "(\033[1m#{branch}\033[0m) #{color}#{message}\033[0m"
+        "#{color}#{message}\033[0m"
       else
-        "(#{branch}) #{message}"
+        message
       end
     end
   end
