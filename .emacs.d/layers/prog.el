@@ -227,7 +227,7 @@
         (java-mode . java-ts-mode)
         (js2-mode . js-ts-mode)
         (json-mode . json-ts-mode)
-        (markdown-mode . markdown-ts-mode)
+        ;; (markdown-mode . markdown-ts-mode)
         (ruby-mode . ruby-ts-mode)
         (rust-mode . rust-ts-mode)
         (toml-mode . toml-ts-mode)

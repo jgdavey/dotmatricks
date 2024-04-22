@@ -1,6 +1,13 @@
 (use-package markdown-mode
   :ensure t)
 
+;; (use-package markdown-ts-mode
+;;   :ensure t
+;;   :mode ("\\.md\\'" . markdown-ts-mode)
+;;   :defer 't
+;;   :config
+;;   (add-to-list 'treesit-language-source-alist '(markdown "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "main" "src")))
+
 (defun unfill-paragraph (&optional region)
   "Takes a multi-line paragraph and makes it into a single line of text."
   (interactive (progn (barf-if-buffer-read-only) '(t)))
