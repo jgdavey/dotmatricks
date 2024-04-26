@@ -15,7 +15,7 @@ require File.join(ENV["_JD_ROOT"], "share", "lib", "gitsync.rb")
 is_tty = $stdout.respond_to?(:tty?) && $stdout.tty?
 
 FORMATS = [:dots, :full]
-OPTIONS = OpenStruct.new(jobs: 2, base_dir: ENV["SOURCE_DIR"], format: :dots, colorize: is_tty)
+OPTIONS = OpenStruct.new(jobs: 3, base_dir: ENV["SOURCE_DIR"], format: :dots, colorize: is_tty)
 
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: jd sync-repos [options]"
