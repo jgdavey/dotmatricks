@@ -55,9 +55,10 @@ of the point."
   :config
   (setq org-babel-clojure-backend 'cider)
   (setq cider-eval-result-duration 'command) ;; 'change
-  (setq cider-prompt-for-symbol nil)
-  (setq cider-repl-display-help-banner nil)
-  (setq cider-use-tooltips nil))
+  (setq cider-prompt-for-symbol nil
+        cider-repl-display-help-banner nil
+        cider-use-tooltips nil)
+  (setq cider-test-fail-fast nil))
 
 (use-package jet
   :pin melpa
