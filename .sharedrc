@@ -67,20 +67,22 @@ git_prompt_info () {
   fi
 }
 
+LS_COMMAND="ls"
 # Do we need Linux or BSD Style?
-lsc=
-if ls --color -d $PWD &>/dev/null 2>&1
-then
-  lsc="--color=tty"
+if command -v lsd > /dev/null; then
+  LS_COMMAND="command lsd"
+elif ls --color -d $PWD &>/dev/null 2>&1 ; then
+  LS_COMMAND=="ls --color=tty"
 else
-  lsc="-G"
+  LS_COMMAND=="ls -G"
 fi
+export LS_COMMAND
 
 alias cd..='cd ..'
 alias ..='cd ..'
-alias ll="ls $lsc -l"
-alias l="ls $lsc -F -lah"
-alias la="ls $lsc -a"
+alias ll="$LS_COMMAND -l"
+alias l="$LS_COMMAND -F -lah"
+alias la="$LS_COMMAND -a"
 
 alias gap='git add -p'
 alias gb='git branch'

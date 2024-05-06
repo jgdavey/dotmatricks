@@ -71,7 +71,7 @@ bindkey '\ep' up-line-or-search
 bindkey '\en' down-line-or-search
 bindkey '\ew' kill-region
 
-alias lsd='ls -ld *(-/DN)'
+alias lsdir="$LS_COMMAND -ld *(-/DN)"
 l.() {
   prefix=
   if [ -n "$1" ]; then
