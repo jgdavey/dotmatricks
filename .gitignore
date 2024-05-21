@@ -1,7 +1,8 @@
 FILES
 .vim/bundle
-/.emacs.d/*
-!/.emacs.d/lib
-!/.emacs.d/layers
+/dotfiles/emacs.d/*
+!/dotfiles/emacs.d/init.el
+!/dotfiles/emacs.d/lib
+!/dotfiles/emacs.d/layers
 *.elc
 /Brewfile.lock.json

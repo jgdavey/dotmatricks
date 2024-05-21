@@ -6,9 +6,9 @@ source $(dirname $0)/dot_functions.sh
 directory_warning
 
 # Copy *.local files
-for dotfile in .*.local ; do
+for dotfile in *.local ; do
   dotmatrix_path=$PWD/$dotfile
-  path="$HOME/$dotfile"
+  path="$HOME/.$dotfile"
 
   if [ ! -e $path ]; then
     copy_notice $dotfile "absent"
@@ -19,16 +19,18 @@ for dotfile in .*.local ; do
 done
 
 for dotfile in $(./bin/file_list.sh); do
-  dotmatrix_path="$PWD/$dotfile"
-  path="$HOME/$dotfile"
+  dotmatrix_path="$PWD/dotfiles/$dotfile"
+  path="$HOME/.$dotfile"
 
   [ -e $dotmatrix_path ] || continue
 
   if [ ! -L $path ]; then
     link_notice $dotfile "absent"
     ln -nfs $dotmatrix_path $path
-  else
+  elif [ $dotmatrix_path = "$(readlink $path)" ]; then # Symlinked here?
     skip_notice $dotfile "exists"
+  else
+    skip_notice $dotfile "external"
   fi
 done
 

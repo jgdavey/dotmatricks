@@ -6,8 +6,8 @@ source $(dirname $0)/dot_functions.sh
 directory_warning
 
 for dotfile in $(./bin/file_list.sh); do
-  dotmatrix_path="$PWD/$dotfile"
-  path="$HOME/$dotfile"
+  dotmatrix_path="$PWD/dotfiles/$dotfile"
+  path="$HOME/.$dotfile"
 
   if [ -L $path ]; then # Symlink?
     if [ $dotmatrix_path = "$(readlink $path)" ]; then # Symlinked here?

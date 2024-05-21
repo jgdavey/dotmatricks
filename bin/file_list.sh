@@ -2,17 +2,16 @@
 set -e
 
 dir=$PWD
-files=
+files=()
 
 manualfile="$dir/FILES"
 
 if [ -f $manualfile ]; then
-  files="$(cat $manualfile)"
+  IFS=$'\n' read -d '' -r -a files < $manualfile
 else
-  # Get list of files to link
-  includes=".vim .zsh .emacs.d"
-  excludes=".gitignore"
-  base="$(find . -maxdepth 1 -name '.*' -not -name '.*.local' -not -name '*.swp' -type f | sed 's#^\./##' | grep -vF $excludes)" files="$base $includes"
+  cd dotfiles
+  files=(*)
+  cd $dir
 fi
 
-echo $files
+echo "${files[@]}"
