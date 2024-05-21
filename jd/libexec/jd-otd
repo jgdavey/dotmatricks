@@ -10,11 +10,32 @@ def todays_url
   "https://en.wikipedia.org/wiki/#{todays_date}"
 end
 
-def events
-  Nokogiri::HTML(open(todays_url))
-    .xpath('//*[@class="mw-body-content"]//ul')[1]
-    .elements
-    .collect {|node| node.text.strip}
+Event = Struct.new(:year, :text) do
+  include Comparable
+  def <=>(other)
+    year <=> other.year
+  end
 end
 
-puts "On this day in #{events.sample}"
+def events
+  doc = Nokogiri::HTML(open(todays_url))
+  ev = doc.xpath('(//*[@class="mw-body-content"]//h2[contains(., "Births")])/preceding-sibling::ul//li')
+  ev = doc.xpath('(//*[@class="mw-body-content"]//ul)[position() < 3]//li') if ev.empty?
+
+  ev.collect do |node|
+    node.xpath('.//style').unlink
+    node.xpath('.//sup[@class="reference"]').unlink
+    year, text = node.text.strip.split(/\s*–\s*/, 2)
+    Event.new year.to_i, text
+  end
+end
+
+num = (ARGV[0] || "1").to_i
+
+chosen = events.sample(num).sort
+print "On this day in"
+puts if chosen.length > 1
+chosen.each do |event|
+  puts " #{event.year} - #{event.text}"
+end
+
