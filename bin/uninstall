@@ -20,3 +20,19 @@ for dotfile in $(./bin/file_list.sh); do
     skip_notice $dotfile "unlinked"
   fi
 done
+
+find config -type f -name '*' | while read file; do
+  dotmatrix_path="$PWD/${file}"
+  path="$HOME/.${file}"
+
+  if [ -e "$path" ]; then
+    if [ "$dotmatrix_path" = "$(readlink $path)" ]; then # Symlinked here?
+      remove_notice $dotfile "exists"
+      unlink $path
+    else
+      skip_notice $file "external"
+    fi
+  else
+    skip_notice $file "unlinked"
+  fi
+done

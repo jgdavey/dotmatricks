@@ -6,31 +6,50 @@ source $(dirname $0)/dot_functions.sh
 directory_warning
 
 # Copy *.local files
-for dotfile in *.local ; do
-  dotmatrix_path=$PWD/$dotfile
-  path="$HOME/.$dotfile"
+for file in *.local ; do
+  dotmatrix_path=$PWD/$file
+  path="$HOME/.$file"
 
   if [ ! -e $path ]; then
-    copy_notice $dotfile "absent"
+    copy_notice $file "absent"
     cp $dotmatrix_path $path
   else
-    skip_notice $dotfile "exists"
+    skip_notice $file "exists"
   fi
 done
 
-for dotfile in $(./bin/file_list.sh); do
-  dotmatrix_path="$PWD/dotfiles/$dotfile"
-  path="$HOME/.$dotfile"
+for file in $(./bin/file_list.sh); do
+  dotmatrix_path="$PWD/dotfiles/$file"
+  path="$HOME/.$file"
 
   [ -e $dotmatrix_path ] || continue
 
-  if [ ! -L $path ]; then
-    link_notice $dotfile "absent"
-    ln -nfs $dotmatrix_path $path
-  elif [ $dotmatrix_path = "$(readlink $path)" ]; then # Symlinked here?
-    skip_notice $dotfile "exists"
+  if [ -e "$path" ]; then
+    if [ $dotmatrix_path = "$(readlink $path)" ]; then # Symlinked here?
+      skip_notice $file "exists"
+    else
+      skip_notice $file "external"
+    fi
   else
-    skip_notice $dotfile "external"
+    link_notice $file "absent"
+    ln -nfs $dotmatrix_path $path
+  fi
+done
+
+find config -type f -name '*' | while read file; do
+  dotmatrix_path="$PWD/${file}"
+  path="$HOME/.${file}"
+
+  if [ -e "$path" ]; then
+    if [ "$dotmatrix_path" = "$(readlink $path)" ]; then # Symlinked here?
+      skip_notice $file "exists"
+    else
+      skip_notice $file "external"
+    fi
+  else
+    link_notice $file "absent"
+    mkdir -p "$(dirname $path)"
+    ln -nfs $dotmatrix_path $path
   fi
 done
 
