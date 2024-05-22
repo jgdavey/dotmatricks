@@ -1,9 +1,45 @@
 #!/usr/bin/env bash
 set -e
 
+force=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -f|--force) force=1 ;;
+    (--) shift; break ;;
+    (*) break ;;
+  esac
+  shift
+done
+
 source $(dirname $0)/dot_functions.sh
 
 directory_warning
+
+link_or_skip() {
+  path="$1"
+  source="$2"
+  force=$3
+
+  status="$(path_status $path $dotmatrix_path)"
+  install=
+
+  case "$status" in
+    "external" ) if [[ -n "$force" ]]; then
+                   install=1
+                 fi ;;
+    "absent" ) install=1 ;;
+    * ) ;;
+  esac
+
+  if [[ -z "$install" ]]; then
+    skip_notice "$(basename $path)" "$status"
+  else
+    link_notice "$(basename $path)" "$status"
+    mkdir -p "$(dirname $path)"
+    ln -nfs $dotmatrix_path $path
+  fi
+}
 
 # Copy *.local files
 for file in *.local ; do
@@ -18,39 +54,23 @@ for file in *.local ; do
   fi
 done
 
+# dotfiles
 for file in $(./bin/file_list.sh); do
   dotmatrix_path="$PWD/dotfiles/$file"
   path="$HOME/.$file"
 
   [ -e $dotmatrix_path ] || continue
 
-  if [ -e "$path" ]; then
-    if [ $dotmatrix_path = "$(readlink $path)" ]; then # Symlinked here?
-      skip_notice $file "exists"
-    else
-      skip_notice $file "external"
-    fi
-  else
-    link_notice $file "absent"
-    ln -nfs $dotmatrix_path $path
-  fi
+  link_or_skip $path "$dotmatrix_path" $force
 done
 
+# auxillary config
 find config -type f -name '*' | while read file; do
   dotmatrix_path="$PWD/${file}"
   path="$HOME/.${file}"
 
-  if [ -e "$path" ]; then
-    if [ "$dotmatrix_path" = "$(readlink $path)" ]; then # Symlinked here?
-      skip_notice $file "exists"
-    else
-      skip_notice $file "external"
-    fi
-  else
-    link_notice $file "absent"
-    mkdir -p "$(dirname $path)"
-    ln -nfs $dotmatrix_path $path
-  fi
+  link_or_skip $path "$dotmatrix_path" $force
 done
 
+# jd
 $PWD/jd/bin/jd autoinstall

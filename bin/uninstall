@@ -1,38 +1,54 @@
 #!/usr/bin/env bash
 set -e
 
+force=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -f|--force) force=1 ;;
+    (--) shift; break ;;
+    (*) break ;;
+  esac
+  shift
+done
+
 source $(dirname $0)/dot_functions.sh
 
 directory_warning
+
+remove_or_skip() {
+  path="$1"
+  source="$2"
+  force=$3
+
+  status="$(path_status $path $dotmatrix_path)"
+  unlink=
+
+  case "$status" in
+    "external" ) if [[ -n "$force" ]]; then
+                   unlink=1
+                 fi ;;
+    "absent" ) unlink=1 ;;
+    * ) ;;
+  esac
+
+  if [[ -z "$unlink" ]]; then
+    skip_notice "$(basename $path)" "$status"
+  else
+    remove_notice "$(basename $path)" "$status"
+    unlink $path
+  fi
+}
 
 for dotfile in $(./bin/file_list.sh); do
   dotmatrix_path="$PWD/dotfiles/$dotfile"
   path="$HOME/.$dotfile"
 
-  if [ -L $path ]; then # Symlink?
-    if [ $dotmatrix_path = "$(readlink $path)" ]; then # Symlinked here?
-      remove_notice $dotfile "exists"
-      unlink $path
-    else
-      skip_notice $dotfile "external"
-    fi
-  else
-    skip_notice $dotfile "unlinked"
-  fi
+  remove_or_skip $path "$dotmatrix_path" $force
 done
 
 find config -type f -name '*' | while read file; do
   dotmatrix_path="$PWD/${file}"
   path="$HOME/.${file}"
-
-  if [ -e "$path" ]; then
-    if [ "$dotmatrix_path" = "$(readlink $path)" ]; then # Symlinked here?
-      remove_notice $dotfile "exists"
-      unlink $path
-    else
-      skip_notice $file "external"
-    fi
-  else
-    skip_notice $file "unlinked"
-  fi
+  remove_or_skip $path "$dotmatrix_path" $force
 done

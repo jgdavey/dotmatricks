@@ -49,3 +49,19 @@ dirty_warning() {
     exit 1
   fi
 }
+
+path_status() {
+  path="$1"
+  source="$2"
+  if [[ -L "$path" ]]; then
+    if [[ "$source" = "$(readlink $path)" ]]; then
+      echo "linked"
+    else
+      echo "external"
+    fi
+  elif [[ -e "$path" ]]; then
+    echo "file"
+  else
+    echo "absent"
+  fi
+}
