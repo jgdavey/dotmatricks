@@ -1,3 +1,6 @@
+# -*- mode: sh; -*-
+# vim: set ft=sh sw=2 sts=2:
+
 fpath=(
   $fpath
   ~/.zsh/functions
@@ -29,7 +32,7 @@ zstyle ':completion:*' cache-path ~/.zshcache
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # Shows files in color, same as LSCOLOR
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
 zstyle ':completion:*' menu select=1 _complete _approximate
 
