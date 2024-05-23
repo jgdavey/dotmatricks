@@ -10,9 +10,10 @@ $cmd_duration\
 $git_branch\
 $git_state\
 $git_status\
+$line_break\
 $character"""
 
-right_format = """$status"""
+right_format = """$status$time"""
 
 [status]
 format = '[{$status}]($style) '
@@ -20,37 +21,40 @@ disabled = false
 
 [username]
 show_always = true
-format = '[$user]($style)'
-style_user="bold green"
+format = '[$user@]($style)'
+style_user="bright-green"
 
 [hostname]
 ssh_only = false
-format = '[@$ssh_symbol$hostname]($style):'
+format = '[$ssh_symbol$hostname]($style)'
+style="bold green"
 
 [directory]
+format = '[(:$path)]($style)[$read_only]($read_only_style) '
 truncate_to_repo = false
 truncation_length = 8
 truncation_symbol = '…/'
 style = "cyan"
 
 [character]
-# success_symbol = "[❯](purple)"
-# error_symbol = "[❯](red)"
+success_symbol = "[%](bold yellow)"
+error_symbol = "[%](bold red)"
 
 [git_branch]
 format = "[$branch]($style)"
 style = "bright-black"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "cyan"
-conflicted = "​"
-untracked = "​"
-modified = "​"
-staged = "​"
-renamed = "​"
-deleted = "​"
-stashed = "≡"
+format = '([$all_status( $ahead_behind)]($style) )'
+style = "218"
+conflicted = '!'
+untracked = '+'
+modified = '*'
+deleted = '-'
+staged = ''
+renamed = ''
+stashed = ''
+typechanged = ''
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
@@ -59,3 +63,12 @@ style = "bright-black"
 [cmd_duration]
 format = "[$duration]($style) "
 style = "yellow"
+
+[line_break]
+disabled = true
+
+[time]
+disabled = false
+format='[$time]($style)'
+time_format="%H:%M"
+style="bright-black"
