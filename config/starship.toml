@@ -40,6 +40,10 @@ style = "cyan"
 success_symbol = "[%](bold yellow)"
 error_symbol = "[%](bold red)"
 
+[[battery.display]]
+threshold = 15 # default is 10
+style = 'bold red'
+
 [git_branch]
 format = "[$branch]($style)"
 style = "bright-black"
