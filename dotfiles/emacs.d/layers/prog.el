@@ -190,6 +190,11 @@
 (use-package dockerfile-mode
   :ensure t)
 
+(use-package protobuf-ts-mode
+  :ensure t
+  :mode ("\\.proto\\'")
+  )
+
 ;; Taken from:
 ;; https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 (setq treesit-language-source-alist
@@ -209,6 +214,7 @@
         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
         (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml")
         (php "https://github.com/tree-sitter/tree-sitter-php")
+        (proto "https://github.com/mitchellh/tree-sitter-proto")
         (python "https://github.com/tree-sitter/tree-sitter-python")
         (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
         (rust "https://github.com/tree-sitter/tree-sitter-rust")
