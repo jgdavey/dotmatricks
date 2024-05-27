@@ -74,13 +74,13 @@ bindkey '\ep' up-line-or-search
 bindkey '\en' down-line-or-search
 bindkey '\ew' kill-region
 
-alias lsdir="$LS_COMMAND -ld *(-/DN)"
+alias lsdir="ll -d *(-/DN)"
 l.() {
   prefix=
   if [ -n "$1" ]; then
     prefix="${1%/}/"
   fi
-  $LS_COMMAND -ld -F ${prefix}.[^.]*
+  ll -d -F ${prefix}.[^.]*
 }
 
 (( ${+aliases[e]} )) && unalias e
