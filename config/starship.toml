@@ -11,6 +11,7 @@ $git_branch\
 $git_state\
 $git_status\
 $line_break\
+$env_var\
 $character"""
 
 right_format = """$status$time"""
@@ -70,6 +71,12 @@ style = "yellow"
 
 [line_break]
 disabled = true
+
+[env_var.BASH]
+format = '[(\[$env_value\] )]($style)'
+style = "white"
+variable = 'BASH_INDICATOR'
+default = ''
 
 [time]
 disabled = false
