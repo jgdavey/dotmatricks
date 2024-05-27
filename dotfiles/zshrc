@@ -80,7 +80,7 @@ l.() {
   if [ -n "$1" ]; then
     prefix="${1%/}/"
   fi
-  ls -ld -F ${prefix}.[^.]*
+  $LS_COMMAND -ld -F ${prefix}.[^.]*
 }
 
 (( ${+aliases[e]} )) && unalias e
