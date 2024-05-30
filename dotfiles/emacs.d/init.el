@@ -127,6 +127,14 @@
 ;; Package setup
 (require 'use-package)
 
+(use-package nerd-icons
+  :pin melpa
+  :ensure t
+  :demand t
+  :custom
+  (nerd-icons-font-family  "Hack Nerd Font Mono")
+  )
+
 (use-package doom-themes
   :ensure t
   :pin melpa
@@ -336,34 +344,37 @@
 
 (use-package treemacs
   :ensure t
+  :pin melpa)
+
+(use-package treemacs-nerd-icons
+  :ensure t
+  :after (treemacs nerd-icons)
   :pin melpa
-  :config
-  (treemacs-load-all-the-icons-with-workaround-font "Hack Nerd Font Mono"))
+  :demand t
+  :config (treemacs-load-theme "nerd-icons"))
 
 (use-package treemacs-projectile
   :pin melpa
   :after (treemacs projectile)
   :ensure t)
 
-(use-package treemacs-icons-dired
-  :pin melpa
-  :after (treemacs dired)
+(use-package treemacs-magit
   :ensure t
-  :config (treemacs-icons-dired-mode))
+  :after (treemacs magit))
 
-(use-package all-the-icons-ivy-rich
+(use-package nerd-icons-ibuffer
   :pin melpa
   :ensure t
-  :init (all-the-icons-ivy-rich-mode 1))
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
-(use-package all-the-icons-ibuffer
+(use-package nerd-icons-ivy-rich
   :pin melpa
   :ensure t
-  :init (all-the-icons-ibuffer-mode 1))
-
-(use-package treemacs-all-the-icons
-  :pin melpa
-  :ensure t)
+  :after (nerd-icons ivy)
+  :init
+  (nerd-icons-ivy-rich-mode 1)
+  ;;(ivy-rich-mode 1)
+  )
 
 (use-package vterm
   :ensure t
