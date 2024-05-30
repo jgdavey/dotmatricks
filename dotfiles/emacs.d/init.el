@@ -338,7 +338,7 @@
   :ensure t
   :pin melpa
   :config
-  (treemacs-load-all-the-icons-with-workaround-font "Menlo"))
+  (treemacs-load-all-the-icons-with-workaround-font "Hack Nerd Font Mono"))
 
 (use-package treemacs-projectile
   :pin melpa
