@@ -228,7 +228,7 @@
       '((bash-mode . bash-ts-mode)
         (c-mode . c-ts-mode)
         (css-mode . css-ts-mode)
-        (elisp-mode . elisp-ts-mode)
+        ;; (elisp-mode . elisp-ts-mode)
         (go-mode . go-ts-mode)
         (java-mode . java-ts-mode)
         (js2-mode . js-ts-mode)
