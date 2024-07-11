@@ -1,7 +1,6 @@
 tap "borkdude/brew"
 tap "clojure-lsp/brew"
 tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
 tap "homebrew/services"
 tap "railwaycat/emacsmacport"
 
