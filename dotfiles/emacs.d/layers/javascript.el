@@ -21,5 +21,6 @@
   (define-derived-mode typescriptreact-mode typescript-mode
     "TypeScript TSX")
   ;; use our derived mode for tsx files
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  ;;(add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . tsx-ts-mode))
   )
