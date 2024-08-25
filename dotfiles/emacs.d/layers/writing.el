@@ -1,6 +1,9 @@
 (use-package markdown-mode
   :ensure t)
 
+(use-package writeroom-mode
+  :ensure t)
+
 ;; (use-package markdown-ts-mode
 ;;   :ensure t
 ;;   :mode ("\\.md\\'" . markdown-ts-mode)
