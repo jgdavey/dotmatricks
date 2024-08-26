@@ -172,8 +172,6 @@
   :ensure t
   :after lsp-mode
   :pin melpa
-  :config
-  (setq lsp-java-java-path "/usr/local/opt/java/bin/java")
   )
 
 (use-package lsp-tailwindcss
