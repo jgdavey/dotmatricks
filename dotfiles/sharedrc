@@ -105,13 +105,8 @@ editor() {
         echoc=1
     fi
 
-    args=(-c)
+    args=(-c -nw)
     alt=""
-    if [[ -n "$TMUX" ]]; then
-        args+=(-nw)
-    elif [ -z "$SSH_CONNECTION" ] && [ -z "$echoc" ]; then
-        args+=(-n)
-    fi
 
     if [[ -e "$EMACS_SOCKET_NAME" ]]; then
         args+=("-s" "$EMACS_SOCKET_NAME")
