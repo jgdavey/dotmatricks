@@ -22,7 +22,9 @@ export HISTIGNORE="%*"
 
 [ -z "$PS1" ] || stty -ixon
 
-if command -v starship >/dev/null; then
+if [[ "$TERM" = "dumb" ]]; then
+  # use default
+elif command -v starship >/dev/null; then
   export BASH_INDICATOR="bash"
   eval "$(starship init bash)"
 else

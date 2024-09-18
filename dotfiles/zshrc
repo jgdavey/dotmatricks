@@ -102,7 +102,11 @@ extended_prompt() {
     fi
 }
 
-if command -v starship >/dev/null; then
+if [[ "$TERM" = "dumb" ]]; then
+  RPROMPT=""
+  PROMPT="$ "
+  PS1="$ "
+elif command -v starship >/dev/null; then
   eval "$(starship init zsh)"
 else
   # show non-success exit code in right prompt
