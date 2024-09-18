@@ -142,12 +142,16 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic nil)
+  (setq doom-themes-treemacs-theme "doom-colors")
   ;;(load-theme 'doom-gruvbox t)
   (load-theme 'doom-opera t)
   (doom-themes-visual-bell-config)
-  (setq doom-themes-treemacs-theme "doom-colors")
   (doom-themes-treemacs-config)
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  ;; Must be used *after* the theme is loaded
+  (custom-set-faces
+   `(ivy-current-match ((t (:background ,(doom-lighten 'base4 0.05))))))
+  )
 
 ;; Has to be first to use :diminish option
 (use-package diminish
