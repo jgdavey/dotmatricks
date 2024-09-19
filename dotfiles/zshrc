@@ -106,6 +106,7 @@ if [[ "$TERM" = "dumb" ]]; then
   RPROMPT=""
   PROMPT="$ "
   PS1="$ "
+  unsetopt zle
 elif command -v starship >/dev/null; then
   eval "$(starship init zsh)"
 else
