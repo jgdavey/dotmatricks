@@ -20,14 +20,14 @@ fi
 
 export HISTIGNORE="%*"
 
-[ -z "$PS1" ] || stty -ixon
-
 if [[ "$TERM" = "dumb" ]]; then
-  # use default
+  echo '' > /dev/null
 elif command -v starship >/dev/null; then
+  [ -z "$PS1" ] || stty -ixon
   export BASH_INDICATOR="bash"
   eval "$(starship init bash)"
 else
+  [ -z "$PS1" ] || stty -ixon
   prefix=
   if [ -n "$SSH_CONNECTION" ]; then
     prefix="\[\033[01;33m\]\u@\h"
