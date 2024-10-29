@@ -100,9 +100,11 @@
 (setq package-archives
       '(("melpa-stable" . "https://stable.melpa.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
+        ("gnu-mirror" . "https://mirror.endianness.com/elpa/")
         ("gnu" . "https://elpa.gnu.org/packages/"))
       package-archive-priorities
       '(("melpa-stable" . 10)
+        ("gnu-mirror" . 9)
         ("gnu" . 5)
         ("melpa" . 1)))
 
