@@ -5,3 +5,6 @@
 (use-package counsel-fd
   :ensure t
   :after counsel)
+
+(use-package csv-mode
+  :ensure t)
