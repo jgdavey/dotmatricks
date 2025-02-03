@@ -113,7 +113,7 @@
   :pin melpa)
 
 (use-package lsp-mode
-  :pin melpa
+  :pin melpa-stable
   :ensure t
   :hook ((rust-mode . lsp)
          (rust-ts-mode .lsp)
@@ -141,7 +141,7 @@
   (setq lsp-enable-xref t))
 
 (use-package lsp-ui
-  :pin melpa
+  :pin melpa-stable
   :ensure t
   :after lsp-mode
   :commands lsp-ui-mode
@@ -157,13 +157,13 @@
 
 (use-package lsp-ivy
   :ensure t
-  :pin melpa
+  :pin melpa-stable
   :commands lsp-ivy-workspace-symbol)
 
 (use-package lsp-treemacs
   :ensure t
   :after lsp-mode
-  :pin melpa
+  :pin melpa-stable
   :commands lsp-treemacs-errors-list
   :init
   (setq treemacs-space-between-root-nodes nil))
