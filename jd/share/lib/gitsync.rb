@@ -40,7 +40,7 @@ class Gitsync
 
   def initialize(quiet: false, dir: Dir.pwd, **)
     @dir = dir
-    fetch = ["git", "fetch", "--progress", "--all", "-P", "-p"] + (quiet ? ["--quiet"] : [])
+    fetch = ["git", "fetch", "--progress", "--all", "-P", "-p", "--force"] + (quiet ? ["--quiet"] : [])
     run *fetch
     @quiet = quiet
     @default_branch = begin
