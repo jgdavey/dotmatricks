@@ -149,7 +149,7 @@ colorize_fg() {
 # Formatters
 
 format_hearts() {
-    heart_full="♥"
+    heart_full="❤"
     heart_empty="♡"
     perc=$BATTERY_PERCENTAGE
     inc=$(( 100 / $NUM_HEARTS))
