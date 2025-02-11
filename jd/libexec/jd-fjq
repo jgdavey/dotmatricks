@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# Usage: jd fjq [FILE]
+#
+# Summary: Use jq within an fzf preview
+#
+# Help: Given stdin, uses that as the JSON input to jq
+#
+# This utility requires fzf and jq to be installed and on the PATH
+
+if [[ -z "$1" ]] || [[ $1 == "-" ]]; then
+  input="$(mktemp)"
+  trap 'rm -f "$input"' EXIT
+  cat /dev/stdin > "$input"
+else
+  input="$1"
+fi
+
+JQ_PREVIEW_CMD="jq --color-output -r {q} $input"
+
+echo '' \
+  | fzf --preview "$JQ_PREVIEW_CMD" \
+        --preview-window="down:99%" \
+        --height="99%" \
+        --disabled \
+        --query="." \
+        --bind "return:become($JQ_PREVIEW_CMD)" \
+        --bind "ctrl-p:preview-up,ctrl-n:preview-down" \
+        --header 'Enter a valid jq query' \
+        --header-lines=1
