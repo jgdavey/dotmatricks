@@ -348,9 +348,9 @@
   :init
   (doom-modeline-mode 1))
 
-(use-package treemacs
-  :ensure t
-  :pin melpa)
+;; (use-package treemacs
+;;   :ensure t
+;;   :pin melpa)
 
 (use-package treemacs-nerd-icons
   :ensure t
