@@ -6,3 +6,5 @@ FILES
 !/dotfiles/emacs.d/layers
 *.elc
 /Brewfile.lock.json
+/config/.lsp/.cache
+/config/.clj-kondo/.cache

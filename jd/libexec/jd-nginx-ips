@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+# Usage: jd nginx-ips
+# Summary: IP address info from nginx access logs
+
+require "zlib"
+require "json"
+require "uri"
+require "net/http"
+require "set"
+require "pp"
+
+def read_file(file, &block)
+  if file.end_with? ".gz"
+    Zlib::GzipReader.open(file, &block)
+  else
+    File.open(file, 'r', &block)
+  end
+end
+
+Line = Struct.new(:ip, :time, :method, :path, :status, :size) do
+  PARSER = /((?:\d{1,3}\.){3}\d{1,3}).*\[(.*)\s.\d{4}\]\s"(.*?)\s(.*?) HTTP.*?"\s(\d{3})\s(\d+)/
+  def self.parse(str)
+    if md = PARSER.match(str)
+      new(*md[1..6])
+    end
+  end
+end
+
+pattern = Regexp.new(ARGV[0] || ".*")
+
+nginx_log_glob = ENV["NGINX_LOG_FILE_GLOB"] || "/var/log/nginx/*"
+
+lines = []
+Dir[nginx_log_glob].each do |file|
+  read_file(file) do |f|
+    f.each_line.filter { |line| line =~ pattern }.map do |line|
+      lines << Line.parse(line)
+    end
+  end
+end
+
+ips = lines.map(&:ip).to_set
+ip_info = ips.each_with_object({}) do |ip, obj|
+  uri = URI("https://ipinfo.io/#{ip}")
+  response = Net::HTTP.get(uri)
+  obj[ip] = JSON.parse(response)
+end
+
+ip_counts = lines.each_with_object(Hash.new(0)) do |line, obj|
+  obj[line[:ip]] += 1
+end
+
+all = ip_counts.map { |(ip, count)|
+  info = ip_info.fetch(ip, {})
+  [count, ip, info["region"], info["city"], info["org"]]
+}.sort_by(&:first)
+
+pp all
