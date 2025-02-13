@@ -47,8 +47,8 @@ bindkey -e
 
 ## History file configuration
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
-[ "$HISTSIZE" -lt 50000 ] && HISTSIZE=50000
-[ "$SAVEHIST" -lt 50000 ] && SAVEHIST=50000
+[ "$HISTSIZE" -lt 1000000 ] && HISTSIZE=1000000
+export SAVEHIST=$HISTSIZE
 
 ## History command configuration
 setopt extended_history       # record timestamp of command in HISTFILE
@@ -56,7 +56,8 @@ setopt hist_expire_dups_first # delete duplicates first when HISTFILE size excee
 setopt hist_ignore_dups       # ignore duplicated commands history list
 setopt hist_ignore_space      # ignore commands that start with space
 setopt hist_verify            # show command with history expansion to user before running it
-setopt share_history          # share command history data
+setopt hist_reduce_blanks     # Remove superfluous blanks before recording entry.
+setopt share_history          # share command history data across sessions
 setopt appendhistory
 setopt inc_append_history     # incrementally flush history (immediate)
 
@@ -129,6 +130,21 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]] \
     && [[ -n ${EMACS_VTERM_PATH} ]] \
     && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh ]]; then
 	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh
+fi
+
+if command -v fzf >/dev/null; then
+  export FZF_FD_OPTS="--strip-cwd-prefix --hidden --follow --exclude .git"
+  export FZF_DEFAULT_COMMAND="fd ${FZF_FD_OPTS}"
+  export FZF_CTRL_T_COMMAND=""
+  export FZF_ALT_C_COMMAND=""
+  source <(fzf --zsh)
+  fzf_compgen_path() {
+    fd $FZF_FD_OPTS . "$1"
+  }
+
+  fzf_compgen_dir() {
+    fd $FZF_FD_OPTS . "$1"
+  }
 fi
 
 # remove duplicates in $PATH

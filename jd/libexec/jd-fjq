@@ -8,8 +8,6 @@
 #
 # This utility requires fzf and jq to be installed and on the PATH
 
-
-
 if [ "$1" = "--complete" ]; then
   find * -type f -name '*.json' -maxdepth 1
   exit 0
