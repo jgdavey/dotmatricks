@@ -204,6 +204,8 @@
                   lisp-interaction-mode-hook
                   scheme-mode-hook
                   clojure-ts-mode-hook
+                  clojurescript-mode-hook
+                  clojurec-mode-hook
                   clojure-mode-hook
                   cider-repl-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
