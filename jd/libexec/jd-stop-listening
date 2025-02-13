@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Usage: jd stop-listening [port]
+#
+# Summary: Kill a process that is listening a port
+#
+# Help: Don't know where that Rails server is listening? Just stop listening!
+# This command takes a port as an argument, or uses fzf to look for a process otherwise
+
+port="${1}"
+pid=
+
+thepid() {
+  lsof -w -nP -i4TCP -F pcfnT | awk -v OFS='\t' '{t = substr($0, 1, 1); f[t] = substr($0, 2)}  t == "T" && f["T"] ~ /ST/ { print f["p"], f["c"], f["f"], f["n"], f["T"] }' | column -t -s $'\t' | fzf --bind 'enter:become(echo {+1})'
+}
+
+if [[ -z "$port" ]]; then
+  pid="$(thepid)"
+else
+  pid="$(lsof -Fp -i tcp:$port | sed 's/p//')"
+fi
+
+if [ -n "$pid" ]; then
+  echo "Killing process with PID $pid listening on port $port..." >&2
+  kill $pid
+else
+  echo "No processes to kill" >&2
+  exit 1
+fi
