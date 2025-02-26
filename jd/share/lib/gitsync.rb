@@ -135,6 +135,7 @@ class Gitsync
       elsif diff.equal?
         Noop.new(diff.local.name, "up to date")
       elsif ancestor?(diff.local.sha, diff.remote.sha)
+        # branch is checked out
         if diff.local.name == current_branch
           if @is_clean_working
             Update.new(diff.local.name, "updated #{diff.range}", ["git", "merge", "--ff-only", diff.remote.name] + (@quiet ? ["--quiet"] : []))

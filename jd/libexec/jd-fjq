@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-#
 # Usage: jd fjq [FILE]
-#
 # Summary: Use jq within an fzf preview
 #
 # Help: Given stdin, uses that as the JSON input to jq

@@ -31,8 +31,12 @@ end
 if ARGV[0] == "--complete"
   ARGV.shift
   parser.top.compsys({}, {}) do |o, d|
-    desc = d.split("(", 2).first.gsub(/[\[\]]/, '\\\\\&')
-    puts "#{o}[#{desc}]"
+    if desc = d.split("(", 2).first
+      desc = desc.gsub(/[\[\]]/, '\\\\\&')
+      puts "#{o}[#{desc}]"
+    else
+      puts o
+    end
   end
   exit 0
 end
