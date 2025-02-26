@@ -21,8 +21,11 @@ format = '[{$status}]($style) '
 disabled = false
 
 [username]
-format = '[($user@)]($style)'
-style_user="bright-green"
+format = '[($user)]($style)@'
+style_user = "bright-green"
+style_root = "white bold"
+# show_always = true
+# aliases = { "josh.davey" = "me" }
 
 [hostname]
 ssh_only = false
