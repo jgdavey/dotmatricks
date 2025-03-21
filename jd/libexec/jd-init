@@ -18,7 +18,7 @@ if [ -z "$print" ]; then
     profile='~/.bash_profile'
     ;;
   zsh )
-    profile='~/.zprofile'
+    profile='~/.zshrc'
     ;;
   * )
     profile='your profile'

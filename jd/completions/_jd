@@ -1,12 +1,15 @@
 #compdef jd
 
-local curcontext="$curcontext" state line _opts ret=1
+local context state state_descr line
+local ret=1
 local -a list
 local comps
 
 _arguments -C \
            '1: :->cmds' \
            '*:: :->args' && ret=0
+
+export COMP_WORD="${line[-1]}"
 
 # Special-case some jd-commands
 case "${line[1]}" in
@@ -19,16 +22,25 @@ esac
 # Or use the commands themselves
 case $state in
   cmds)
-    comps="$(jd completions --commands)"
+    comps="$(_call_program jd-cmds jd completions --commands)"
     ;;
   args)
-    comps="$(jd completions $line[@])"
+    comps="$(_call_program jd-args jd completions $line[@])"
+    has="$?"
     ;;
 esac
 
-list=("${(ps:\n:)comps}")
+if [[ -z "$comps" ]]; then
+  if [[ "$has" = 42 ]]; then
+    _default # fallback to generic (usually filename) completion
+  else
+    _message "No completions"
+  fi
+else
+  list=("${(ps:\n:)comps}")
 
-_values "jd command" "${list[@]}"
+  _values "jd-command" "${list[@]}"
+fi
 
 return ret
 # Local Variables:

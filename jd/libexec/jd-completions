@@ -25,20 +25,33 @@ print_summaries() {
 }
 
 command="$1"
-if [ "$command" = "--commands" ]; then
+if [[ "$command" = "--commands" ]]; then
   print_summaries
   exit
 fi
 
-if [ -z "$command" ]; then
+if [[ -z "$command" ]]; then
   echo "usage: jd completions command [arg1 arg2...]" >&2
   exit 1
 fi
 
 file_path="$(command_path "$command")"
-if [ -n "$file_path" ]; then
+if [[ -n "$file_path" ]]; then
   if grep "\--complete" "$file_path" >/dev/null; then
     shift
-    exec "$file_path" --complete "$@"
+    args=("$@")
+    if [[ -z "$COMP_WORD" ]]; then
+      args+=("")
+    fi
+    n=${#args[@]}
+    COMP_LASTARG="${args[$((n - 1))]}"
+    COMP_PENULT=
+    if [[ $n -gt 1 ]]; then
+      COMP_PENULT="${args[$((n - 2))]}"
+    fi
+    export COMP_PENULT COMP_LASTARG
+    exec "$file_path" --complete "${args[@]}"
+  else
+    exit 42
   fi
 fi
