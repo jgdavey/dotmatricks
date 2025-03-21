@@ -34,13 +34,17 @@ if [[ -z "$comps" ]]; then
   if [[ "$has" = 42 ]]; then
     _default # fallback to generic (usually filename) completion
   else
+    ret=1
     _message "No completions"
   fi
 else
+  ret=0
   list=("${(ps:\n:)comps}")
 
   _values "jd-command" "${list[@]}"
 fi
+
+unset COMP_WORD
 
 return ret
 # Local Variables:

@@ -8,6 +8,7 @@ _jd() {
   else
     export COMP_WORD="$word"
     completions="$(jd completions "${COMP_WORDS[1]}" "${COMP_WORDS[@]:2}" | sed -e 's/\[.*//g')"
+    unset COMP_WORD
   fi
   COMPREPLY=( $(compgen -W "$completions" -- "$word") )
 }
