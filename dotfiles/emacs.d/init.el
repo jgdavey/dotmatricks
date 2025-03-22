@@ -220,7 +220,9 @@
   (setq projectile-completion-system 'ivy)
   (add-to-list 'projectile-project-search-path "~/src")
   ;;(projectile-mode +1)
-  (counsel-projectile-mode +1))
+  (counsel-projectile-mode +1)
+  (if (not projectile-known-projects)
+      (projectile-reset-known-projects)))
 
 (use-package projectile-ripgrep
   :ensure t)
