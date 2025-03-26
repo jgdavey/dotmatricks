@@ -2,3 +2,4 @@
 # vim: set ft=sh sw=2 sts=2:
 
 [ ! -f "$HOME/.path" ] || source "$HOME/.path"
+[ ! -f "$HOME/.bashrc" ] || source "$HOME/.bashrc"
