@@ -299,6 +299,11 @@
   :init
   (global-company-mode 1))
 
+(use-package company-quickhelp
+  :ensure t
+  :init
+  (company-quickhelp-mode))
+
 (use-package wgrep
   :ensure t
   :init
