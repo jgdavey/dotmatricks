@@ -168,11 +168,18 @@
   :init
   (setq treemacs-space-between-root-nodes nil))
 
+
+(use-package lsp-docker
+  :ensure t
+  :after lsp-mode)
+
 (use-package lsp-java
   :ensure t
   :after lsp-mode
-  :pin melpa
-  )
+  :hook ((java-mode . lsp)
+         (java-ts-mode . lsp))
+  :init
+  (setq lsp-java-jdt-ls-prefer-native-command t))
 
 (use-package lsp-tailwindcss
   :ensure t
