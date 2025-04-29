@@ -200,6 +200,11 @@
   :mode ("\\.proto\\'")
   )
 
+(use-package mise
+  :ensure t
+  :init
+  (add-hook 'after-init-hook #'global-mise-mode))
+
 ;; Taken from:
 ;; https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 (setq treesit-language-source-alist
