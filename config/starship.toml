@@ -6,6 +6,8 @@ $hostname\
 $directory\
 $jobs\
 $battery\
+$mise\
+$java\
 $cmd_duration\
 $git_branch\
 $git_state\
@@ -28,17 +30,18 @@ style_root = "white bold"
 # aliases = { "josh.davey" = "me" }
 
 [hostname]
-ssh_only = false
-format = '[$hostname$ssh_symbol]($style)'
+ssh_only = true
+format = '[$hostname$ssh_symbol]($style):'
 style="bold green"
 ssh_symbol=' ☎︎'
 
 [directory]
-format = '[(:$path)]($style)[$read_only]($read_only_style) '
+# format = '[($path)]($style)[$read_only]($read_only_style) '
 truncate_to_repo = false
-truncation_length = 8
+truncation_length = 3
 truncation_symbol = '…/'
-style = "cyan"
+# fish_style_pwd_dir_length = 1
+# style = "cyan"
 
 [character]
 success_symbol = "[%](bold yellow)"
@@ -71,6 +74,11 @@ style = "bright-black"
 [cmd_duration]
 format = "[$duration]($style) "
 style = "yellow"
+
+[java]
+format = "[${symbol}(${version} )]($style)"
+version_format = "v${major}"
+disabled = true
 
 [line_break]
 disabled = true
