@@ -76,6 +76,15 @@
 (global-set-key (kbd "s-c") 'clipboard-kill-ring-save)
 (global-set-key (kbd "s-v") 'clipboard-yank)
 
+;; Don't copy everything to system clipboard by default
+(setq select-enable-clipboard nil)
+
+(defun jd/toggle-clipboard ()
+  (setq select-enable-clipboard (not select-enable-clipboard)))
+
+;; ...but allow it to be enabled
+(global-set-key (kbd "C-c C-o C-p") 'jd/toggle-clipboard)
+
 ;; Use ibuffer instead of buff-menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 

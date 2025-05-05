@@ -3,7 +3,7 @@
   :bind (("C-c c" . counsel-projectile-org-capture)
          ("C-c a" . org-agenda)
          :map org-mode-map
-         ("C-c C-o" . jd/org-open-at-point))
+         ("C-c o" . jd/org-open-at-point))
   :init
   (use-package ob-http
     :ensure t)
