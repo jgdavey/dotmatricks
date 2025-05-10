@@ -24,9 +24,11 @@ brew "hugo"
 brew "jet"
 brew "jq"
 brew "leiningen"
-brew "libvterm"
+brew "libvterm" # for emacs vterm
+brew "libyaml"  # modern versions of ruby want this
 brew "lsd"
 brew "mosh"
+brew "mise"     # manage versions of langs (java, ruby, etc)
 brew "node"
 brew "pandoc"
 brew "pinentry-mac"
@@ -48,7 +50,8 @@ brew "borkdude/brew/clj-kondo"
 brew "clojure-lsp/brew/clojure-lsp-native"
 brew "railwaycat/emacsmacport/emacs-mac"
 
+cask "arc"
+cask "maccy"
 cask "font-fira-code"
 cask "font-hack"
 cask "font-hack-nerd-font"
-cask "zen-browser"
