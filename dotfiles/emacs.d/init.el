@@ -80,6 +80,7 @@
 (setq select-enable-clipboard nil)
 
 (defun jd/toggle-clipboard ()
+  (interactive)
   (setq select-enable-clipboard (not select-enable-clipboard)))
 
 ;; ...but allow it to be enabled
