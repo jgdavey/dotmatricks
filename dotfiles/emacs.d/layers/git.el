@@ -1,3 +1,7 @@
+(use-package transient
+  :ensure t
+  :pin melpa)
+
 (use-package magit
   :ensure t
   :pin melpa
@@ -13,7 +17,11 @@
   (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-completing-read-function 'ivy-completing-read)
   (magit-define-popup-switch 'magit-log-popup
-                             ?m "Omit merge commits" "--no-merges"))
+    ?m "Omit merge commits" "--no-merges"))
+
+(use-package magit-section
+  :ensure t
+  :pin melpa)
 
 (use-package treemacs-magit
   :pin melpa
