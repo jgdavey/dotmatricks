@@ -15,11 +15,10 @@
     (interactive (git-commit-read-ident))
     (git-commit-insert-header "Co-authored-by" name mail))
   (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-completing-read-function 'ivy-completing-read)
-  (magit-define-popup-switch 'magit-log-popup
-    ?m "Omit merge commits" "--no-merges"))
+        magit-completing-read-function 'ivy-completing-read))
 
 (use-package magit-section
+  :after magit
   :ensure t
   :pin melpa)
 
@@ -27,9 +26,6 @@
   :pin melpa
   :after (treemacs magit)
   :ensure t)
-
-;; (use-package magit-popup
-;;   :ensure t)
 
 (use-package git-link
   :ensure t)
