@@ -192,6 +192,7 @@
          ;;("M-(" . sp-wrap-round)
          ("M-(" . sp-wrap)
          ("M-J" . sp-join-sexp)
+         ("C-M-t" . sp-transpose-sexp)
          :map smartparens-mode-map
          ("M-)" . sp-forward-slurp-sexp)
          :map emacs-lisp-mode-map
@@ -217,7 +218,8 @@
                   clojurescript-mode-hook
                   clojurec-mode-hook
                   clojure-mode-hook
-                  cider-repl-mode-hook))
+                  cider-repl-mode-hook
+                  babashka-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
 
 (use-package projectile
