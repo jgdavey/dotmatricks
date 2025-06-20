@@ -222,23 +222,6 @@
                   babashka-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
 
-(use-package projectile
-  :ensure t
-  :bind (:map projectile-mode-map
-              ("C-c p" . projectile-command-map))
-  :config
-  (setq projectile-mode-line-function
-        (lambda () (format " [%s]" (projectile-project-name))))
-  (setq projectile-completion-system 'ivy)
-  (add-to-list 'projectile-project-search-path "~/src")
-  ;;(projectile-mode +1)
-  (counsel-projectile-mode +1)
-  (if (not projectile-known-projects)
-      (projectile-reset-known-projects)))
-
-(use-package projectile-ripgrep
-  :ensure t)
-
 (use-package ivy
   :ensure t
   :diminish ivy-mode
@@ -272,9 +255,47 @@
          ("C-c i" . counsel-imenu)
          ("C-x C-f" . counsel-find-file)))
 
+(use-package projectile
+  :ensure t
+  :bind (:map projectile-mode-map
+              ("C-c p" . projectile-command-map))
+  :config
+  (setq projectile-mode-line-function
+        (lambda () (format " [%s]" (projectile-project-name))))
+  (setq projectile-completion-system 'ivy)
+  ;; (setq projectile-indexing-method 'hybrid)
+  (add-to-list 'projectile-project-search-path "~/src")
+  ;;(projectile-mode +1)
+  (counsel-projectile-mode +1)
+  (defun jd/projectile-find-file ()
+    "Inspired by doom's +ivy/projectile-find-file.
+A more sensible `counsel-projectile-find-file', which will revert to
+`counsel-find-file' if outside of a project, `projectile-find-file' if
+in a big project (more than `ivy-sort-max-size' files), or
+`counsel-projectile-find-file' otherwise.
+
+The point of this is to avoid Emacs locking up indexing massive file trees."
+    (interactive)
+    (let ((this-command 'counsel-find-file))
+      (call-interactively
+       (cond ((projectile-project-p)
+              (let ((files (projectile-current-project-files)))
+                (if (<= (length files) ivy-sort-max-size)
+                    #'counsel-projectile-find-file
+                  #'projectile-find-file)))
+
+             (#'counsel-find-file)))))
+
+  (define-key projectile-command-map "f" #'jd/projectile-find-file)
+  (if (not projectile-known-projects)
+      (projectile-reset-known-projects)))
+
 (use-package counsel-projectile
   :ensure t
   :pin melpa)
+
+(use-package projectile-ripgrep
+  :ensure t)
 
 (use-package swiper
   :ensure t
@@ -400,8 +421,7 @@
   :after (nerd-icons ivy)
   :init
   (nerd-icons-ivy-rich-mode 1)
-  ;;(ivy-rich-mode 1)
-  )
+  (ivy-rich-mode 1))
 
 (use-package vterm
   :ensure t
