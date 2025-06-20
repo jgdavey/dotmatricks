@@ -176,6 +176,10 @@
   :config
   (exec-path-from-shell-initialize))
 
+(use-package ws-butler
+  :pin melpa
+  :ensure t)
+
 (add-to-list 'load-path (expand-file-name "lib" user-emacs-directory))
 
 (use-package browse-kill-ring
