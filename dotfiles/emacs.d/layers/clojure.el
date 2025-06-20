@@ -31,10 +31,6 @@ of the point."
     (defroutes 'defun)
     (defui '(1 nil (1)))))
 
-(use-package clojure-ts-mode
-  :pin melpa
-  :ensure t)
-
 (use-package inf-clojure
   :pin melpa
   :ensure t)

@@ -118,6 +118,7 @@
   :hook ((rust-mode . lsp)
          (rust-ts-mode .lsp)
          (clojure-mode . lsp)
+         (clojure-ts-mode . lsp)
          (clojurescript-mode . lsp)
          (clojurec-mode . lsp)
          (go-ts-mode . lsp-deferred)
