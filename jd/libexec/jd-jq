@@ -26,6 +26,17 @@ jqpaths() {
   command jq --raw-output "$prog" "$@" | sort | uniq
 }
 
+command_or_exit() {
+  cmd="$1"
+  if ! command -v "$cmd" 2>&1 >/dev/null ; then
+    echo "$cmd could not be found. Maybe \`brew install $cmd\`?"
+    exit 1
+  fi
+}
+
+command_or_exit "fzf"
+command_or_exit "jq"
+
 if [[ $# -eq 0 ]] && [[ -t 0 ]]; then
   exec jd-help jq
 fi
@@ -83,7 +94,8 @@ jqpaths "${inputs[@]}" | fzf \
     --bind "tab:replace-query" \
     --bind "return:become($JQ_PREVIEW_CMD)" \
     --bind "ctrl-v:preview-page-down,alt-v:preview-page-up" \
+    --bind "ctrl-k:kill-line" \
     --bind "alt->:preview-bottom,alt-<:preview-top" \
-    --bind "ctrl-o:print-query" \
-    --header 'Ctrl-o: print query / Enter: print results / Tab: change query to selected' \
+    --bind "ctrl-o:print-query,ctrl-y:execute-silent(echo -n {q} | pbcopy)" \
+    --header 'Ctrl-o: print query / Ctrl-y: copy query / Enter: print results / Tab: change query to selected' \
     --header-lines=0
