@@ -123,12 +123,12 @@ class Gitsync
         if ancestor?(diff.local.sha, @default_branch)
           # Gone, but merged
           if diff.local.name == current_branch
-            Warning.new(diff.local.name, "WARN: Remote branch is gone, but still checked out locally")
+            Warning.new(diff.local.name, "WARN: Remote branch for #{diff.local.name} is gone, but still checked out locally")
           else
             Update.new(diff.local.name, "deleted, was #{diff.local.sha}", ["git", "branch", "-D", diff.local.name] + (@quiet ? ["--quiet"] : []))
           end
         else
-          Error.new(diff.local.name,  "ERROR: Remote branch is gone, but not merged locally")
+          Error.new(diff.local.name,  "ERROR: Remote branch for #{diff.local.name} is gone, but not merged locally")
         end
       elsif diff.remote.sha.nil? || diff.remote.sha.empty?
         Noop.new(diff.local.name, "no remote")

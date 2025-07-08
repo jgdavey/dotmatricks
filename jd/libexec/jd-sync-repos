@@ -155,7 +155,7 @@ if OPTIONS.format == :dots
       {repo: result.name, update: action}
     }
   }
-  repo_width = updated.map{ |m| m[:repo].to_s.length }.max
+  repo_width = updated.map { |m| m[:repo].to_s.length }.max
   branch_width = updated.map { |m| m[:update].branch.to_s.length }.max
 
   updated.each do |update|
