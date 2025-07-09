@@ -419,13 +419,19 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   :ensure t
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
-(use-package nerd-icons-ivy-rich
-  :pin melpa
-  :ensure t
-  :after (nerd-icons ivy)
-  :init
-  (nerd-icons-ivy-rich-mode 1)
-  (ivy-rich-mode 1))
+;; (use-package ivy-rich
+;;   :ensure t
+;;   :after (ivy)
+;;   :init
+;;   (ivy-rich-mode 1))
+
+;; (use-package nerd-icons-ivy-rich
+;;   :pin melpa
+;;   :ensure t
+;;   :after (nerd-icons ivy)
+;;   :init
+;;   (nerd-icons-ivy-rich-mode -1)
+;;   (ivy-rich-mode 1))
 
 (use-package vterm
   :ensure t
