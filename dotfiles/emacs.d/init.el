@@ -267,6 +267,7 @@
   (setq projectile-mode-line-function
         (lambda () (format " [%s]" (projectile-project-name))))
   (setq projectile-completion-system 'ivy)
+  (setq projectile-enable-caching t)
   ;; (setq projectile-indexing-method 'hybrid)
   (add-to-list 'projectile-project-search-path "~/src")
   ;;(projectile-mode +1)
@@ -294,9 +295,13 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (if (not projectile-known-projects)
       (projectile-reset-known-projects)))
 
+
 (use-package counsel-projectile
   :ensure t
-  :pin melpa)
+  :pin melpa
+  :init
+  (setq counsel-projectile-find-file-matcher 'ivy--re-filter))
+
 
 (use-package projectile-ripgrep
   :ensure t)
