@@ -14,8 +14,7 @@
     "Insert a header mentioning a co-author"
     (interactive (git-commit-read-ident))
     (git-commit-insert-header "Co-authored-by" name mail))
-  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-completing-read-function 'ivy-completing-read))
+  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")))
 
 (use-package magit-section
   :after magit

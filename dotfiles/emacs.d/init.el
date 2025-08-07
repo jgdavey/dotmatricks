@@ -160,9 +160,6 @@
   (doom-themes-visual-bell-config)
   (doom-themes-treemacs-config)
   (doom-themes-org-config)
-  ;; Must be used *after* the theme is loaded
-  (custom-set-faces
-   `(ivy-current-match ((t (:background ,(doom-lighten 'base4 0.05))))))
   )
 
 ;; Has to be first to use :diminish option
@@ -226,38 +223,94 @@
                   babashka-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
 
-(use-package ivy
-  :ensure t
-  :diminish ivy-mode
-  :bind (("C-c r" . ivy-resume)
-         ("C-c v" . ivy-push-view)
-         ("C-c V" . ivy-pop-view))
-  :config
-  (progn
-    (with-eval-after-load 'ido
-      (ido-mode -1)
-      ;; Enable ivy
-      (ivy-mode 1))
-    (setq ivy-use-virtual-buffers t
-          ivy-count-format "%d/%d "
-          ivy-height 12
-          ivy-display-style 'fancy)
-    (defun jd/ivy-kill-buffer ()
-      (interactive)
-      (ivy-set-action 'kill-buffer)
-      (ivy-done))
-    (bind-keys
-     :map ivy-switch-buffer-map
-     ("C-k" . jd/ivy-kill-buffer))))
-
 (use-package smex
   :ensure t)
 
-(use-package counsel
+(use-package vertico
   :ensure t
-  :bind (("M-x" . counsel-M-x)
-         ("C-c i" . counsel-imenu)
-         ("C-x C-f" . counsel-find-file)))
+  :custom
+  ;; (vertico-scroll-margin 0) ;; Different scroll margin
+  ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+  ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  (vertico-count 16)  ;; limit to a fixed size
+  :init
+  (vertico-mode))
+
+;; Convenient path selection
+(use-package vertico-directory
+  :after vertico
+  :ensure nil  ;; no need to install, it comes with vertico
+  :bind (:map vertico-map
+              ("DEL" . vertico-directory-delete-char)))
+
+(use-package orderless
+  :ensure t
+  :custom
+  ;; Activate orderless completion
+  (completion-styles '(orderless basic))
+  ;; Enable partial completion for file wildcard support
+  (completion-category-overrides '((file (styles partial-completion)))))
+
+(defun jd/get-project-root (&optional _)
+    (when (fboundp 'projectile-project-root)
+      (projectile-project-root)))
+
+(use-package consult
+  :ensure t
+  :custom
+  ;; Disable preview
+  (consult-preview-key "M-.")
+  (consult-project-function 'jd/get-project-root)
+  (consult-async-input-throttle 0.3)
+  :init
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+  :config
+  (consult-customize
+   consult-ripgrep
+   :add-history (seq-some #'thing-at-point '(region symbol))
+   )
+  :bind
+  (("M-g i" . 'consult-imenu)     ;; original: imenu
+   ("C-x b" . 'consult-buffer)    ;; Switch buffer, including recentf and bookmarks
+   ;; ("M-l"   . 'consult-git-grep)  ;; Search inside a project
+   ("C-s" . 'consult-line)
+   :map projectile-command-map
+   ("s r" . 'consult-ripgrep)
+   ("s g" . 'consult-git-grep)
+   ("s s" . 'consult-grep)
+   ))
+
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  :ensure t
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+  :init
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
+
+(use-package nerd-icons-completion
+  :ensure t
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package embark
+  :ensure t
+  :bind
+  (("C-."   . embark-act)         ;; Begin the embark process
+   ("C-;"   . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+  :config
+  (use-package embark-consult))
 
 (use-package projectile
   :ensure t
@@ -266,55 +319,15 @@
   :config
   (setq projectile-mode-line-function
         (lambda () (format " [%s]" (projectile-project-name))))
-  (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
   ;; (setq projectile-indexing-method 'hybrid)
   (add-to-list 'projectile-project-search-path "~/src")
-  ;;(projectile-mode +1)
-  (counsel-projectile-mode +1)
-  (defun jd/projectile-find-file ()
-    "Inspired by doom's +ivy/projectile-find-file.
-A more sensible `counsel-projectile-find-file', which will revert to
-`counsel-find-file' if outside of a project, `projectile-find-file' if
-in a big project (more than `ivy-sort-max-size' files), or
-`counsel-projectile-find-file' otherwise.
-
-The point of this is to avoid Emacs locking up indexing massive file trees."
-    (interactive)
-    (let ((this-command 'counsel-find-file))
-      (call-interactively
-       (cond ((projectile-project-p)
-              (let ((files (projectile-current-project-files)))
-                (if (<= (length files) ivy-sort-max-size)
-                    #'counsel-projectile-find-file
-                  #'projectile-find-file)))
-
-             (#'counsel-find-file)))))
-
-  (define-key projectile-command-map "f" #'jd/projectile-find-file)
+  (projectile-mode +1)
   (if (not projectile-known-projects)
       (projectile-reset-known-projects)))
 
-
-(use-package counsel-projectile
-  :ensure t
-  :pin melpa
-  :init
-  (setq counsel-projectile-find-file-matcher 'ivy--re-filter))
-
-
 (use-package projectile-ripgrep
   :ensure t)
-
-(use-package swiper
-  :ensure t
-  :bind (("C-s" . swiper-isearch)
-         ("C-r" . swiper-isearch-backward)
-         ("C-c C-s" . isearch-forward)
-         :map isearch-mode-map
-         ("C-c C-s" . swiper-isearch-toggle)
-         :map swiper-map
-         ("C-c C-s" . swiper-isearch-toggle)))
 
 (use-package multiple-cursors
   :ensure t
@@ -423,20 +436,6 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   :pin melpa
   :ensure t
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
-
-;; (use-package ivy-rich
-;;   :ensure t
-;;   :after (ivy)
-;;   :init
-;;   (ivy-rich-mode 1))
-
-;; (use-package nerd-icons-ivy-rich
-;;   :pin melpa
-;;   :ensure t
-;;   :after (nerd-icons ivy)
-;;   :init
-;;   (nerd-icons-ivy-rich-mode -1)
-;;   (ivy-rich-mode 1))
 
 (use-package vterm
   :ensure t

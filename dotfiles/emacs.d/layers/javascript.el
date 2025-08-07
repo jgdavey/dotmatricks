@@ -10,10 +10,6 @@
 (use-package rjsx-mode
   :ensure t)
 
-(use-package counsel-jq
-  :ensure t
-  :after counsel)
-
 (use-package typescript-mode
   :ensure t
   :after tree-sitter

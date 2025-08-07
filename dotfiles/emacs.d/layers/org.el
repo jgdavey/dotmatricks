@@ -1,7 +1,6 @@
 (use-package org
   :ensure t
-  :bind (("C-c c" . counsel-projectile-org-capture)
-         ("C-c a" . org-agenda)
+  :bind (("C-c a" . org-agenda)
          :map org-mode-map
          ("C-c o" . jd/org-open-at-point))
   :init
@@ -39,10 +38,6 @@
                              (org-agenda-files :maxlevel . 3)))
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
-  (setq counsel-projectile-org-capture-templates
-        `(("p" "[${name}] Task" entry
-           (file+headline "${root}/notes.org" "Tasks")
-           "* TODO %?\n  %u\n  %a\n  %i")))
   (setq org-capture-templates
         `(("t" "Todo" entry (file "todo.org")
            "* TODO %?\n  %i")

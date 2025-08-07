@@ -73,44 +73,6 @@
   :init
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
-(use-package imenu-anywhere
-  :ensure t
-  :bind (("C-." . jd/imenu-anywhere))
-  :init
-  (defvar-local jd/show-imenu-filename t)
-  (defun jd/hide-imenu-filename ()
-    (setq jd/show-imenu-filename nil))
-  :config
-  (add-hook 'clojure-mode-hook #'jd/hide-imenu-filename)
-  (defun jd/imenu-anywhere-preprocess (entry entry-name)
-    (when entry
-      (let* ((bufname (when (and jd/show-imenu-filename
-                                 (markerp (cdr entry)))
-                        (buffer-name (marker-buffer (cdr entry)))))
-             (bname (if bufname
-                        (concat
-                         (propertize bufname 'face 'ivy-grep-info)
-                         (propertize ": " 'face 'ivy-separator))
-                      "")))
-        (setcar entry (concat bname
-                              (when entry-name
-                                (concat
-                                 (propertize entry-name 'face 'ivy-grep-info)
-                                 (propertize imenu-anywhere-delimiter 'face 'ivy-separator)))
-                              (car entry))))
-      entry))
-
-  (defun jd/imenu-anywhere ()
-    "Use ivy for imenu-anywhere"
-    (interactive)
-    (unless (require 'ivy nil t)
-      (error "[imenu-anywhere]: This command requires 'ivy' package"))
-    (let ((ivy-sort-functions-alist)
-          (imenu-anywhere-preprocess-entry-function #'jd/imenu-anywhere-preprocess)
-          (completing-read-function 'ivy-completing-read))
-      (imenu-anywhere))))
-
-
 (use-package flycheck
   :ensure t
   :pin melpa)
@@ -144,6 +106,9 @@
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]data/batches\\'")
   (setq lsp-enable-xref t))
 
+(use-package consult-lsp
+  :ensure t)
+
 (use-package lsp-ui
   :pin melpa-stable
   :ensure t
@@ -158,11 +123,6 @@
         lsp-ui-sideline-delay 0.5
         lsp-ui-doc-delay 0.5
         ))
-
-(use-package lsp-ivy
-  :ensure t
-  :pin melpa-stable
-  :commands lsp-ivy-workspace-symbol)
 
 (use-package lsp-treemacs
   :ensure t
