@@ -226,6 +226,23 @@
 (use-package smex
   :ensure t)
 
+(use-package projectile
+  :ensure t
+  :bind (:map projectile-mode-map
+              ("C-c p" . projectile-command-map))
+  :config
+  (setq projectile-mode-line-function
+        (lambda () (format " [%s]" (projectile-project-name))))
+  (setq projectile-enable-caching t)
+  ;; (setq projectile-indexing-method 'hybrid)
+  (add-to-list 'projectile-project-search-path "~/src")
+  (projectile-mode +1)
+  (if (not projectile-known-projects)
+      (projectile-reset-known-projects)))
+
+(use-package projectile-ripgrep
+  :ensure t)
+
 (use-package vertico
   :ensure t
   :custom
@@ -311,23 +328,6 @@
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
   :config
   (use-package embark-consult))
-
-(use-package projectile
-  :ensure t
-  :bind (:map projectile-mode-map
-              ("C-c p" . projectile-command-map))
-  :config
-  (setq projectile-mode-line-function
-        (lambda () (format " [%s]" (projectile-project-name))))
-  (setq projectile-enable-caching t)
-  ;; (setq projectile-indexing-method 'hybrid)
-  (add-to-list 'projectile-project-search-path "~/src")
-  (projectile-mode +1)
-  (if (not projectile-known-projects)
-      (projectile-reset-known-projects)))
-
-(use-package projectile-ripgrep
-  :ensure t)
 
 (use-package multiple-cursors
   :ensure t
