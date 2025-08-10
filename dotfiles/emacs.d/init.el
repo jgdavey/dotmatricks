@@ -263,6 +263,9 @@
 (use-package orderless
   :ensure t
   :custom
+  (orderless-matching-styles '(orderless-literal
+                               orderless-initialism
+                               orderless-regexp))
   ;; Activate orderless completion
   (completion-styles '(orderless basic))
   ;; Enable partial completion for file wildcard support
@@ -306,7 +309,11 @@
   ;; available in the *Completions* buffer, add it to the
   ;; `completion-list-mode-map'.
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
+  :custom
+  (marginalia-align 'right)
+  (marginalia-separator "    ")
+  (marginalia-max-relative-age (* 1 24 60 60)) ;; 1 day ago
   :init
   ;; Marginalia must be activated in the :init section of use-package such that
   ;; the mode gets enabled right away. Note that this forces loading the
