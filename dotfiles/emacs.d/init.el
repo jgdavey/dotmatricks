@@ -289,7 +289,7 @@
    :add-history (seq-some #'thing-at-point '(region symbol))
    )
   :bind
-  (("M-g i" . 'consult-imenu)     ;; original: imenu
+  (("C-c i" . 'consult-imenu)     ;; original: imenu
    ("C-x b" . 'consult-buffer)    ;; Switch buffer, including recentf and bookmarks
    ;; ("M-l"   . 'consult-git-grep)  ;; Search inside a project
    ("C-s" . 'consult-line)
@@ -404,6 +404,9 @@
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
+  :ensure t)
+
+(use-package consult-yasnippet
   :ensure t)
 
 (use-package doom-modeline

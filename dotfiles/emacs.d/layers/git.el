@@ -28,3 +28,6 @@
 
 (use-package git-link
   :ensure t)
+
+(use-package consult-gh
+  :ensure t)

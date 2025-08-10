@@ -77,6 +77,9 @@
   :ensure t
   :pin melpa)
 
+(use-package consult-flycheck
+  :ensure t)
+
 (use-package lsp-mode
   :pin melpa-stable
   :ensure t
