@@ -330,9 +330,10 @@
 (use-package embark
   :ensure t
   :bind
-  (("C-."   . embark-act)         ;; Begin the embark process
-   ("C-;"   . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+  (("C-."    . embark-act)         ;; Begin the embark process
+   ("C-c ."  . embark-export)      ;; Use completion candidates in another context
+   ("C-;"    . embark-dwim)
+   ("C-h B"  . embark-bindings))   ;; alternative for `describe-bindings'
   :config
   (use-package embark-consult))
 
