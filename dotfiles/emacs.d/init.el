@@ -233,7 +233,7 @@
   :config
   (setq projectile-mode-line-function
         (lambda () (format " [%s]" (projectile-project-name))))
-  (setq projectile-enable-caching t)
+  ;; (setq projectile-enable-caching t)
   ;; (setq projectile-indexing-method 'hybrid)
   (add-to-list 'projectile-project-search-path "~/src")
   (projectile-mode +1)
