@@ -142,6 +142,9 @@
 ;; Required until PATH injection in Info.plist works
 (use-package exec-path-from-shell
   :ensure t
+  :custom
+  ;; Don't use interactive shell
+  (exec-path-from-shell-arguments (list "-l"))
   :if (display-graphic-p)
   :config
   (exec-path-from-shell-initialize))
