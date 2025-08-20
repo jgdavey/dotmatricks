@@ -139,6 +139,13 @@
 ;; Package setup
 (require 'use-package)
 
+;; Required until PATH injection in Info.plist works
+(use-package exec-path-from-shell
+  :ensure t
+  :if (display-graphic-p)
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package nerd-icons
   :pin melpa
   :ensure t
@@ -166,12 +173,6 @@
 (use-package diminish
   :pin melpa
   :ensure t)
-
-(use-package exec-path-from-shell
-  :ensure t
-  :if (display-graphic-p)
-  :config
-  (exec-path-from-shell-initialize))
 
 (use-package ws-butler
   :pin melpa
