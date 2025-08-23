@@ -250,6 +250,7 @@
 (use-package vertico
   :ensure t
   :custom
+  (vertico-sort-function 'vertico-sort-history-alpha)
   ;; (vertico-scroll-margin 0) ;; Different scroll margin
   ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
   ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
