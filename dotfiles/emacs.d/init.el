@@ -149,6 +149,12 @@
   :config
   (exec-path-from-shell-initialize))
 
+(use-package recentf
+  :custom
+  (recentf-max-saved-items 100)
+  :config
+  (recentf-mode +1))
+
 (use-package nerd-icons
   :pin melpa
   :ensure t
