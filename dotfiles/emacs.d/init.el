@@ -233,9 +233,6 @@
                   babashka-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
 
-(use-package smex
-  :ensure t)
-
 (use-package projectile
   :ensure t
   :bind (:map projectile-mode-map
@@ -253,9 +250,14 @@
 (use-package projectile-ripgrep
   :ensure t)
 
+(use-package savehist
+  :init
+  (savehist-mode))
+
 (use-package vertico
   :ensure t
   :custom
+  (read-extended-command-predicate #'command-completion-default-include-p)
   (vertico-sort-function 'vertico-sort-history-alpha)
   ;; (vertico-scroll-margin 0) ;; Different scroll margin
   ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer

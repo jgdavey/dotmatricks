@@ -81,4 +81,3 @@ active process."
   (process-send-region jd/process-target beg end))
 
 (global-set-key (kbd "C-c C-o C-s") #'jd/region-to-process)
-
