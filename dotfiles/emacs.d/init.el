@@ -107,14 +107,20 @@
 ;; Packages
 (require 'package)
 
+
+;; When primary mirrors are down:
+;; (setq package-archives
+;;       '(("melpa-stable" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/stable-melpa/")
+;;         ("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
+;;         ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
+
 (setq package-archives
       '(("melpa-stable" . "https://stable.melpa.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
-        ("gnu-mirror" . "https://mirror.endianness.com/elpa/")
-        ("gnu" . "https://elpa.gnu.org/packages/"))
-      package-archive-priorities
+        ("gnu" . "https://elpa.gnu.org/packages/")))
+
+(setq package-archive-priorities
       '(("melpa-stable" . 10)
-        ("gnu-mirror" . 9)
         ("gnu" . 5)
         ("melpa" . 1)))
 
