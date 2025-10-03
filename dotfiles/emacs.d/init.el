@@ -312,14 +312,23 @@
    :add-history (seq-some #'thing-at-point '(region symbol))
    )
   :bind
-  (("C-c i" . 'consult-imenu)     ;; original: imenu
-   ("C-x b" . 'consult-buffer)    ;; Switch buffer, including recentf and bookmarks
-   ;; ("M-l"   . 'consult-git-grep)  ;; Search inside a project
+  (("C-c M-x" . consult-mode-command)
+   ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+   ("C-c i" . 'consult-imenu)       ;; orig. imenu
+   ("C-x b" . 'consult-buffer)      ;; Switch buffer, including recentf and bookmarks
+   ("M-g g" . consult-goto-line)    ;; orig. goto-line
+   ("M-g M-g" . consult-goto-line)  ;; orig. goto-line
+   ("M-g o" . consult-outline)
+   ("M-g m" . consult-mark)
+   ("M-g k" . consult-global-mark)
+   ("M-g i" . consult-imenu)
+   ("M-g I" . consult-imenu-multi)
    ("C-s" . 'consult-line)
    :map projectile-command-map
    ("s r" . 'consult-ripgrep)
    ("s g" . 'consult-git-grep)
    ("s s" . 'consult-grep)
+   ("F" . 'consult-fd)
    ))
 
 ;; Enable rich annotations using the Marginalia package
@@ -354,8 +363,12 @@
    ("C-c ."  . embark-export)      ;; Use completion candidates in another context
    ("C-;"    . embark-dwim)
    ("C-h B"  . embark-bindings))   ;; alternative for `describe-bindings'
-  :config
-  (use-package embark-consult))
+  )
+
+(use-package embark-consult
+  :ensure t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package multiple-cursors
   :ensure t
