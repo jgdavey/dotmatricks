@@ -36,18 +36,7 @@
   :pin melpa
   :ensure t)
 
-;; (use-package restclient
-;;   :pin melpa
-;;   :ensure t)
-
-;; (use-package ob-restclient
-;;   :pin melpa
-;;   :ensure t)
-
 (use-package nginx-mode
-  :ensure t)
-
-(use-package company-nginx
   :ensure t)
 
 (use-package web-mode
@@ -55,11 +44,7 @@
   :mode ("\\.html?\\'"
          "\\.mustache\\'"
          "\\.erb\\'")
-  :init
-  ;; (add-hook 'web-mode-hook 'display-line-numbers-mode)
   :config
-  (use-package company-web
-    :ensure t)
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
         web-mode-code-indent-offset 2

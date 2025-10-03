@@ -290,6 +290,7 @@
   ;; Enable partial completion for file wildcard support
   (completion-category-overrides '((file (styles partial-completion)))))
 
+
 (defun jd/get-project-root (&optional _)
     (when (fboundp 'projectile-project-root)
       (projectile-project-root)))
@@ -371,20 +372,36 @@
 ;;  :bind ;;(("C-c e e" . er/))
   )
 
-(use-package company
-  :ensure t
-  :diminish company-mode
-  :config
-  (setq company-tooltip-align-annotations t)
-  (setq company-minimum-prefix-length 2
-        company-idle-delay 0.1)
-  :init
-  (global-company-mode 1))
+(use-package nerd-icons-corfu
+  :ensure t)
 
-(use-package company-quickhelp
+(use-package corfu
   :ensure t
+  :custom
+  (corfu-auto nil)
+  (corfu-preview-current 'insert)
+  (corfu-preselect 'valid)
+  (corfu-popupinfo-delay '(1.5 . 0.5))
+  :config
+  (setq tab-always-indent 'complete)
+  (setq global-corfu-minibuffer
+      (lambda ()
+        (not (or (bound-and-true-p mct--active)
+                 (bound-and-true-p vertico--input)
+                 (eq (current-local-map) read-passwd-map)))))
   :init
-  (company-quickhelp-mode))
+  (global-corfu-mode)
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (corfu-popupinfo-mode)
+  )
+
+;; (use-package corfu-terminal
+;;   :ensure t
+;;   :vc (:url "https://codeberg.org/akib/emacs-corfu-terminal.git"
+;;        :rev :newest)
+;;   :init
+;;   (unless (display-graphic-p)
+;;     (corfu-terminal-mode +1)))
 
 (use-package wgrep
   :ensure t
