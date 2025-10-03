@@ -68,6 +68,8 @@
 (use-package lsp-mode
   :pin melpa-stable
   :ensure t
+  :custom
+  (lsp-completion-provider :none) ;; we use Corfu!
   :hook ((rust-mode . lsp)
          (rust-ts-mode .lsp)
          (clojure-mode . lsp)
@@ -77,9 +79,14 @@
          (go-ts-mode . lsp-deferred)
          (go-mode . lsp-deferred)
          ;;(enh-ruby-mode . lsp)
-         (lsp-mode . lsp-enable-which-key-integration))
+         (lsp-mode . lsp-enable-which-key-integration)
+         (lsp-completion-mode . jd/lsp-mode-setup-completion))
   :commands lsp
   :autoload lsp-deferred
+  :init
+  (defun jd/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(flex))) ;; Configure flex
   :config
   (setq ;; lsp-keymap-prefix "C-c l"
         lsp-headerline-breadcrumb-enable nil
