@@ -285,6 +285,7 @@
   (orderless-matching-styles '(orderless-literal
                                orderless-initialism
                                orderless-regexp))
+  (completion-ignore-case t)
   ;; Activate orderless completion
   (completion-styles '(orderless basic))
   ;; Enable partial completion for file wildcard support

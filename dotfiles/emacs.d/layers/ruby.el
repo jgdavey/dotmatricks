@@ -26,11 +26,3 @@
   (add-to-list 'auto-mode-alist
                '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
 
-(use-package rspec-mode
-  :ensure t
-  ;; mimic rust mode mappings
-  :bind (:map rspec-mode-verifiable-keymap
-              ("C-t" . rspec-verify)
-              ("C-c" . rspec-rerun))
-  :init
-  (setq rspec-key-command-prefix (kbd "C-c C-C")))

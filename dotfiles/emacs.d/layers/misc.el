@@ -6,3 +6,6 @@
 
 (use-package arduino-mode
   :ensure t)
+
+(use-package terraform-mode
+  :ensure t)
