@@ -1,56 +1,369 @@
-#!/usr/bin/env ruby
-# Usage: jd git-sync [opts]
-# Summary: Fetch and sync all git branches with their remote tracking branches
+#!/usr/bin/env bb
+;; Usage: jd git-sync [opts]
+;; Summary: Sync all tracking branches for repo(s)
+;; Help: Iterates through all local branches that have remote tracking branches
+;; and attempts to fast-forward them to match their upstream counterparts.
+;;
+;; When called with --all, does the same but for ALL repos in the $PEERSPACE_SRC_DIR
 
-require 'optparse'
-require 'ostruct'
+(require '[babashka.process]
+         '[babashka.deps :as deps]
+         '[babashka.fs :as fs]
+         '[clojure.core.async :as a]
+         '[clojure.string :as str])
 
-require File.join(ENV["_JD_ROOT"], "share", "lib", "gitsync.rb")
+#_{:clj-kondo/ignore [:unresolved-namespace]}
+(babashka.classpath/add-classpath (str (System/getenv "_JD_ROOT") "/share/lib"))
 
-is_tty = $stdout.respond_to?(:tty?) && $stdout.tty?
+;; --complete is supported
 
-OPTIONS = OpenStruct.new(quiet: false, colorize: is_tty)
+(require '[jd.common :as common :refer [log logf]])
 
-parser = OptionParser.new do |opts|
-  opts.banner = "Usage: jd git-sync [options]"
+(deps/add-deps
+ '{:deps {com.joshuadavey/crockery {:mvn/version "0.3.3"}}})
 
-  opts.on("-q", "--quiet", "Output less stuff") do |d|
-    OPTIONS.quiet = true
-  end
+(require '[crockery.core :as crock])
 
-  opts.on("--[no-]color", "Colorize output") do |c|
-    OPTIONS.colorize = c
-  end
+(defn repo-root [cli-passed]
+  (-> (or cli-passed
+          (System/getenv "SOURCE_DIR") ;; Uses init.sh
+          (str (System/getenv "_JD_ROOT") "/../.."))
+      fs/path
+      fs/canonicalize))
 
-  opts.on_tail("-h", "--help", "Show this message") do
-    puts opts
-    exit
-  end
-end
+(defn known-repos [root-dir]
+  (mapv (fn [p]
+          (let [path (fs/parent p)]
+            {:dir (str path)
+             :repo (str (fs/relativize root-dir path))}))
+        (fs/glob root-dir "*/.git" {:max-depth 2
+                                    :hidden true})))
 
-if ARGV[0] == "--complete"
-  parser.send(:visit, :compsys, {}, {}) {|o, d|
-    puts "#{o}[#{d.gsub(/[\\\"\[\]]/, '\\\\\&')}]"
-  }
-  exit 0
-end
+(def ^:dynamic *dir* nil)
 
-parser.parse!
+(defn git-cmd
+  "Execute a git command and return {:success? :out :err :exit}"
+  [& args]
+  (let [cmd (into ["git"] args)
+        result (common/process-run-sync cmd {:dir *dir*})]
+    result))
 
-Gitsync.new(**OPTIONS.to_h).actions.each do |action|
-  branch = if OPTIONS.colorize
-             "\033[1m#{action.branch}\033[0m"
-           else
-             action.branch
-           end
-  message = "(#{branch}) " + action.formatted(OPTIONS.colorize)
-  case action
-  when Gitsync::Error
-    $stderr.puts message
-  when Gitsync::Update
-    system *action.command
-    puts message
-  else
-    puts message
-  end
-end
+(defn current-branch
+  "Get the name of the current branch"
+  []
+  (let [{:keys [out success?]} (git-cmd "rev-parse" "--abbrev-ref" "HEAD")]
+    (when success?
+      (str/trim out))))
+
+(defn rev-parse
+  [ref]
+  (let [{:keys [out success?]} (git-cmd "rev-parse" "-q" ref)]
+    (when success?
+      (str/trim out))))
+
+(defn is-dirty?
+  "Check if working tree has uncommitted changes"
+  []
+  (let [{:keys [out success?]} (git-cmd "status" "--porcelain")]
+    (and success? (not (str/blank? out)))))
+
+(defn get-tracking-branches
+  "Get all local branches with their remote tracking branches.
+   Returns a seq of maps: [{:local 'main' :remote 'origin/main'} ...]"
+  []
+  (let [{:keys [out success?]} (git-cmd "for-each-ref"
+                                        "--format=%(refname:short)|%(upstream:short)"
+                                        "refs/heads")]
+    (if success?
+      (into [] (comp (map str/trim)
+                     (remove str/blank?)
+                     (keep (fn [line]
+                             (let [[local remote] (str/split line #"\|" 2)]
+                               (when (and local remote (not (str/blank? remote)))
+                                 {:local local
+                                  :remote remote})))))
+            (str/split-lines out))
+      [])))
+
+(defn local-remote-status
+  "Check if local branch can be fast-forwarded to remote"
+  [{:keys [local remote]}]
+  (let [local-sha (rev-parse local)
+        remote-sha (rev-parse remote)
+        base {:local local
+              :local-sha local-sha
+              :remote remote
+              :remote-sha remote-sha}]
+    (if remote-sha
+      (let [{rev-list-okay? :success? out :out} (git-cmd "rev-list" "--left-right" "--count"
+                                                         (str local "..." remote))]
+        (if rev-list-okay?
+          (let [[ahead behind] (map parse-long (str/split (str/trim out) #"\s+"))]
+            (merge base
+                   {:branch-status :tracking
+                    :can-ff? (and (pos? behind) (zero? ahead))
+                    :ahead ahead
+                    :behind behind
+                    :up-to-date? (and (zero? behind) (zero? ahead))}))
+          (assoc base :error? true
+                 :message "unknown error getting rev-list")))
+      (assoc base :remote-gone? true))))
+
+(defn get-branch-sync-status
+  "Sync a single branch by checking it out and pulling with --ff-only.
+   Returns {:success? :status :message}"
+  [{:keys [current dirty?] :as opts}]
+  (let [{:keys [local remote] :as status} (local-remote-status opts)]
+    (cond
+      ;; Branch is already up to date
+      (:up-to-date? status)
+      (assoc status :status :up-to-date)
+
+      ;; Branch can be fast-forwarded
+      (:can-ff? status)
+      (if (= current local)
+        (if dirty?
+          (assoc status
+                 :status :unable-to-ff
+                 :message "branch has files that are not checked-in")
+          (assoc status
+                 :status :sync
+                 :command :sync/current
+                 :git-args ["merge" "--ff-only" remote]))
+        (assoc status
+               :status :sync
+               :command :sync/other
+               :git-args ["update-ref" (str "refs/heads/" local) remote]))
+
+      ;; Previously tracked branch no longer present in remote
+      (:remote-gone? status)
+      (if (= current local)
+        (assoc status
+               :status :remote-gone
+               :message "remote branch is gone, but still checked out locally")
+        (assoc status
+               :status :sync
+               :command :sync/delete-branch
+               :git-args ["branch" "-D" local]))
+
+      ;; Some other error
+      (:error? status)
+      (assoc status
+             :message (or (:message status) "unknown error")
+             :status :error)
+
+      ;; Diverged
+      :else
+      (let [behind (:behind status 0)
+            ahead (:ahead status 0)]
+        (assoc status
+               :status :diverged
+               :message (str "cannot fast-forward (behind: " behind ", ahead: " ahead ")"))))))
+
+(defn sync-all-branches
+  "Sync all tracking branches and return results"
+  [{:keys [dry-run?]}]
+  (let [current (current-branch)
+        branches (get-tracking-branches)
+        dirty? (is-dirty?)
+        fetch-result (if dry-run?
+                       {:success? true}
+                       (git-cmd "fetch" "--all" "--prune" "-P" "--force"))]
+    (if (:success? fetch-result)
+      (let [_ (logf :debug "Found %s tracking branches: %s"
+                    (count branches)
+                    (pr-str (mapv :local branches)))
+            ;; Get sync actions and statuses
+            statuses (mapv (fn [{:keys [local remote]}]
+                             (logf :debug "Processing %s -> %s" local remote)
+                             (get-branch-sync-status {:local local
+                                                      :remote remote
+                                                      :dry-run? dry-run?
+                                                      :dirty? dirty?
+                                                      :current current}))
+                           branches)
+            ;; Do the sync actions
+            results (if dry-run?
+                      statuses
+                      (mapv (fn [status]
+                              (if (= :sync (:status status))
+                                (let [{:keys [success? out]} (apply git-cmd (:git-args status))
+                                      _ (when (and success? (= :sync/current (:status status)))
+                                          (git-cmd "submodule" "update" "--init"))]
+                                  (if success?
+                                    status
+                                    (assoc status :status :error
+                                           :message (str "Error while syncing:\n" out))))
+                                status))
+                            statuses))]
+        {:success? true
+         :dir *dir*
+         :results results})
+      {:success? false
+       :dir *dir*
+       :message (str "Fetch failed " (:err fetch-result))})))
+
+(defmulti output-spec :status)
+
+(defmethod output-spec :up-to-date [_]
+  {:symbol "="
+   :color :green})
+
+(defmethod output-spec :sync [{:keys [local-sha remote-sha command]}]
+  (if (= :sync/delete-branch command)
+    {:symbol "♺"
+     :color :green
+     :detail "(removed)"}
+    {:symbol "✓"
+     :color :green
+     :detail (str
+              (subs (or local-sha "") 0 7)
+              ".."
+              (subs (or remote-sha "") 0 7))}))
+
+(defmethod output-spec :diverged [{:keys [message]}]
+  {:symbol "!"
+   :color :yellow
+   :detail message})
+
+(defmethod output-spec :remote-gone [{:keys [message]}]
+  {:symbol "ø"
+   :color :red
+   :detail message})
+
+(defmethod output-spec :unable-to-ff [{:keys [message]}]
+  {:symbol "!"
+   :color :yellow
+   :detail message})
+
+(defmethod output-spec :error [{:keys [message]}]
+  {:symbol "✗"
+   :color :red
+   :detail message})
+
+(defn print-results-single-repo
+  "Print a summary of sync results"
+  [results dry-run?]
+  (println)
+  (println (common/colorize :bold
+                            (if dry-run?
+                              "Dry run - would sync the following branches:"
+                              "Sync results:")))
+  (println)
+  (doseq [result results]
+    (let [{:keys [symbol detail color]} (output-spec result)
+          branch-name (common/colorize :bold (:local result))
+          summary (common/colorize color (str symbol " " branch-name))]
+      (println (str "  " summary (when detail (str ": " detail)))))))
+
+(defn sync-one-repo [opts]
+  (let [dry-run? (:dry-run opts)
+        {:keys [success?]} (git-cmd "rev-parse" "--git-dir")]
+    (when-not success?
+      (log :error "Not in a git repository")
+      (System/exit 1))
+    (let [{:keys [success? results message]} (sync-all-branches {:dry-run? dry-run?})]
+      (if success?
+        (print-results-single-repo results dry-run?)
+        (do (log :error message)
+            (System/exit 1))))))
+
+(defn print-summary
+  "Print a summary of sync results"
+  [results dry-run?]
+  (println)
+  (println (common/colorize :bold
+                            (if dry-run?
+                              "Dry run - would sync the following branches:"
+                              "Sync results:")))
+  (println)
+  (crock/print-table
+   {:titles? false
+    :defaults {:ignore-ansi? true}
+    :format :plain}
+   (into [] (comp
+             (remove (fn [{:keys [status]}] (= :up-to-date status)))
+             (map (fn [result]
+                    (let [{:keys [symbol detail color]} (output-spec result)
+                          branch-name (:local result)
+                          repo (common/colorize :bold (:repo result))
+                          summary (common/colorize color (str symbol " " branch-name))]
+                      {:repo repo
+                       :branch summary
+                       :details detail}))))
+         results)))
+
+(defn sync-all-repos [{:keys [threads progress] :as opts}]
+  (let [dry-run? (:dry-run opts)
+        threads (or threads 5)
+        repos (known-repos (repo-root (:root opts)))
+        _ (logf :debug "Syncing %s repos" (count repos))
+        results-chan (a/chan (count repos))
+        print-progress (case progress
+                         :verbose (fn [{:keys [results repo]}]
+                                    (binding [*out* *err*]
+                                      (println (format "Synced %s branches for %s"
+                                                       (count results)
+                                                       repo))))
+                         :none (fn [_])
+                         (:dots nil) (fn [_]
+                                       (binding [*out* *err*]
+                                         (print ".") (flush))))
+        proc (comp (map (fn [{:keys [repo dir]}]
+                          (binding [*dir* dir]
+                            (logf :debug "Syncing repo %s" repo)
+                            (let [{:keys [success?] :as ret} (sync-all-branches {:dry-run? dry-run?})
+                                  results (map #(assoc % :repo repo) (:results ret))]
+                              (if success?
+                                (do
+                                  (print-progress {:repo repo :results results})
+                                  results)
+                                (do
+                                  (logf :error "Issue syncing %s %s" repo (:message ret))
+                                  []))))))
+                   cat)
+        _pipeline (a/pipeline-blocking threads results-chan proc (a/to-chan repos))
+        results (a/<!! (a/into [] results-chan))]
+    (binding [*out* *err*] (println))
+    (print-summary results dry-run?)))
+
+(def ^:private progress-styles #{:dots :verbose :none})
+
+;; supports --help
+(def cli-handler
+  (common/build-cli-args-handler
+   {:description (str "p git-sync - Sync all tracking branches in a git repository\n\n"
+                      "This command will iterate through all local branches with remote\n"
+                      "tracking branches and attempt to fast-forward them to match upstream.\n\n"
+                      "Examples:\n"
+                      "  p git-sync                    # Sync all tracking branches\n"
+                      "  p git-sync --dry-run          # Preview what would be synced\n"
+                      "  p git-sync --all              # Sync all repos (not just current)")
+    :allow-no-args? true
+    :cli-options [["-n" "--dry-run" "Show what would be synced without making changes"]
+                  ["-a" "--all" "Sync all known repos"]
+                  ["-p" "--progress STYLE" "How to display progress (with --all)"
+                   :default :dots
+                   :default-desc "dots"
+                   :parse-fn keyword
+                   :validate [progress-styles (str "Must be one of: " (pr-str progress-styles))]]
+                  ["-j" "--threads THREADS" "Number of threads to use (with --all)"
+                   :default 5
+                   :parse-fn parse-long
+                   :validate [#(< 0 % 20) "Must be a number between 0 and 20"]]
+                  ["-r" "--root" "Override root directory for repositories (used with --all)"]]}))
+
+(defn main [args]
+  (let [{:keys [options errors]} (cli-handler args)]
+    (when (seq errors)
+      (println "ERROR:")
+      (doseq [e errors]
+        (println e))
+      (System/exit (count errors)))
+    (if (:all options)
+      (sync-all-repos options)
+      (sync-one-repo options))))
+
+;; Run main if this script is executed directly
+(when (common/run-main?)
+  (main *command-line-args*))
