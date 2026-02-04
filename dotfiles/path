@@ -16,7 +16,7 @@ export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
 # end Homebrew stuff
 
 # Paths for prepending
-for dir in /usr/local/bin "$HOMEBREW_PREFIX/bin" "$WASMTIME_HOME/bin" "$GOPATH/bin" "$HOME/.cargo/bin" "$HOME/bin" ".git/safe/../../bin" ; do
+for dir in /usr/local/bin "$HOMEBREW_PREFIX/bin" "$WASMTIME_HOME/bin" "$GOPATH/bin" "$HOME/.cargo/bin" "$HOME/bin" "$HOME/.local/bin" ".git/safe/../../bin" ; do
   case "$PATH:" in
     *:"$dir":*) PATH="`echo "$PATH"|sed -e "s#:$dir##"`" ;;
   esac
