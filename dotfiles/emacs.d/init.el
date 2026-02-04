@@ -239,22 +239,14 @@
                   babashka-mode-hook))
     (add-hook hook #'turn-on-smartparens-strict-mode)))
 
-(use-package projectile
-  :ensure t
-  :bind (:map projectile-mode-map
-              ("C-c p" . projectile-command-map))
+(use-package project
+  :bind (:map project-prefix-map
+              ("s" . nil)  ;; will be rebound by consult
+              ("t" . project-find-functions))
+  :custom
+  (project-switch-commands #'project-find-file)
   :config
-  (setq projectile-mode-line-function
-        (lambda () (format " [%s]" (projectile-project-name))))
-  ;; (setq projectile-enable-caching t)
-  ;; (setq projectile-indexing-method 'hybrid)
-  (add-to-list 'projectile-project-search-path "~/src")
-  (projectile-mode +1)
-  (if (not projectile-known-projects)
-      (projectile-reset-known-projects)))
-
-(use-package projectile-ripgrep
-  :ensure t)
+  (global-set-key (kbd "C-c p") project-prefix-map))
 
 (use-package savehist
   :init
@@ -291,17 +283,11 @@
   ;; Enable partial completion for file wildcard support
   (completion-category-overrides '((file (styles partial-completion)))))
 
-
-(defun jd/get-project-root (&optional _)
-    (when (fboundp 'projectile-project-root)
-      (projectile-project-root)))
-
 (use-package consult
   :ensure t
   :custom
-  ;; Disable preview
+  ;; Disable preview except for with special key
   (consult-preview-key "M-.")
-  (consult-project-function 'jd/get-project-root)
   (consult-async-input-throttle 0.3)
   :init
   ;; Use Consult to select xref locations with preview
@@ -325,7 +311,7 @@
    ("M-g i" . consult-imenu)
    ("M-g I" . consult-imenu-multi)
    ("C-s" . 'consult-line)
-   :map projectile-command-map
+   :map project-prefix-map
    ("s r" . 'consult-ripgrep)
    ("s g" . 'consult-git-grep)
    ("s s" . 'consult-grep)
@@ -483,15 +469,6 @@
   :pin melpa
   :demand t
   :config (treemacs-load-theme "nerd-icons"))
-
-(use-package treemacs-projectile
-  :pin melpa
-  :after (treemacs projectile)
-  :ensure t)
-
-(use-package treemacs-magit
-  :ensure t
-  :after (treemacs magit))
 
 (use-package nerd-icons-ibuffer
   :pin melpa
