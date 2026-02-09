@@ -479,6 +479,9 @@
   :ensure t
   :pin melpa)
 
+;; (use-package vterm-anti-flicker-filter
+;;   :vc (:url "https://github.com/martinbaillie/vterm-anti-flicker-filter" :rev :newest))
+
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
           'browse-url-default-macosx-browser
