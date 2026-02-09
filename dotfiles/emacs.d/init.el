@@ -138,9 +138,8 @@
     (when (not (package-installed-p pkg))
       (package-install pkg))))
 
-(when (version<= "26.0.50" emacs-version)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode))
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(global-set-key (kbd "C-c C-o C-l") 'display-line-numbers-mode)
 
 ;; Package setup
 (require 'use-package)
@@ -492,10 +491,6 @@
       '(("github\\.com" . browse-url-default-browser)
         ("postgres\\.org" . eww-browse-url)
         ("docs\\.oracle\\.com" . eww-browse-url)))
-
-(when (version<= emacs-version "28.0.0")
-  (add-to-list 'browse-url-handlers '("." . browse-url-default-browser) t)
-  (setq browse-url-browser-function browse-url-handlers))
 
 (setq sh-basic-offset 2)
 
