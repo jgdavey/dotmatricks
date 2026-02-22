@@ -7,6 +7,7 @@
 (require '[babashka.process]
          '[babashka.deps :as deps]
          '[babashka.fs :as fs]
+         '[clojure.core.async :as a]
          '[clojure.string :as str])
 
 #_{:clj-kondo/ignore [:unresolved-namespace]}
@@ -279,7 +280,8 @@
                     (known-repos (repo-root (:root opts))))]
     {:opts {:dry-run? (:dry-run opts)
             :threads (:threads opts)
-            :root (:root opts)}
+            :root (:root opts)
+            :sticky (:sticky opts)}
      :repos repos
      :repo->idx (into {} (map-indexed (fn [i {:keys [repo]}] [repo i])) repos)}))
 
@@ -350,22 +352,54 @@
         lower (min running-idx (max 0 (- upper size)))]
     (subvec repos lower upper)))
 
-(defn view [state]
-  (let [{:keys [repos opts]} state]
-    (cond
-      (all-done? state)
-      (str "\n" (charm/render complete-style
-                         (format "✓ Finished syncing %s repos" (count repos))) "\n\n")
+(defn done-view [{:keys [repos]}]
+  (str "\n" (charm/render complete-style
+                     (format "✓ Finished syncing %s repos" (count repos))) "\n\n"))
 
-      :else
-      (str (render-bar state)
-           "\n"
-           (str/join "\n"
-                     (->> (visible-repos repos (max 10 (+ 4 (:threads opts))))
-                          (map render-repo)))))))
+(defn none-view [state]
+  (when (all-done? state)
+    (done-view state)))
+
+(defn full-view [state]
+  (let [{:keys [repos opts]} state
+        sticky? (:sticky opts)
+        done? (all-done? state)
+        main (when (or (not done?) sticky?)
+               (str (render-bar state)
+                    "\n"
+                    (str/join "\n"
+                              (->> (visible-repos repos (max 10 (+ 4 (:threads opts))))
+                                   (map render-repo)))))
+        done (when done?
+               (done-view state))]
+    (str main done)))
+
+(defn simple-view [state]
+  (let [{:keys [opts]} state
+        sticky? (:sticky opts)
+        done? (all-done? state)
+        main (when (or (not done?) sticky?)
+               (render-bar state))
+        done (when done? (done-view state))]
+    (str main done)))
 
 (defn complete-repo [m]
   (assoc m :type :complete-repo))
+
+(defn make-repo-fn [item opts]
+  (fn []
+    (let [{:keys [repo dir]} item]
+      (binding [*dir* dir]
+        (let [{:keys [success?] :as ret} (sync-all-branches opts)
+              results (map #(assoc % :repo repo) (:results ret))]
+          (complete-repo
+           (if success?
+             {:success? true
+              :repo repo
+              :results results}
+             {:success? false
+              :repo repo
+              :error (:message ret)})))))))
 
 (defn make-repo-task
   "Create a changeset entry for starting sync on a repo."
@@ -375,19 +409,7 @@
     {:path [:repos (get repo->idx repo)]
      :updated (assoc item :state :running :spinner spinner)
      :cmds [cmd
-            (charm/cmd (fn []
-                         (let [{:keys [repo dir]} item]
-                           (binding [*dir* dir]
-                             (let [{:keys [success?] :as ret} (sync-all-branches opts)
-                                   results (map #(assoc % :repo repo) (:results ret))]
-                               (complete-repo
-                                (if success?
-                                  {:success? true
-                                   :repo repo
-                                   :results results}
-                                  {:success? false
-                                   :repo repo
-                                   :error (:message ret)})))))))]}))
+            (charm/cmd (make-repo-fn item opts))]}))
 
 (defn update-state [state msg]
   (let [running-repos (filter running? (:repos state))
@@ -430,6 +452,22 @@
       :else
       [state nil])))
 
+(defn plain-run [opts]
+  (let [threads (or (:threads opts) 5)
+        repos (-> (init-state opts) :repos)
+        results-chan (a/chan (count repos))
+        _pipeline (a/pipeline-blocking threads
+                                       results-chan
+                                       (map (fn [repo]
+                                              (let [results ((make-repo-fn repo opts))]
+                                                (print (format "Synced %s branches for %s\n"
+                                                               (count (:results results))
+                                                               (:repo repo)))
+                                                (flush)
+                                                results)))
+                                       (a/to-chan repos))]
+    (a/<!! (a/into [] results-chan))))
+
 ;;--- CLI entry point ---
 (def cli-handler
   (common/build-cli-args-handler
@@ -445,21 +483,30 @@
                    :default 5
                    :parse-fn parse-long
                    :validate [#(< 0 % 20) "Must be a number between 0 and 20"]]
+                  ["-p" "--progress MODE" "Progress display: full, simple, none"
+                   :default "full"
+                   :validate [#(#{"full" "plain" "simple" "none"} %) "Must be full, plain, simple, or none"]]
+                  [nil "--sticky" "Keep progress output on screen after completion"]
                   ["-r" "--root" "Override root directory for repositories"]]}))
 
 (defn main [args]
-  (let [{:keys [options errors]} (cli-handler args)]
+  (let [{:keys [options errors]} (cli-handler args)
+        progress (keyword (:progress options))]
     (when (seq errors)
       (println "ERROR:")
       (doseq [e errors]
         (println e))
       (System/exit (count errors)))
-    (->
-     (charm/run {:view view
-                 :update update-state
-                 :init #(init-state options)})
-     :repos
-     (print-summary (:dry-run options)))))
+    (let [repo-results (if (= progress :plain)
+                         (plain-run options)
+                         (-> (charm/run {:view (case progress
+                                                 :simple simple-view
+                                                 :none none-view
+                                                 full-view)
+                                         :update update-state
+                                         :init #(init-state options)})
+                             :repos))]
+      (print-summary repo-results (:dry-run options)))))
 
 ;; Run main if this script is executed directly
 (when (common/run-main?)

@@ -1,6 +1,10 @@
+;; A set of common generic utility functions
+;; NOTE: do not run this file.
+;; Here's how to use it:
+
 #_(comment
-    ;; in your jd-script:
-    (babashka.classpath/add-classpath (str (System/getenv "_JD_ROOT") "/lib"))
+    ;; in your p-script:
+    (babashka.classpath/add-classpath (str (System/getenv "_P_ROOT") "/lib/bb"))
     ;; in other scripts in this repo
     (babashka.classpath/add-classpath (str (babashka.fs/parent (babashka.fs/parent *file*)) "/..//etc/lib/bb"))
     (require '[ps.common :as common :refer [log logf]]))
@@ -107,7 +111,7 @@
 ;; CLI args handling
 (defn build-cli-args-handler
   "Wrapper around parse-opts to handle CLI args.
-  Returns a function that will handle the CLI args - the function accepts vector of args
+  Returns a function that will handle the CLI args - the function acceps vector of args
   When invoked it will:
   - parse the args
   - in case `:help` is set, args are empty or there are errors, print help and exit with an error code
@@ -121,6 +125,7 @@
   "
   [{:keys [cli-options
            allow-no-args?
+           allow-rest-args?
            description]}]
 
   (let [has-help-flag? (some (fn [[short long & _rest]]
@@ -169,13 +174,14 @@
           ;; in some situations we don't want to always exit when help flag is handled
           (when exit-on-help?
             (System/exit 0)))
-        (when (and (seq arguments) (not= (count arguments) 1)) ; allow a single subcommand
+        (when  (and (not allow-rest-args?)  (seq arguments) (not= (count arguments) 1)) ; allow a single subcommand
           (println "Error: Only one subcommand is allowed")
           (println summary)
           (System/exit 1))
 
         {:options options
          :subcommand (some-> arguments seq first)
+         :arguments (vec arguments)
          :summary summary
          :errors errors}))))
 
