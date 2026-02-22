@@ -1,6 +1,6 @@
 #!/usr/bin/env bb
 ;; Usage: jd git-sync-all [opts]
-;; Summary: Sync all tracking branches for repo(s)
+;; Summary: Sync all tracking branches for repos
 ;; Help: Iterates through all local branches that have remote tracking branches
 ;; and attempts to fast-forward them to match their upstream counterparts.
 
@@ -13,6 +13,7 @@
 (babashka.classpath/add-classpath (str (System/getenv "_JD_ROOT") "/share/lib"))
 
 ;; --complete is supported
+;; --help is supported
 (require '[jd.common :as common])
 
 (deps/add-deps
@@ -38,29 +39,32 @@
         (fs/glob root-dir "*/.git" {:max-depth 2
                                     :hidden true})))
 
+;;--- Git operations ---
+
 (def ^:dynamic *dir* nil)
 
 (defn git-cmd
   "Execute a git command and return {:success? :out :err :exit}"
   [& args]
-  (let [cmd (into ["git"] args)
-        result (common/process-run-sync cmd {:dir *dir*})]
-    result))
+  (common/process-run-sync (into ["git"] args) {:dir *dir*}))
+
+(defn git-cmd-output
+  "Execute a git command, returning trimmed stdout on success, nil on failure."
+  [& args]
+  (let [{:keys [out success?]} (apply git-cmd args)]
+    (when success?
+      (str/trim out))))
 
 (defn current-branch
   "Get the name of the current branch"
   []
-  (let [{:keys [out success?]} (git-cmd "rev-parse" "--abbrev-ref" "HEAD")]
-    (when success?
-      (str/trim out))))
+  (git-cmd-output "rev-parse" "--abbrev-ref" "HEAD"))
 
 (defn rev-parse
   [ref]
-  (let [{:keys [out success?]} (git-cmd "rev-parse" "-q" ref)]
-    (when success?
-      (str/trim out))))
+  (git-cmd-output "rev-parse" "-q" ref))
 
-(defn is-dirty?
+(defn dirty?
   "Check if working tree has uncommitted changes"
   []
   (let [{:keys [out success?]} (git-cmd "status" "--porcelain")]
@@ -107,6 +111,8 @@
           (assoc base :error? true
                  :message "unknown error getting rev-list")))
       (assoc base :remote-gone? true))))
+
+;;--- Branch sync logic ---
 
 (defn get-branch-sync-status
   "Sync a single branch by checking it out and pulling with --ff-only.
@@ -164,7 +170,7 @@
   [{:keys [dry-run?]}]
   (let [current (current-branch)
         branches (get-tracking-branches)
-        dirty? (is-dirty?)
+        dirty? (dirty?)
         fetch-result (if dry-run?
                        {:success? true}
                        (git-cmd "fetch" "--all" "--prune" "-P" "--force"))]
@@ -197,6 +203,8 @@
       {:success? false
        :dir *dir*
        :message (str "Fetch failed " (:err fetch-result))})))
+
+;;--- UI / rendering ---
 
 (defmulti output-spec :status)
 
@@ -264,6 +272,8 @@
                        :details detail}))))
          results)))
 
+;;--- State management / charm program ---
+
 (defn init-state [opts]
   (let [repos (mapv #(assoc % :state :queued)
                     (known-repos (repo-root (:root opts))))]
@@ -302,16 +312,16 @@
 
 (defn render-bar
   "Render a single progress bar with label."
-  [{:keys [repos]}]
-  (let [bar (charm/progress-bar :width 50
+  [{:keys [repos window-size]}]
+  (let [bar (charm/progress-bar :width (or (some-> window-size :width (* 0.75) long) 60)
                                 :bar-style {:full "━" :empty "┈"}
-                                ;; :bar-style {:full "█" :empty "┈"}
                                 ;; :bar-style :thin
                                 :show-percent false
                                 :percent (complete-percent repos))]
-    (str (charm/progress-view bar)
+    (str " "
+         (charm/progress-view bar)
          " "
-         (charm/render (charm/style :fg charm/green)  (count (filter complete? repos)))
+         (count (filter complete? repos))
          "/"
          (count repos))))
 
@@ -319,25 +329,21 @@
   (case (:state repo)
     :queued
     (str "   "
-         (charm/render (charm/style :fg 240) (:repo repo)))
+         (charm/render (charm/style :fg 238) (:repo repo)))
 
     :running
     (str " " (charm/spinner-view (:spinner repo)) " "
          (charm/render (charm/style :fg charm/cyan :bold true) (:repo repo)))
 
     :complete
-    (str "   "
+    (str " ✓ "
          (charm/render (charm/style :fg charm/green) (:repo repo)))))
 
-(defn window [repos size]
-  (let [running-idx (or (first (keep-indexed (fn [i {:keys [state]}]
-                                               (when (= :running state)
-                                                 i))
+(defn visible-repos [repos size]
+  (let [running-idx (or (first (keep-indexed (fn [i r] (when (running? r) i))
                                              repos))
                         0)
-        queued-idx (or (first (keep-indexed (fn [i {:keys [state]}]
-                                              (when (= :queued state)
-                                                i))
+        queued-idx (or (first (keep-indexed (fn [i r] (when (queued? r) i))
                                             repos))
                        (count repos))
         upper (min (inc (max queued-idx size)) (count repos))
@@ -348,22 +354,42 @@
   (let [{:keys [repos opts]} state]
     (cond
       (all-done? state)
-      (str (charm/render complete-style
-                         (format "Finished syncing %s repos" (count repos))) "\n\n")
+      (str "\n" (charm/render complete-style
+                         (format "✓ Finished syncing %s repos" (count repos))) "\n\n")
 
       :else
       (str (render-bar state)
            "\n"
            (str/join "\n"
-                     (->> (window repos (min 10 (+ 4 (:threads opts))))
+                     (->> (visible-repos repos (max 10 (+ 4 (:threads opts))))
                           (map render-repo)))))))
 
 (defn complete-repo [m]
-  (merge
-   m
-   {:type :complete-repo}))
+  (assoc m :type :complete-repo))
 
-(defn update-fn [state msg]
+(defn make-repo-task
+  "Create a changeset entry for starting sync on a repo."
+  [opts repo->idx item]
+  (let [repo (:repo item)
+        [spinner cmd] (charm/spinner-init (charm/spinner :dots :id repo))]
+    {:path [:repos (get repo->idx repo)]
+     :updated (assoc item :state :running :spinner spinner)
+     :cmds [cmd
+            (charm/cmd (fn []
+                         (let [{:keys [repo dir]} item]
+                           (binding [*dir* dir]
+                             (let [{:keys [success?] :as ret} (sync-all-branches opts)
+                                   results (map #(assoc % :repo repo) (:results ret))]
+                               (complete-repo
+                                (if success?
+                                  {:success? true
+                                   :repo repo
+                                   :results results}
+                                  {:success? false
+                                   :repo repo
+                                   :error (:message ret)})))))))]}))
+
+(defn update-state [state msg]
   (let [running-repos (filter running? (:repos state))
         waiting-repos (filter queued? (:repos state))]
     (cond
@@ -379,33 +405,16 @@
              (update-in path assoc :state :complete))
          nil])
 
+      (charm/window-size? msg)
+      [(assoc state :window-size msg) (charm/cmd (fn [] {:type :continue}))]
+
       ;; Start downloading (n threads) repos
       (and (< (count running-repos) (get-in state [:opts :threads]))
            (seq waiting-repos))
       (let [{:keys [opts repo->idx]} state
             needed (- (get-in state [:opts :threads]) (count running-repos))
             items (take needed waiting-repos)
-            changeset (mapv
-                       (fn [item]
-                         (let [repo (:repo item)
-                               [spinner cmd] (charm/spinner-init (charm/spinner :dots :id repo))]
-                           {:path [:repos (get repo->idx repo)]
-                            :updated (assoc item :state :running :spinner spinner)
-                            :cmds [cmd
-                                   (charm/cmd (fn []
-                                                (let [{:keys [repo dir]} item]
-                                                  (binding [*dir* dir]
-                                                    (let [{:keys [success?] :as ret} (sync-all-branches opts)
-                                                          results (map #(assoc % :repo repo) (:results ret))]
-                                                      (complete-repo
-                                                       (if success?
-                                                         {:success? true
-                                                          :repo repo
-                                                          :results results}
-                                                         {:success? false
-                                                          :repo repo
-                                                          :error (:message ret)})))))))]}))
-                       items)]
+            changeset (mapv #(make-repo-task opts repo->idx %) items)]
         [(reduce (fn [s c] (assoc-in s (:path c) (:updated c))) state changeset)
          (apply charm/batch (mapcat :cmds changeset))])
 
@@ -421,7 +430,7 @@
       :else
       [state nil])))
 
-;; supports --help
+;;--- CLI entry point ---
 (def cli-handler
   (common/build-cli-args-handler
    {:description (str "p git-sync - Sync all tracking branches in a git repository\n\n"
@@ -447,7 +456,7 @@
       (System/exit (count errors)))
     (->
      (charm/run {:view view
-                 :update update-fn
+                 :update update-state
                  :init #(init-state options)})
      :repos
      (print-summary (:dry-run options)))))
