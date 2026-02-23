@@ -81,7 +81,10 @@
 
 (defun jd/toggle-clipboard ()
   (interactive)
-  (setq select-enable-clipboard (not select-enable-clipboard)))
+  (setq select-enable-clipboard (not select-enable-clipboard))
+  (message "Clipboard integration is %s." (if select-enable-clipboard
+                                              "on"
+                                            "off")))
 
 ;; ...but allow it to be enabled
 (global-set-key (kbd "C-c C-o C-p") 'jd/toggle-clipboard)
