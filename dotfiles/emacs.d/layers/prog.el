@@ -66,7 +66,7 @@
   :ensure t)
 
 (use-package lsp-mode
-  :pin melpa-stable
+  :pin melpa
   :ensure t
   :custom
   (lsp-completion-provider :none) ;; we use Corfu!
@@ -105,7 +105,7 @@
   :ensure t)
 
 (use-package lsp-ui
-  :pin melpa-stable
+  :pin melpa
   :ensure t
   :after lsp-mode
   :commands lsp-ui-mode
@@ -122,7 +122,7 @@
 (use-package lsp-treemacs
   :ensure t
   :after lsp-mode
-  :pin melpa-stable
+  :pin melpa
   :commands lsp-treemacs-errors-list
   :init
   (setq treemacs-space-between-root-nodes nil))
@@ -134,6 +134,7 @@
 
 (use-package lsp-java
   :ensure t
+  :pin melpa
   :after lsp-mode
   :hook ((java-mode . lsp)
          (java-ts-mode . lsp))
