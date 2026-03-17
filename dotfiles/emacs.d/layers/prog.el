@@ -78,6 +78,7 @@
          (clojurec-mode . lsp)
          (go-ts-mode . lsp-deferred)
          (go-mode . lsp-deferred)
+         (terraform-mode . lsp-deferred)
          ;;(enh-ruby-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration)
          (lsp-completion-mode . jd/lsp-mode-setup-completion))
@@ -88,13 +89,15 @@
     (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
           '(flex))) ;; Configure flex
   :config
+  (setq lsp-disabled-clients '(tfls))
   (setq ;; lsp-keymap-prefix "C-c l"
         lsp-headerline-breadcrumb-enable nil
         lsp-response-timeout 2
         lsp-completion-enable t
         lsp-signature-auto-activate nil
         lsp-enable-snippet t
-        lsp-idle-delay 0.5)
+        lsp-idle-delay 0.5
+        lsp-terraform-ls-enable-show-reference t)
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/public\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].datomic-local\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo\\'")
@@ -165,14 +168,13 @@
   :init
   (add-hook 'after-init-hook #'global-mise-mode))
 
-;; Taken from:
-;; https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (cmake "https://github.com/uyha/tree-sitter-cmake")
-        (css "https://github.com/tree-sitter/tree-sitter-css")
         (c "https://github.com/tree-sitter/tree-sitter-c")
-        (c++ "https://github.com/tree-sitter/tree-sitter-cpp")
+        ;; (c++ "https://github.com/tree-sitter/tree-sitter-cpp")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (commonlisp "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
         (go "https://github.com/tree-sitter/tree-sitter-go")
         (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
@@ -180,18 +182,29 @@
         (java "https://github.com/tree-sitter/tree-sitter-java")
         (javascript "https://github.com/tree-sitter/tree-sitter-javascript")
         (json "https://github.com/tree-sitter/tree-sitter-json")
-        (make "https://github.com/alemuller/tree-sitter-make")
+        (latex "https://github.com/latex-lsp/tree-sitter-latex")
+        (make "https://github.com/tree-sitter-grammars/tree-sitter-make")
         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
         (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml")
+        (org "https://github.com/milisims/tree-sitter-org")
+        (perl "https://github.com/ganezdragon/tree-sitter-perl")
         (php "https://github.com/tree-sitter/tree-sitter-php")
         (proto "https://github.com/mitchellh/tree-sitter-proto")
         (python "https://github.com/tree-sitter/tree-sitter-python")
+        (r "https://github.com/r-lib/tree-sitter-r")
         (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
         (rust "https://github.com/tree-sitter/tree-sitter-rust")
+        (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages")
         (toml "https://github.com/tree-sitter/tree-sitter-toml")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+(defun jd/treesit-install-all-grammars ()
+  (interactive)
+  (mapc (lambda (lang)
+          (treesit-install-language-grammar (car lang)))
+        treesit-language-source-alist))
 
 ;; Treesit wrappers for Emacs 29+
 (setq major-mode-remap-alist
@@ -208,3 +221,5 @@
         (typescriptreact-mode . tsx-ts-mode)
         (python-mode . python-ts-mode)
         (yaml-mode . yaml-ts-mode)))
+
+(add-to-list 'auto-mode-alist '("\\.env\\.tmpl\\'" . bash-ts-mode))
