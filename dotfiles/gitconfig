@@ -26,7 +26,7 @@
     tracking = "!f() { git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | egrep -v ':$'; }; f"
 	tr = log --graph --oneline --decorate --color
 	tre = log --pretty=format:'%C(auto)%h%d%Creset %s  %C(auto,bold blue)%an%Creset %C(auto,green)(%ar)%Creset' --graph
-	tree = tre --all
+	tree = tre --exclude='refs/notes/*' --all
 [branch]
 	autosetuprebase = always
 [color]
