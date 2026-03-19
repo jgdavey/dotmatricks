@@ -38,7 +38,7 @@ ssh_symbol=' ☎︎'
 [directory]
 # format = '[($path)]($style)[$read_only]($read_only_style) '
 truncate_to_repo = false
-truncation_length = 4
+truncation_length = 5
 truncation_symbol = '…/'
 # fish_style_pwd_dir_length = 1
 # style = "cyan"
@@ -78,6 +78,9 @@ style = "yellow"
 [java]
 format = "[${symbol}(${version} )]($style)"
 version_format = "v${major}"
+disabled = true
+
+[mise]
 disabled = true
 
 [line_break]
