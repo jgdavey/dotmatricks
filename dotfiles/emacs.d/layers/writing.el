@@ -46,7 +46,7 @@
             (switch-to-buffer-other-window err-buf)
             (special-mode))) ; Set this mode so that you can quit it quickly using C-u q
       ;; If 1 is returned, error occurred in the cmd execution; 0 - no error
-      (if (= 1 prose-ret)
+      (if (> prose-ret 0)
           nil
         ;; If no error occurred, do below in the original buffer
         (delete-region begin end)
