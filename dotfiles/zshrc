@@ -135,7 +135,9 @@ fi
 if command -v fzf >/dev/null; then
   export FZF_FD_OPTS="--strip-cwd-prefix --hidden --follow --exclude .git"
   export FZF_DEFAULT_COMMAND="fd ${FZF_FD_OPTS}"
+  # Disable fzf's C-t
   export FZF_CTRL_T_COMMAND=""
+  # Disable fzf's M-c
   export FZF_ALT_C_COMMAND=""
   source <(fzf --zsh)
   fzf_compgen_path() {
