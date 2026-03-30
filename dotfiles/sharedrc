@@ -1,12 +1,6 @@
 # -*- mode: sh; -*-
 # vim: set ft=sh sw=2 sts=2:
 
-if command -v hub >/dev/null; then
-  git() {
-    command hub "$@"
-  }
-fi
-
 # git_prompt_info accepts 0 or 1 arguments (i.e., format string)
 # returns text to add to bash PS1 prompt (includes branch name)
 git_prompt_info () {
@@ -139,30 +133,6 @@ E() {
 
 e() {
     editor "$@"
-}
-
-__warn__hr() {
-    {
-        echo '*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*'
-        echo '*-*   Hey! the `hr` command is now `jd`, bub.   *-*'
-        echo '*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*'
-        echo
-    } >&2
-}
-
-hr() {
-    __warn__hr
-    jd "$@"
-}
-
-hcd() {
-    __warn__hr
-    jd cd "$@"
-}
-
-hclone() {
-    __warn__hr
-    jd clone "$@"
 }
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html
