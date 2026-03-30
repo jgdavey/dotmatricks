@@ -1,13 +1,13 @@
 # -*- mode: sh; -*-
 # vim: set ft=sh sw=2 sts=2:
 
+[ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
+
 fpath=(
   $fpath
   ~/.zsh/functions
   $HOMEBREW_PREFIX/share/zsh/site-functions
 )
-
-[ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # color term
 export LC_CTYPE=en_US.UTF-8
