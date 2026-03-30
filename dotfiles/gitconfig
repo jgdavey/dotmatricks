@@ -23,7 +23,7 @@
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
 	squash = commit --squash
 	st = status
-    tracking = "!f() { git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | egrep -v ':$'; }; f"
+    tracking = "!f() { git for-each-ref --format '%(refname:short):%(upstream:short)' 'refs/heads' | grep -Ev ':$'; }; f"
 	tr = log --graph --oneline --decorate --color
 	tre = log --pretty=format:'%C(auto)%h%d%Creset %s  %C(auto,bold blue)%an%Creset %C(auto,green)(%ar)%Creset' --graph
 	tree = tre --exclude='refs/notes/*' --all
@@ -41,11 +41,11 @@
 [merge]
 	summary = true
 [push]
-	default = tracking
+	default = upstream
 [rebase]
 	autosquash = true
 [diff]
-	algorithm = patience
+	algorithm = histogram
     tool = difftastic
 [difftool]
     prompt = false
