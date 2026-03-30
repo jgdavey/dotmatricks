@@ -406,28 +406,7 @@
 ;;     (corfu-terminal-mode +1)))
 
 (use-package wgrep
-  :ensure t
-  :init
-  (use-package wgrep-ag
-    :ensure t)
-  (autoload 'wgrep-ag-setup "wgrep-ag"))
-
-(use-package ag
-  :ensure t
-  :config
-  (require 'wgrep-ag)
-  :init
-  (defun jd/ag-project-root-fn (file-path)
-    (or (ag/longest-string
-         (vc-find-root file-path "build.boot")
-         (vc-git-root file-path)
-         (vc-svn-root file-path)
-         (vc-hg-root file-path))
-        file-path))
-  (setq ag-highlight-search t
-        ag-reuse-window t
-        ag-project-root-function 'jd/ag-project-root-fn)
-  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+  :ensure t)
 
 (use-package rg
   :ensure t)
