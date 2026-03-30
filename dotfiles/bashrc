@@ -42,4 +42,8 @@ if [ -f "${HOMEBREW_PREFIX:-/usr/local}/etc/bash_completion.d/git-completion.bas
   source '${HOMEBREW_PREFIX:-/usr/local}/etc/bash_completion.d/git-completion.bash'
 fi
 
+if command -v mise >/dev/null; then
+  eval "$(mise activate bash)"
+fi
+
 [ ! -f "$HOME/.bashrc.local" ] || . "$HOME/.bashrc.local"
