@@ -43,4 +43,4 @@ esac
 
 git branch --merged \
   | grep -v "master\|release\|develop\|main\|${defaultbranch}\|${currentbranch}" \
-  | while read br; do git branch -d $br; done
+  | while read -r br; do git branch -d "$br"; done

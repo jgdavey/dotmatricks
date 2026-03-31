@@ -4,6 +4,7 @@
 # of Wikipedia.
 require 'nokogiri'
 require 'open-uri'
+require 'uri'
 
 def todays_url
   todays_date = Time.now.strftime("%B_%-e")
@@ -18,7 +19,7 @@ Event = Struct.new(:year, :text) do
 end
 
 def events
-  doc = Nokogiri::HTML(open(todays_url))
+  doc = Nokogiri::HTML(URI.open(todays_url))
   ev = doc.xpath('(//*[@class="mw-body-content"]//h2[contains(., "Births")])/preceding-sibling::ul//li')
   ev = doc.xpath('(//*[@class="mw-body-content"]//ul)[position() < 3]//li') if ev.empty?
 

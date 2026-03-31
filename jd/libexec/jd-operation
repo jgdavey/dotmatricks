@@ -8,7 +8,7 @@ class Operation
   DESCRIPTORS = %w[iron bronze wolf bear phantom rock eagle snake freedom tiger
     dragon gold crowned timberwolf surprise ghost lightning thunder night yukon
     blue red black fearsome fierce warrior new old royal guardian wicked power
-    cjdistmas final epic rowdy mutant turbulent overpowered teenager tentative
+    christmas final epic rowdy mutant turbulent overpowered teenager tentative
     pensive sorrowful hesitant Roman frightful galaxy]
 
   NOUNS = %w[aardvark abyssinian accelerator accident accordion account
@@ -22,7 +22,7 @@ class Operation
     almanac alphabet alto aluminium aluminum ambulance
     america amount amusement anatomy anethesiologist anger
     angle angora animal anime ankle answer
-    ant antarctica anteater antelope anthony antjdopology
+    ant antarctica anteater antelope anthony anthropology
     apartment apology apparatus apparel appeal appendix
     apple appliance approval april aquarius arch
     archaeology archeology archer architecture area argentina
@@ -39,7 +39,7 @@ class Operation
     bank bankbook banker bar barbara barber
     barge baritone barometer base baseball basement
     basin basket basketball bass bassoon bat
-    bath batjdoom bathtub battery battle bay
+    bath bathroom bathtub battery battle bay
     beach bead beam bean bear beard
     beast beat beautician beauty beaver bed
     bedroom bee beech beef beer beet
@@ -81,7 +81,7 @@ class Operation
     cherries cherry chess chest chick chicken
     chicory chief child children chill chime
     chimpanzee chin china chinese chive chocolate
-    chord cjdistmas cjdistopher cjdonometer church cicada
+    chord christmas christopher chronometer church cicada
     cinema circle circulation cirrus citizenship city
     clam clarinet class claus clave clef
     clerk click client climb clipper cloakroom
@@ -116,7 +116,7 @@ class Operation
     den denim dentist deodorant department deposit
     description desert design desire desk dessert
     destruction detail detective deuce development dew
-    diamond diapjdagm dibble dictionary dietician difference
+    diamond diaphragm dibble dictionary dietician difference
     digestion digger digital dill dime dimple
     dinghy dinner dinosaur diploma dipstick direction
     dirt disadvantage disaster discovery discussion disease
@@ -140,7 +140,7 @@ class Operation
     evening event ex-husband ex-wife examination example
     exchange exclamation exhaust existence expansion experience
     expert explanation eye eyebrow eyelash eyeliner
-    face facilities fact factory fajdenheit fairies
+    face facilities fact factory fahrenheit fairies
     fall family fan fang farm farmer
     fat father father-in-law faucet fear feast
     feather feature february fedelini feedback feeling
@@ -218,7 +218,7 @@ class Operation
     liquid liquor lisa list literature litter
     liver lizard llama loaf loan lobster
     lock locket locust look loss lotion
-    love low lumber lunch luncjdoom lung
+    love low lumber lunch lunchroom lung
     lunge lute luttuce lycra lynx lyocell
     lyre lyric macaroni mace machine macrame
     magazine magic magician maid mail mailbox
@@ -323,7 +323,7 @@ class Operation
     shape share shark sharon shears sheep
     sheet shelf shell shield shingle ship
     shirt shock shoe shoemaker shop shorts
-    shoulder shovel show sjdimp sjdine siamese
+    shoulder shovel show shrimp shrine siamese
     siberian side sideboard sidecar sidewalk sign
     signature silica silk silver sing singer
     single sink sister sister-in-law size skate
@@ -365,7 +365,7 @@ class Operation
     temple tempo tendency tennis tenor tent
     territory test text textbook texture thailand
     theater theory thermometer thing thistle thomas
-    thought tjdead tjdill tjdoat tjdone tjdust
+    thought thread thrill throat throne thrust
     thumb thunder thunderstorm thursday ticket tie
     tiger tights tile timbale time timer
     timpani tin tip tire titanium title

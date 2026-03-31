@@ -39,7 +39,7 @@ else
 fi
 
 if [ -f "${HOMEBREW_PREFIX:-/usr/local}/etc/bash_completion.d/git-completion.bash" ]; then
-  source '${HOMEBREW_PREFIX:-/usr/local}/etc/bash_completion.d/git-completion.bash'
+  source "${HOMEBREW_PREFIX:-/usr/local}/etc/bash_completion.d/git-completion.bash"
 fi
 
 if command -v mise >/dev/null; then
