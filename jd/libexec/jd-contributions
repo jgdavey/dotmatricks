@@ -36,7 +36,7 @@ to_username = ->(str) {
 names = log.flat_map do |line|
   authors, message = line.split("|||", 2)
   names = authors.split(/,? and |, /).map(&to_username)
-  names += message.scan(/Co-authored-by: ?([^<]*) ?<.*$/).flat_map { |md|
+  names += message.scan(/co-authored-by: ?([^<]*) ?<.*$/i).flat_map { |md|
     md.map(&to_username)
   }
   names
@@ -45,8 +45,6 @@ end
 counts = names.each_with_object(Hash.new(0)) do |name, obj|
   obj[name] += 1
 end
-
-counts["TOTAL"] = total
 
 ### Table printing
 def print_table(labels, rows)
@@ -67,7 +65,7 @@ end
 
 labels = { commits: "Commits", name: "Name" }
 
-rows = counts.map do |name, count|
+rows = [{ commits: total, name: "TOTAL" }] + counts.map do |name, count|
   { commits: count, name: name }
 end.sort_by { |h| -h[:commits] }
 
