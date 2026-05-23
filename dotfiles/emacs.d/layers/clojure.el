@@ -31,6 +31,11 @@ of the point."
     (defroutes 'defun)
     (defui '(1 nil (1)))))
 
+(use-package clojure-ts-mode
+  :ensure t
+  :bind (:map clojure-ts-mode-map
+              ("M-q" . jd/lsp-indent-defun)))
+
 (use-package inf-clojure
   :pin melpa
   :ensure t)
