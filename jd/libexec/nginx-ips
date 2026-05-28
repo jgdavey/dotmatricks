@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
-# Usage: jd nginx-ips
-# Summary: IP address info from nginx access logs
+#@ summary: IP address info from nginx access logs
+#@ usage: jd nginx-ips
 
 require "zlib"
 require "json"

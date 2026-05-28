@@ -1,30 +1,29 @@
 #!/usr/bin/env ruby
-#
-# Usage: jd vimbundle [options]
-#
-# Summary: Install or update all vim plugins defined in ~/.vimbundle
-#
-# Help: Running `jd vimbundle` will iterate through the plugins listed in the
-# ~/.vimbundle and ~/.vimbundle.local files. If the plugin isn't already in the
-# folder, it will be fetched. If it already exists, the latest will be fetched
-# from github.
-#
-# Entries in these manifest files should be in this format:
-# githubusername/reponame
-#
-# Example:
-#
-# tpope/vim-surround
-# tpope/vim-rails
-#
-# This would fetch both the vim-surround and the vim-rails plugins from the
-# corresponding repos on tpope's github account.
-#
-# Options include -j [--threads] to specify the number of concurrent jobs to
-# run. Defaults to 1.
-#
-# After running `jd vimbundle`, you can run `jd vimbundle diff` to see a list
-# of changes for each changed plugin.
+#@ summary: Install or update all vim plugins defined in ~/.vimbundle
+#@ usage: jd vimbundle [options]
+#@ help: |
+#@   Running `jd vimbundle` will iterate through the plugins listed in the
+#@   ~/.vimbundle and ~/.vimbundle.local files. If the plugin isn't already in the
+#@   folder, it will be fetched. If it already exists, the latest will be fetched
+#@   from github.
+#@
+#@   Entries in these manifest files should be in this format:
+#@   githubusername/reponame
+#@
+#@   Example:
+#@
+#@   tpope/vim-surround
+#@   tpope/vim-rails
+#@
+#@   This would fetch both the vim-surround and the vim-rails plugins from the
+#@   corresponding repos on tpope's github account.
+#@
+#@   Options include -j [--threads] to specify the number of concurrent jobs to
+#@   run. Defaults to 1.
+#@
+#@   After running `jd vimbundle`, you can run `jd vimbundle diff` to see a list
+#@   of changes for each changed plugin.
+#@ complete: true
 
 if ARGV[0] == "--complete"
   puts "-j"

@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Usage: jd mux [<name>]
-#
-# Summary: Create or reattach to tmux session
-#
-# Help: After `cd`ing to a directory you'd like the root of your tmux session to be:
-#
-#    $ jd mux
-#
-# The above will create a tmux session named after the directory you're
-# in and create a few useful default windows with a sensible layout.
-#
-# If a session already exists with the name of your directory, this command will
-# simply re-attach to that session.
+#@ summary: Create or reattach to tmux session
+#@ usage: jd mux [<name>]
+#@ help: |
+#@   After `cd`ing to a directory you'd like the root of your tmux session to be:
+#@
+#@      $ jd mux
+#@
+#@   The above will create a tmux session named after the directory you're
+#@   in and create a few useful default windows with a sensible layout.
+#@
+#@   If a session already exists with the name of your directory, this command will
+#@   simply re-attach to that session.
+#@ complete: true
 
 sanitize() {
   echo "$(basename "$1" | sed -e 's/\./-/g')"

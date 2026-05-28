@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
-#
-# Usage: jd battery [options]
-#
-# Summary: Show battery percentage, with various formatting options
-#
-# Help: By default, prints just the battery percentage.
-#
-# Options:
-#   --charging     Print even when plugged in (default prints nothing when plugged in)
-#   --color        Print with color (depending on formatter)
-#   --tmux         Print with tmux formatting (for status bar)
-#   --format=[opt] One of percent, bar, icon, block, or hearts,
-#                  or a format string (any of the opts, prefixed with %)
-#
-# This utility is known to work with OS X and Ubuntu, but may work with other Linux distros.
+#@ summary: Show battery percentage, with various formatting options
+#@ usage: jd battery [options]
+#@ help: |
+#@   By default, prints just the battery percentage.
+#@
+#@   Options:
+#@     --charging     Print even when plugged in (default prints nothing when plugged in)
+#@     --color        Print with color (depending on formatter)
+#@     --tmux         Print with tmux formatting (for status bar)
+#@     --format=[opt] One of percent, bar, icon, block, or hearts,
+#@                    or a format string (any of the opts, prefixed with %)
+#@
+#@   This utility is known to work with OS X and Ubuntu, but may work with other Linux distros.
+#@ complete: true
 
 if [ "$1" = "--complete" ]; then
     echo --charging

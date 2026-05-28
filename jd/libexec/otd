@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
-# Usage: jd otd
-# Summary: Print a random event that happened on this day in history, courtesy
-# of Wikipedia.
+#@ summary: Print a random event that happened on this day in history, courtesy
+#@ usage: jd otd
 require 'nokogiri'
 require 'open-uri'
 require 'uri'

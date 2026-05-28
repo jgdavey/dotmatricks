@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Usage: jd update
-# Summary: Update jd and all plugins
-# Help: Just run `jd update`
+#@ summary: Update jd and all plugins
+#@ usage: jd update
+#@ help: |
+#@   Just run `jd update`
 
 set -e
 

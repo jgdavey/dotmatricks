@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
-#
-# Usage: jd redact-git-author
-#
-# Summary: Fix wrong author name/email in git history (destructively)
+#@ summary: Fix wrong author name/email in git history (destructively)
+#@ usage: jd redact-git-author
+#@ complete: true
 
 require 'optparse'
 require 'ostruct'

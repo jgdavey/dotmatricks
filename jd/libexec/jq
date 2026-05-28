@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Usage: jd jq [FILE]
-# Summary: Use jq within an fzf preview
-#
-# Help: Given stdin, uses that as the JSON input to jq
-#
-# This utility requires fzf and jq to be installed and on the PATH
+#@ summary: Use jq within an fzf preview
+#@ usage: jd jq [FILE]
+#@ help: |
+#@   Given stdin, uses that as the JSON input to jq
+#@
+#@   This utility requires fzf and jq to be installed and on the PATH
 
 jqpaths() {
   set -e

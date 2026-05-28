@@ -2,7 +2,7 @@
 set -e
 echo "Attempting to install jd automatically" >&2
 
-script="${_JD_ROOT}/bin/jd init"
+script="${ZUB_ROOT}/bin/jd init"
 
 shell="$1"
 if [ -z "$shell" ]; then

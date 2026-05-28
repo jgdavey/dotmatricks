@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Usage: jd setup-unicornleap
-#
-# Summary: Install unicornleap
-# Help: Install unicornleap
+#@ summary: Install unicornleap
+#@ usage: jd setup-unicornleap
+#@ help: |
+#@   Install unicornleap
 
 set -e
 

@@ -1,14 +1,12 @@
 #!/usr/bin/env ruby
-#
-# Usage: jd repos <command>
-#
-# Summary: Download list of github repos to ~/.repos
-#
-# Help: Usually the defaults will work just fine:
-#
-#    $ jd repos
-#
-# The above will download all writable repos to the ~/.repos file
+#@ summary: Download list of github repos to ~/.repos
+#@ usage: jd repos <command>
+#@ help: |
+#@   Usually the defaults will work just fine:
+#@
+#@      $ jd repos
+#@
+#@   The above will download all writable repos to the ~/.repos file
 
 require "tempfile"
 require "fileutils"

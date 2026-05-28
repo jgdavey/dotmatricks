@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
-# Usage: jd group [options]
-# Summary: Print a table under a grouped heading
-# Help: Given a flat table of information, group by the first "column"
-# and print beneath it as a heading.
+#@ summary: Print a table under a grouped heading
+#@ usage: jd group [options]
+#@ help: |
+#@   Given a flat table of information, group by the first "column"
+#@   and print beneath it as a heading.
+#@ complete: true
 
 require 'optparse'
 require 'ostruct'

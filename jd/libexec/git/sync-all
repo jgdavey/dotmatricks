@@ -1,8 +1,10 @@
 #!/usr/bin/env bb
-;; Usage: jd git-sync-all [opts]
-;; Summary: Sync all tracking branches for repos
-;; Help: Iterates through all local branches that have remote tracking branches
-;; and attempts to fast-forward them to match their upstream counterparts.
+;@ summary: Sync all tracking branches for repos
+;@ usage: jd git-sync-all [opts]
+;@ help: |
+;@   Iterates through all local branches that have remote tracking branches
+;@   and attempts to fast-forward them to match their upstream counterparts.
+;@ complete: true
 
 (require '[babashka.process]
          '[babashka.deps :as deps]

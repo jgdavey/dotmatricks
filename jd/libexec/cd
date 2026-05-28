@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#@ summary: Change to a folder within $SOURCE_DIR
+#@ usage: jd cd <directory>
+#@ help: |
+#@   Change to a folder within $SOURCE_DIR
+#@
+#@   Note: This command requires $SOURCE_DIR to be set.
+#@ complete: true
+#@ eval: true
+
+base="$SOURCE_DIR"
+
+if [ "$1" = "--complete" ]; then
+  ls "$base"
+  exit 0
+fi
+
+if [ -d "${base}/${1}" ]; then
+  echo "cd ${base}/${1}"
+else
+  echo "No such directory: $path" >&2
+  exit 2
+fi
+

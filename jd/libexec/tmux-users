@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-#
-# Usage: jd tmux-users
-#
-# Summary: List users attached to tmux session
+#@ summary: List users attached to tmux session
+#@ usage: jd tmux-users
+#@ complete: true
 
 if [ "$1" = "--complete" ]; then
   exit

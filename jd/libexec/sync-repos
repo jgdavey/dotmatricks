@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
-# Usage: jd sync-repos [opts]
-# Summary: Update all git repos under a directory
+#@ summary: Update all git repos under a directory
+#@ usage: jd sync-repos [opts]
+#@ complete: true
 
 require 'pathname'
 require 'stringio'

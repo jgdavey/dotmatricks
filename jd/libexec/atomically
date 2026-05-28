@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-#
-# Usage: jd atomically <command>
-#
-# Summary: Run command on series of git revisions to determine atomicity
-#
-# Help: Usually the defaults will work just fine:
-#
-#    $ [jd] atomically rake
-#
-# The above will run `rake` on each commit between you and origin on your current branch.
+#@ summary: Run command on series of git revisions to determine atomicity
+#@ usage: jd atomically <command>
+#@ help: |
+#@   Usually the defaults will work just fine:
+#@
+#@      $ [jd] atomically rake
+#@
+#@   The above will run `rake` on each commit between you and origin on your current branch.
+#@ complete: true
 
 if [ "$1" = "--complete" ]; then
   echo --range

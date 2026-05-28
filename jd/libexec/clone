@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Usage: jd clone [-f] <repo>
-#
-# Summary: Clone down a git project into $SOURCE_DIR
-#
-# Help: Clone down a git project into $SOURCE_DIR. If you provide
-# the "-f" flag, the repository will be redownloaded.
-#
-# Note: This command requires $SOURCE_DIR to be set.
+#@ summary: Clone down a git project into $SOURCE_DIR
+#@ usage: jd clone [-f] <repo>
+#@ help: |
+#@   Clone down a git project into $SOURCE_DIR. If you provide
+#@   the "-f" flag, the repository will be redownloaded.
+#@
+#@   Note: This command requires $SOURCE_DIR to be set.
+#@ complete: true
 
 GITHUB_NAME="${GITHUB_NAME:-$(git config --get github.user)}"
 
