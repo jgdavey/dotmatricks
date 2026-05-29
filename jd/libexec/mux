@@ -13,6 +13,12 @@
 #@   simply re-attach to that session.
 #@ complete: true
 
+
+if [[ -z "$ZUB_ROOT" ]]; then
+  # In case this is run directly (without zub)
+  ZUB_ROOT="$(realpath "${BASH_SOURCE[0]}/../..")"
+fi
+
 sanitize() {
   echo "$(basename "$1" | sed -e 's/\./-/g')"
 }
@@ -48,12 +54,12 @@ name="$(sanitize ${1:-$directory})"
 
 mux_file="$directory/.mux"
 [ -f $mux_file ] || mux_file="$HOME/.mux"
-[ -f $mux_file ] || mux_file="$_JD_SHARE/mux-init"
+[ -f $mux_file ] || mux_file="$ZUB_ROOT/mux-init"
 
 if ! tmux has-session -t "$name" &>/dev/null; then
   # Cleanup env
   export PATH="$ORIG_PATH"
-  unset ORIG_PATH _JD_ROOT _JD_SHARE
+  unset ORIG_PATH
 
   cols="$(tput cols)"
   cd "$directory"

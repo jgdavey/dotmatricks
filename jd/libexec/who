@@ -20,4 +20,10 @@ if [ "$1" = "--complete" ]; then
   exit 0
 fi
 
+if [[ -z "$ZUB_ROOT" ]]; then
+  ZUB_ROOT="$(realpath "${BASH_SOURCE[0]}/../..")"
+fi
+
+echo "ZUB_ROOT: $ZUB_ROOT"
+
 exec who "$@"

@@ -12,8 +12,12 @@
          '[clojure.core.async :as a]
          '[clojure.string :as str])
 
+
+(def zub-root (or (System/getenv "ZUB_ROOT")
+                  (fs/parent (fs/parent (fs/parent *file*)))))
+
 #_{:clj-kondo/ignore [:unresolved-namespace]}
-(babashka.classpath/add-classpath (str (System/getenv "_JD_ROOT") "/share/lib"))
+(babashka.classpath/add-classpath (str zub-root "/share/lib"))
 
 ;; --complete is supported
 ;; --help is supported
@@ -30,7 +34,7 @@
 (defn repo-root [cli-passed]
   (-> (or cli-passed
           (System/getenv "SOURCE_DIR") ;; Uses init.sh
-          (str (System/getenv "_JD_ROOT") "/../.."))
+          (str zub-root "/../.."))
       fs/path
       fs/canonicalize))
 

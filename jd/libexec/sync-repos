@@ -11,7 +11,9 @@ require 'thread'
 require 'optparse'
 require 'ostruct'
 
-require File.join(ENV["_JD_ROOT"], "share", "lib", "gitsync.rb")
+ROOT = ENV["ZUB_ROOT"] || Pathname.new(File.dirname(__FILE__) + "/..").cleanpath
+
+require File.join(ROOT, "share", "lib", "gitsync.rb")
 
 is_tty = $stdout.respond_to?(:tty?) && $stdout.tty?
 

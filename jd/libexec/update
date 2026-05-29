@@ -10,6 +10,6 @@ header() {
   echo -e "\033[33m$1\033[0m"
 }
 
-cd $_JD_ROOT/..
+cd $ZUB_ROOT/..
 header "Updating dotmatricks"
 bin/upgrade
