@@ -6,6 +6,7 @@
 #@   the "-f" flag, the repository will be redownloaded.
 #@
 #@   Note: This command requires $SOURCE_DIR to be set.
+#@ eval: true
 #@ complete: true
 
 GITHUB_NAME="${GITHUB_NAME:-$(git config --get github.user)}"
@@ -27,7 +28,7 @@ if [ -z "$1" ]; then
   {
     jd-help clone
     echo
-    echo "ERROR: please provide a repo" >&2
+    echo "ERROR: please provide a repo"
   } >&2
   exit 1
 fi
@@ -106,8 +107,7 @@ script_setup() {
 setup_git_submodules() {
   (
     cd "$path"
-    git submodule init
-    git submodule update
+    git submodule update --init --recursive
   )
 }
 
@@ -121,12 +121,14 @@ setup_git_email () {
   fi
 }
 
-hclone() {
-  clone_if_necessary || return 1
-  setup_git_submodules
-  setup_git_email
-  setup_bin_path
-  script_setup
+do_clone() {
+  {
+    clone_if_necessary || return 1
+    setup_git_submodules
+    setup_git_email
+    setup_bin_path
+    script_setup
+  } >&2
 }
 
-hclone "$@" >&2 && echo && echo "$path"
+do_clone "$@" && echo "cd $path"
