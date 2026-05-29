@@ -79,6 +79,9 @@
          (go-ts-mode . lsp-deferred)
          (go-mode . lsp-deferred)
          (terraform-mode . lsp-deferred)
+         (typescript-mode . lsp-deferred)
+         (typescript-ts-mode . lsp-deferred)
+         (tsx-ts-mode . lsp-deferred)
          ;;(enh-ruby-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration)
          (lsp-completion-mode . jd/lsp-mode-setup-completion))
@@ -143,17 +146,6 @@
          (java-ts-mode . lsp))
   :init
   (setq lsp-java-jdt-ls-prefer-native-command t))
-
-(use-package lsp-tailwindcss
-  :ensure t
-  :after lsp-mode
-  :pin melpa
-  :init
-  (setq lsp-tailwindcss-add-on-mode t)
-  :config
-  ;; doesn't seem to work yet
-  ;(add-to-list 'lsp-tailwindcss-major-modes 'clojurescript-mode)
-  )
 
 (use-package dockerfile-mode
   :ensure t)

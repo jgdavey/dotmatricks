@@ -460,8 +460,10 @@
   :ensure t
   :pin melpa)
 
-;; (use-package vterm-anti-flicker-filter
-;;   :vc (:url "https://github.com/martinbaillie/vterm-anti-flicker-filter" :rev :newest))
+(use-package ghostel
+  :ensure t
+  :pin melpa
+  )
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
