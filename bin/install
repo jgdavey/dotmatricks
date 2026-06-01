@@ -71,6 +71,3 @@ find config -type f -name '*' | while read file; do
 
   link_or_skip $path "$dotmatrix_path" $force
 done
-
-# jd
-$PWD/jd/bin/jd autoinstall
