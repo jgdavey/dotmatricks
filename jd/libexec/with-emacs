@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
+#@ usage: $0 [<emacs-args>]
+#@ summary: Run emacs in a sandbox
+#@ dynamic_help: true
 
+## From here down is copy-pasted from alphapapa/with-emacs.sh
 # * with-emacs.sh --- Run Emacs in a sandbox
 
 # URL: https://github.com/alphapapa/with-emacs.sh
