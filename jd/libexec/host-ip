@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #@ summary: Resolve IP address for given host name (respects /etc/hosts)
-#@ usage: jd host-ip <address>
+#@ usage: $0 <address>
 #@ complete: true
 
 host = ARGV[0].to_s.strip

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: Clean up branches that have already been merged
-#@ usage: jd git-br-clean-merged
+#@ usage: $0
 #@ complete: true
 
 if [ "$1" = "--complete" ]; then

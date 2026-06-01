@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 #@ summary: Install or update all vim plugins defined in ~/.vimbundle
-#@ usage: jd vimbundle [options]
+#@ usage: $0
 #@ help: |
-#@   Running `jd vimbundle` will iterate through the plugins listed in the
+#@   Running `$0` will iterate through the plugins listed in the
 #@   ~/.vimbundle and ~/.vimbundle.local files. If the plugin isn't already in the
 #@   folder, it will be fetched. If it already exists, the latest will be fetched
 #@   from github.
@@ -113,7 +113,7 @@ require 'optparse'
 options = {:jobs => 4}
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: jd vimbundle [options]"
+  opts.banner = "Options:"
 
   opts.on("-j", "--threads [NUM]", Integer, "Number of concurrent threads to use") do |j|
     options[:jobs] = j or abort("choose a number of threads")

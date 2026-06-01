@@ -1,6 +1,6 @@
 #!/usr/bin/env bb
 ;@ summary: Sync all tracking branches for repos
-;@ usage: jd git-sync-all [opts]
+;@ usage: $0 [opts]
 ;@ help: |
 ;@   Iterates through all local branches that have remote tracking branches
 ;@   and attempts to fast-forward them to match their upstream counterparts.

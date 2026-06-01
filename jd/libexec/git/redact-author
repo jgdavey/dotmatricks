@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 #@ summary: Fix wrong author name/email in git history (destructively)
-#@ usage: jd redact-git-author
+#@ usage: $0 [<opts>]
 #@ complete: true
+#@ dynamic_help: true
 
 require 'optparse'
 require 'ostruct'
@@ -26,8 +27,8 @@ unless $?.success?
   abort "ERROR: Not in a git repo"
 end
 
-OptionParser.new do |opts|
-  opts.banner = "Usage: jd redact-git-author [options]"
+parser = OptionParser.new do |opts|
+  opts.banner = "Options:"
 
   opts.on("-o", "--old-email [EMAIL]", String, "") do |ae|
     options.old_author_email = ae
@@ -40,7 +41,14 @@ OptionParser.new do |opts|
   opts.on("-e", "--new-email [EMAIL]", String, "") do |ae|
     options.new_author_email = ae
   end
-end.parse!
+
+  opts.on("-h", "--help" ) do
+    puts parser
+    exit 0
+  end
+end
+
+parser.parse!
 
 unless `git status --porcelain`.chomp.empty?
   abort "ERROR: You have a dirty working copy. This command would remove any files not already checked in"

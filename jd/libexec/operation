@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #@ summary: Generate a random operation name
-#@ usage: jd operation
+#@ usage: $0
 
 class Operation
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: Show battery percentage, with various formatting options
-#@ usage: jd battery [options]
+#@ usage: $0 [options]
 #@ help: |
 #@   By default, prints just the battery percentage.
 #@

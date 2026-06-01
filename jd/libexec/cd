@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: Change to a folder within $SOURCE_DIR
-#@ usage: jd cd <directory>
+#@ usage: $0 <directory>
 #@ help: |
 #@   Change to a folder within $SOURCE_DIR
 #@

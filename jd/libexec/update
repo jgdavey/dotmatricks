@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-#@ summary: Update jd and all plugins
-#@ usage: jd update
-#@ help: |
-#@   Just run `jd update`
+#@ summary: Update jd, dotmatricks, mise
+#@ usage: $0
 
 set -e
 
 header() {
   echo -e "\033[33m$1\033[0m"
 }
+
+cd $HOME
+mise upgrade
 
 cd $ZUB_ROOT/..
 header "Updating dotmatricks"

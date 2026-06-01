@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: Kill a process that is listening a port
-#@ usage: jd stop-listening [port]
+#@ usage: $0 [port]
 #@ help: |
 #@   Don't know where that Rails server is listening? Just stop listening!
 #@   This command takes a port as an argument, or uses fzf to look for a process otherwise

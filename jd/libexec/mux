@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #@ summary: Create or reattach to tmux session
-#@ usage: jd mux [<name>]
+#@ usage: $0 [<name>]
 #@ help: |
 #@   After `cd`ing to a directory you'd like the root of your tmux session to be:
 #@
-#@      $ jd mux
+#@      $ $0
 #@
 #@   The above will create a tmux session named after the directory you're
 #@   in and create a few useful default windows with a sensible layout.

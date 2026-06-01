@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: List all jd shell aliases
-#@ usage: jd commands
+#@ usage: $0
 #@ help: |
 #@   Simply lists aliases provided by jd
 #@ complete: true

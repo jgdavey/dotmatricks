@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 #@ summary: List users attached to tmux session
-#@ usage: jd tmux-users
+#@ usage: $0
 #@ complete: true
 
 if [ "$1" = "--complete" ]; then
+  echo "--porcelain"
   exit
 fi
 
@@ -34,7 +35,7 @@ table() {
     } | column -t -s $'\t'
 }
 
-if [ -n "$as_table" ]; then
+if [[ -n "$as_table" ]]; then
     table
 else
     list

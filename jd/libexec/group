@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 #@ summary: Print a table under a grouped heading
-#@ usage: jd group [options]
+#@ usage: $0 [options]
 #@ help: |
 #@   Given a flat table of information, group by the first "column"
 #@   and print beneath it as a heading.
+#@ dynamic_help: true
 #@ complete: true
 
 require 'optparse'
@@ -14,7 +15,7 @@ options.field_separator = /,|:|\t/
 options.output_field_separator = "\n"
 
 parser = OptionParser.new do |opts|
-  opts.banner = "Usage: jd group [options]"
+  opts.banner = "Options:"
 
   opts.on("-f", "--field-separator C", "Field separator") do |c|
     options.output_field_separator = c or abort("choose a character for output_field_separator")

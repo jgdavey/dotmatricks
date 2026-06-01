@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: Clone down a git project into $SOURCE_DIR
-#@ usage: jd clone [-f] <repo>
+#@ usage: $0 [-f] <repo>
 #@ help: |
 #@   Clone down a git project into $SOURCE_DIR. If you provide
 #@   the "-f" flag, the repository will be redownloaded.

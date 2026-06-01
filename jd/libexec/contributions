@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 #@ summary: Show sorted list of git commit authorship totals
-#@ usage: jd contributions [<args>]
+#@ usage: $0 [<args>]
 #@ help: |
-#@   From within a folder tracked by git, run `jd contributions`. The
+#@   From within a folder tracked by git, run `$0`. The
 #@   output is a sorted list of names and the number of commits they've
 #@   contributed. Any arguments are forwarded to `git log`.
 #@
 #@   Examples:
-#@   $ jd contributions                      # for entire repo history
-#@   $ jd contributions -n30                 # authorship for last 30 commits
-#@   $ jd contributions --since="last week"
+#@   $ $0                      # for entire repo history
+#@   $ $0 -n30                 # authorship for last 30 commits
+#@   $ $0 --since="last week"
 require 'yaml'
 require 'pathname'
 

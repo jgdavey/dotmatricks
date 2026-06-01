@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #@ summary: Use jq within an fzf preview
-#@ usage: jd jq [FILE]
+#@ usage: $0 [FILE]
 #@ help: |
 #@   Given stdin, uses that as the JSON input to jq
 #@
