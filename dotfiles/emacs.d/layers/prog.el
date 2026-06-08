@@ -101,6 +101,8 @@
         lsp-enable-snippet t
         lsp-idle-delay 0.5
         lsp-terraform-ls-enable-show-reference t)
+  (setq lsp-tailwindcss-add-on-mode t
+        lsp-tailwindcss-major-modes '(web-mode html-mode css-mode))
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/public\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].datomic-local\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo\\'")
