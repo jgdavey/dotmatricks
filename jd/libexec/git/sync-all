@@ -122,7 +122,7 @@
 ;;--- Branch sync logic ---
 
 (defn get-branch-sync-status
-  "Sync a single branch by checking it out and pulling with --ff-only.
+  "Sync a single branch by fast-forwarding only
    Returns {:success? :status :message}"
   [{:keys [current dirty?] :as opts}]
   (let [{:keys [local remote] :as status} (local-remote-status opts)]
@@ -417,46 +417,52 @@
      :cmds [cmd
             (charm/cmd (make-repo-fn item opts))]}))
 
-(defn update-state [state msg]
+(defn continue []
+  (charm/cmd (fn [] {:type :continue})))
+
+(defn enqueue [state]
   (let [running-repos (filter running? (:repos state))
         waiting-repos (filter queued? (:repos state))]
-    (cond
-      (all-done? state)
-      [state charm/quit-cmd]
-
-      ;; Repo finished
-      (= :complete-repo (:type msg))
-      (let [{:keys [repo->idx]} state
-            path [:repos (get repo->idx (:repo msg))]]
-        [(-> state
-             (update-in path merge msg)
-             (update-in path assoc :state :complete))
-         nil])
-
-      (charm/window-size? msg)
-      [(assoc state :window-size msg) (charm/cmd (fn [] {:type :continue}))]
-
-      ;; Start downloading (n threads) repos
-      (and (< (count running-repos) (get-in state [:opts :threads]))
-           (seq waiting-repos))
+    (if
+     (and (< (count running-repos) (get-in state [:opts :threads]))
+          (seq waiting-repos))
       (let [{:keys [opts repo->idx]} state
             needed (- (get-in state [:opts :threads]) (count running-repos))
             items (take needed waiting-repos)
             changeset (mapv #(make-repo-task opts repo->idx %) items)]
         [(reduce (fn [s c] (assoc-in s (:path c) (:updated c))) state changeset)
          (apply charm/batch (mapcat :cmds changeset))])
+      [state nil])))
+
+(defn update-state [state msg]
+  (cond
+    (all-done? state)
+    [state charm/quit-cmd]
+
+      ;; Repo finished
+    (= :complete-repo (:type msg))
+    (let [{:keys [repo->idx]} state
+          path [:repos (get repo->idx (:repo msg))]
+          new-state (-> state
+                        (update-in path merge msg)
+                        (update-in path assoc :state :complete))]
+      (enqueue new-state))
+
+    (charm/window-size? msg)
+    [(assoc state :window-size msg) (continue)]
 
       ;; continue spinner animation
-      (spinner/tick-msg? msg)
-      (let [{:keys [spinner-id]} msg
-            r->i (:repo->idx state)
-            path [:repos (r->i spinner-id) :spinner]
-            spinner (get-in state path)
-            [new-spinner cmd] (charm/spinner-update spinner msg)]
-        [(assoc-in state path new-spinner) cmd])
+    (spinner/tick-msg? msg)
+    (let [{:keys [spinner-id]} msg
+          r->i (:repo->idx state)
+          path [:repos (r->i spinner-id) :spinner]
+          spinner (get-in state path)
+          [new-spinner cmd] (charm/spinner-update spinner msg)]
+      [(assoc-in state path new-spinner)
+       cmd])
 
-      :else
-      [state nil])))
+    :else
+    (enqueue state)))
 
 (defn plain-run [opts]
   (let [threads (or (:threads opts) 5)
