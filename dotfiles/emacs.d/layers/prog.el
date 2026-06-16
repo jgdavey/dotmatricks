@@ -160,6 +160,8 @@
 (use-package mise
   :ensure t
   :init
+  (add-to-list 'magic-mode-alist
+               '("#!.*/env\\(?:[ \t]+-[A-Za-z]+\\)*[ \t]+usage[ \t]+\\(ba\\|z\\|k\\)sh\\b" . sh-mode))
   (add-hook 'after-init-hook #'global-mise-mode))
 
 (setq treesit-language-source-alist
