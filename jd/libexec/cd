@@ -10,7 +10,7 @@
 
 base="$SOURCE_DIR"
 
-if [ "$1" = "--complete" ]; then
+if [[ "$1" = "--complete" ]]; then
   (
     cd $base
     for i in $(ls -d */); do echo "${i%%/}"; done
@@ -18,10 +18,31 @@ if [ "$1" = "--complete" ]; then
   exit 0
 fi
 
-if [ -d "${base}/${1}" ]; then
-  echo "cd ${base}/${1}"
-else
-  echo "No such directory: $path" >&2
-  exit 2
-fi
+initial_query="${1}"
+dir="$1"
 
+choose() {
+  fd_opts=("--hidden" "--follow" "--exclude" ".git")
+  fzf_opts=("--height" "~30%")
+  if [[ -n "$initial_query" ]]; then
+    fzf_opts+=("-q" "$initial_query")
+  fi
+  dir="$(cd ${base} && fd ${fd_opts[@]} -t d -d 1 . | sed 's#/$##' | fzf ${fzf_opts[@]})"
+}
+
+gocd() {
+  path="${base}/$1"
+  if [[ -n "$path" && -d "$path" ]]; then
+    echo "cd \"$path\""
+    return 0
+  else
+    return 1
+  fi
+}
+
+# No-arg behavior?
+# [[ -n "$dir" ]] || choose
+
+while ! gocd "$dir"; do
+  choose
+done

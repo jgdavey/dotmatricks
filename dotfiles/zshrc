@@ -137,8 +137,8 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]] \
 fi
 
 if command -v fzf >/dev/null; then
-  export FZF_FD_OPTS="--strip-cwd-prefix --hidden --follow --exclude .git"
-  export FZF_DEFAULT_COMMAND="fd ${FZF_FD_OPTS}"
+  export FZF_FD_OPTS=("--strip-cwd-prefix=always" "--hidden" "--follow" "--exclude" ".git")
+  export FZF_DEFAULT_COMMAND="fd ${FZF_FD_OPTS[@]}"
   # Disable fzf's C-t
   export FZF_CTRL_T_COMMAND=""
   # Disable fzf's M-c
