@@ -93,46 +93,43 @@ alias grep='command grep --color=auto'
 alias reset-authors='git commit --amend --reset-author -C HEAD'
 alias vi='vim'
 
-editor() {
-    echoc=
-    if [[ "--echo-command" = "$1" ]]; then
-        echoc=1
-    fi
+MY_SHELL=""
 
-    args=(-c -nw)
-    alt=""
+if [[ -n "$BASH_VERSION" ]]; then
+  MY_SHELL="bash"
+else
+  case "$SHELL" in
+    *zsh)   MY_SHELL="zsh" ;;
+    *bash)  MY_SHELL="bash" ;;
+  esac
+fi
 
-    if [[ -e "$EMACS_SOCKET_NAME" ]]; then
-        args+=("-s" "$EMACS_SOCKET_NAME")
-    else
-        alt=" --alternate-editor=''"
-    fi
+if command -v mise >/dev/null ; then
+  eval "$(mise activate $MY_SHELL)"
+fi
 
-    if [[ -n "$echoc" ]]; then
-        echo emacsclient "${args[@]}""$alt"
-    else
-        if [[ -n "$alt" ]]; then
-            args+=("-a" "")
-        fi
-        command emacsclient "${args[@]}" "$@"
-    fi
-}
+JD_ROOT="${SOURCE_DIR}/dotmatricks/jd"
 
-setup-editor-vars() {
-    export VISUAL="$(editor --echo-command)"
-    export EDITOR="$VISUAL"
-}
+if [[ -d "${JD_ROOT}" ]]; then
+  eval "$(${JD_ROOT}/bin/jd init - ${MY_SHELL})"
+  source "${JD_ROOT}/share/aliases"
+fi
 
-setup-editor-vars
+# Use emacsclient (via the `ec` wrapper in jd/bin) as the editor. It opens a
+# GUI frame on macOS, a terminal frame on headless boxes, and starts a daemon
+# if needed. $EDITOR must be a single executable path for tools that exec it
+# directly, so resolve `ec` to its absolute path (falling back to vim).
+export EDITOR="$(command -v ec || command -v emacsclient)"
+export VISUAL="$EDITOR"
 
 alias sudoedit="sudo -e"
 
 E() {
-    SUDO_EDITOR="$EDITOR" sudoedit $@
+    SUDO_EDITOR="$EDITOR" sudoedit "$@"
 }
 
 e() {
-    editor "$@"
+    ec "$@"
 }
 
 # http://twistedcode.blogspot.com/2008/04/lscolors-explained.html

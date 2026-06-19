@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# ec — open files in Emacs via emacsclient. Suitable as $EDITOR / $VISUAL.
+#
+#   * Graphical session (macOS, or $DISPLAY/$WAYLAND_DISPLAY set): new GUI frame.
+#   * Otherwise (e.g. headless server over SSH): new frame in the terminal.
+#   * Starts an Emacs daemon automatically if one isn't already running.
+#
+# Blocks until the buffer is finished (C-x #), which is what $EDITOR consumers
+# (git, sudoedit, etc.) expect.
+
+set -euo pipefail
+
+# --alternate-editor="" tells emacsclient to start a daemon if none is running.
+args=(--alternate-editor="")
+
+if [[ "${OSTYPE:-}" == darwin* || -n "${DISPLAY:-}" ]]; then
+  args+=(--create-frame)   # graphical frame
+else
+  args+=(--tty)            # new frame in the current terminal
+fi
+
+exec emacsclient "${args[@]}" "$@"

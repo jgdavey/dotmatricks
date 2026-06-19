@@ -1,8 +1,6 @@
 # -*- mode: sh; -*-
 # vim: set ft=sh sw=2 sts=2:
 
-[ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
-
 fpath=(
   $fpath
   ~/.zsh/functions
@@ -14,6 +12,8 @@ export LC_CTYPE=en_US.UTF-8
 
 # make with the nice completion
 autoload -U compinit; compinit
+
+[ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # Completion for kill-like commands
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
