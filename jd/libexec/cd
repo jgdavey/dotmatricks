@@ -44,5 +44,5 @@ gocd() {
 # [[ -n "$dir" ]] || choose
 
 while ! gocd "$dir"; do
-  choose
+  choose >&2
 done
