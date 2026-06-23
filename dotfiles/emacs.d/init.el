@@ -312,7 +312,9 @@
    ("M-g k" . consult-global-mark)
    ("M-g i" . consult-imenu)
    ("M-g I" . consult-imenu-multi)
-   ("C-s" . 'consult-line)
+   ("C-s" . 'consult-line)          ;; replaces isearch-forward
+   :map isearch-mode-map
+   ("C-S" . 'consult-line)
    :map project-prefix-map
    ("s r" . 'consult-ripgrep)
    ("s g" . 'consult-git-grep)
