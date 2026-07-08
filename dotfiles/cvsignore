@@ -7,3 +7,4 @@
 !/.lsp/config.edn
 /.clj-kondo/.cache
 /.clj-kondo/imports
+**/.claude/settings.local.json
