@@ -1,10 +1,10 @@
 #!/usr/bin/env bb
-;@ summary: Sync all tracking branches for repos
-;@ usage: $0 [opts]
-;@ help: |
-;@   Iterates through all local branches that have remote tracking branches
-;@   and attempts to fast-forward them to match their upstream counterparts.
-;@ complete: true
+;;@ summary: Sync all tracking branches for repos
+;;@ usage: $0 [opts]
+;;@ help: |
+;;@   Iterates through all local branches that have remote tracking branches
+;;@   and attempts to fast-forward them to match their upstream counterparts.
+;;@ complete: true
 
 (require '[babashka.process]
          '[babashka.deps :as deps]
@@ -12,28 +12,28 @@
          '[clojure.core.async :as a]
          '[clojure.string :as str])
 
-
 (def zub-root (or (System/getenv "ZUB_ROOT")
                   (fs/parent (fs/parent (fs/parent *file*)))))
 
 #_{:clj-kondo/ignore [:unresolved-namespace]}
 (babashka.classpath/add-classpath (str zub-root "/share/lib"))
 
-;; --complete is supported
-;; --help is supported
 (require '[jd.common :as common])
 
 (deps/add-deps
  '{:deps {com.joshuadavey/crockery {:mvn/version "0.3.3"}
-          de.timokramer/charm.clj {:mvn/version "0.1.60"}}})
+          de.timokramer/charm.clj {:mvn/version "0.2.71"}}})
 
 (require '[crockery.core :as crock]
-         '[charm.core :as charm]
+         '[charm.style.core :as style]
+         '[charm.program :as program]
+         '[charm.message :as msg]
+         '[charm.components.progress :as progress]
          '[charm.components.spinner :as spinner])
 
 (defn repo-root [cli-passed]
   (-> (or cli-passed
-          (System/getenv "SOURCE_DIR") ;; Uses init.sh
+          (System/getenv "SOURCE_DIR")
           (str zub-root "/../.."))
       fs/path
       fs/canonicalize))
@@ -122,9 +122,9 @@
 ;;--- Branch sync logic ---
 
 (defn get-branch-sync-status
-  "Sync a single branch by fast-forwarding only
+  "Sync a single branch by checking it out and pulling with --ff-only.
    Returns {:success? :status :message}"
-  [{:keys [current dirty?] :as opts}]
+  [{:keys [current dirty? force-sync?] :as opts}]
   (let [{:keys [local remote] :as status} (local-remote-status opts)]
     (cond
       ;; Branch is already up to date
@@ -164,6 +164,15 @@
              :message (or (:message status) "unknown error")
              :status :error)
 
+      ;; Diverged, but the user asked for a destructive reset
+      force-sync?
+      (assoc status
+             :status :force-sync
+             :command (cond
+                        (not= current local) :force-sync/other
+                        dirty?                :force-sync/stash
+                        :else                 :force-sync/current))
+
       ;; Diverged
       :else
       (let [behind (:behind status 0)
@@ -172,11 +181,47 @@
                :status :diverged
                :message (str "cannot fast-forward (behind: " behind ", ahead: " ahead ")"))))))
 
+(defn execute-force-sync
+  "Run the destructive sync for a diverged branch based on :command."
+  [{:keys [local remote command] :as status}]
+  (case command
+    :force-sync/other
+    (let [{:keys [success? out]} (git-cmd "update-ref" (str "refs/heads/" local) remote)]
+      (if success?
+        status
+        (assoc status :status :error :message (str "Error while force-syncing:\n" out))))
+
+    :force-sync/current
+    (let [{:keys [success? out]} (git-cmd "reset" "--hard" remote)
+          _ (when success?
+              (git-cmd "submodule" "update" "--init" "--recursive"))]
+      (if success?
+        status
+        (assoc status :status :error :message (str "Error while force-syncing:\n" out))))
+
+    :force-sync/stash
+    (let [stash (git-cmd "stash" "push" "--include-untracked")]
+      (if-not (:success? stash)
+        (assoc status :status :error :message (str "Error stashing before force-sync:\n" (:err stash)))
+        (let [reset (git-cmd "reset" "--hard" remote)]
+          (if-not (:success? reset)
+            (assoc status :status :error :message (str "Error resetting during force-sync:\n" (:err reset)))
+            (let [_ (git-cmd "submodule" "update" "--init" "--recursive")
+                  pop (git-cmd "stash" "pop")]
+              (if (:success? pop)
+                status
+                (assoc status
+                       :status :stash-conflict
+                       :message "stash pop had conflicts; stash preserved, resolve manually")))))))))
+
 (defn sync-all-branches
   "Sync all tracking branches and return results"
-  [{:keys [dry-run?]}]
+  [{:keys [dry-run? develop-only? force-sync?]}]
   (let [current (current-branch)
-        branches (get-tracking-branches)
+        all-branches (get-tracking-branches)
+        branches (if develop-only?
+                   (filter #(= "develop" (:local %)) all-branches)
+                   all-branches)
         dirty? (dirty?)
         fetch-result (if dry-run?
                        {:success? true}
@@ -187,6 +232,7 @@
                              (get-branch-sync-status {:local local
                                                       :remote remote
                                                       :dry-run? dry-run?
+                                                      :force-sync? force-sync?
                                                       :dirty? dirty?
                                                       :current current}))
                            branches)
@@ -194,15 +240,20 @@
             results (if dry-run?
                       statuses
                       (mapv (fn [status]
-                              (if (= :sync (:status status))
+                              (cond
+                                (= :sync (:status status))
                                 (let [{:keys [success? out]} (apply git-cmd (:git-args status))
-                                      _ (when (and success? (= :sync/current (:status status)))
-                                          (git-cmd "submodule" "update" "--init"))]
+                                      _ (when (and success? (= :sync/current (:command status)))
+                                          (git-cmd "submodule" "update" "--init" "--recursive"))]
                                   (if success?
                                     status
                                     (assoc status :status :error
                                            :message (str "Error while syncing:\n" out))))
-                                status))
+
+                                (= :force-sync (:status status))
+                                (execute-force-sync status)
+
+                                :else status))
                             statuses))]
         {:success? true
          :dir *dir*
@@ -251,6 +302,23 @@
    :color :red
    :detail message})
 
+(defmethod output-spec :force-sync [{:keys [local-sha remote-sha command]}]
+  {:symbol "⟲"
+   :color :yellow
+   :detail (str
+            (case command
+              :force-sync/other   "reset "
+              :force-sync/current "reset HEAD "
+              :force-sync/stash   "stash+reset+pop ")
+            (subs (or local-sha "") 0 7)
+            ".."
+            (subs (or remote-sha "") 0 7))})
+
+(defmethod output-spec :stash-conflict [{:keys [message]}]
+  {:symbol "!"
+   :color :yellow
+   :detail (or message "stash pop conflict — resolve manually")})
+
 (defn print-summary
   "Print a summary of sync results"
   [results dry-run?]
@@ -266,7 +334,7 @@
     :defaults {:ignore-ansi? true}
     :format :plain}
    (into [] (comp
-             (map :results)
+             (keep :results)
              cat
              (remove (fn [{:keys [status]}] (= :up-to-date status)))
              (map (fn [result]
@@ -279,12 +347,50 @@
                        :details detail}))))
          results)))
 
+;;--- Terminal taskbar progress (OSC 9;4) ---
+;; ConEmu-style progress escape code understood by WezTerm, Ghostty, Windows
+;; Terminal, ConEmu, etc.; silently ignored by terminals that don't support it.
+;; It's zero-width and cursor-neutral, so it does not disturb the charm TUI, but
+;; it must be written straight to stdout (not through the diffing renderer).
+;; See https://conemu.github.io/en/AnsiEscapeCodes.html#ConEmu_specific_OSC
+
+(def ^:private emit-osc?
+  ;; Only when attached to a real terminal, and not explicitly disabled.
+  (delay (and (nil? (System/getenv "NO_OSC_PROGRESS"))
+              (some? (System/console)))))
+
+(defn set-terminal-progress!
+  "Emit an OSC 9;4 progress update to stdout. `state`: 0=clear, 1=normal,
+   2=error, 3=indeterminate, 4=warning. `pct` is 0-100. No-op off a terminal.
+   Written straight to stdout (out of band from the charm renderer)."
+  ([state] (set-terminal-progress! state 0))
+  ([state pct]
+   (when @emit-osc?
+     ;; ESC ] 9 ; 4 ; state ; pct BEL
+     (.print System/out (format "]9;4;%d;%d" state (long pct)))
+     (.flush System/out))))
+
+(defn clear-progress-on-exit!
+  "Register a JVM shutdown hook that clears the OSC 9;4 terminal progress
+   indicator, so it never lingers regardless of how the process exits (normal
+   completion, Ctrl-C, or a signal). No-op off a terminal."
+  []
+  (when @emit-osc?
+    (.addShutdownHook (Runtime/getRuntime)
+                      (Thread. #(set-terminal-progress! 0)))))
+
 ;;--- State management / charm program ---
 
 (defn init-state [opts]
-  (let [repos (mapv #(assoc % :state :queued)
+  (let [ignored (or (:ignore opts) #{})
+        repos (into []
+                    (comp
+                     (remove (fn [{:keys [repo]}] (contains? ignored repo)))
+                     (map #(assoc % :state :queued)))
                     (known-repos (repo-root (:root opts))))]
     {:opts {:dry-run? (:dry-run opts)
+            :develop-only? (:develop-only opts)
+            :force-sync? (:force-sync opts)
             :threads (:threads opts)
             :root (:root opts)
             :sticky (:sticky opts)}
@@ -312,22 +418,35 @@
    (count (filter complete? repos))
    (float (count repos))))
 
+(defn percent-complete
+  "`done` of `total` as an integer 0-100, for the OSC 9;4 terminal progress
+   indicator. Zero total reads as 0."
+  [done total]
+  (if (zero? total)
+    0
+    (Math/round (* 100.0 (/ done (double total))))))
+
+(defn progress-pct
+  "Repo completion as an integer 0-100, for the OSC 9;4 terminal progress indicator."
+  [repos]
+  (percent-complete (count (filter complete? repos)) (count repos)))
+
 (def complete-style
-  (charm/style :fg charm/green :bold true))
+  (style/style :fg style/green :bold true))
 
 (def hint-style
-  (charm/style :fg 240))
+  (style/style :fg 240))
 
 (defn render-bar
   "Render a single progress bar with label."
   [{:keys [repos window-size]}]
-  (let [bar (charm/progress-bar :width (or (some-> window-size :width (* 0.75) long) 60)
+  (let [bar (progress/progress-bar :width (or (some-> window-size :width (* 0.75) long) 60)
                                 :bar-style {:full "━" :empty "┈"}
                                 ;; :bar-style :thin
                                 :show-percent false
                                 :percent (complete-percent repos))]
     (str " "
-         (charm/progress-view bar)
+         (progress/progress-view bar)
          " "
          (count (filter complete? repos))
          "/"
@@ -337,15 +456,15 @@
   (case (:state repo)
     :queued
     (str "   "
-         (charm/render (charm/style :fg 238) (:repo repo)))
+         (style/render (style/style :fg 238) (:repo repo)))
 
     :running
-    (str " " (charm/spinner-view (:spinner repo)) " "
-         (charm/render (charm/style :fg charm/cyan :bold true) (:repo repo)))
+    (str " " (spinner/spinner-view (:spinner repo)) " "
+         (style/render (style/style :fg style/cyan :bold true) (:repo repo)))
 
     :complete
     (str " ✓ "
-         (charm/render (charm/style :fg charm/green) (:repo repo)))))
+         (style/render (style/style :fg style/green) (:repo repo)))))
 
 (defn visible-repos [repos size]
   (let [running-idx (or (first (keep-indexed (fn [i r] (when (running? r) i))
@@ -359,7 +478,7 @@
     (subvec repos lower upper)))
 
 (defn done-view [{:keys [repos]}]
-  (str "\n" (charm/render complete-style
+  (str "\n" (style/render complete-style
                      (format "✓ Finished syncing %s repos" (count repos))) "\n\n"))
 
 (defn none-view [state]
@@ -411,95 +530,109 @@
   "Create a changeset entry for starting sync on a repo."
   [opts repo->idx item]
   (let [repo (:repo item)
-        [spinner cmd] (charm/spinner-init (charm/spinner :dots :id repo))]
+        [spinner cmd] (spinner/spinner-init (spinner/spinner :dots :id repo))]
     {:path [:repos (get repo->idx repo)]
      :updated (assoc item :state :running :spinner spinner)
      :cmds [cmd
-            (charm/cmd (make-repo-fn item opts))]}))
+            (program/cmd (make-repo-fn item opts))]}))
 
-(defn continue []
-  (charm/cmd (fn [] {:type :continue})))
-
-(defn enqueue [state]
+(defn update-state [state msg]
   (let [running-repos (filter running? (:repos state))
         waiting-repos (filter queued? (:repos state))]
-    (if
-     (and (< (count running-repos) (get-in state [:opts :threads]))
-          (seq waiting-repos))
+    (cond
+      ;; Ctrl-C (or `q`) aborts the run
+      (or (msg/key-match? msg "ctrl+c")
+          (msg/key-match? msg "q"))
+      [state program/quit-cmd]
+
+      (all-done? state)
+      [state program/quit-cmd]
+
+      ;; Repo finished
+      (= :complete-repo (:type msg))
+      (let [{:keys [repo->idx]} state
+            path [:repos (get repo->idx (:repo msg))]
+            new-state (-> state
+                          (update-in path merge msg)
+                          (update-in path assoc :state :complete))]
+        (set-terminal-progress! 1 (progress-pct (:repos new-state)))
+        [new-state nil])
+
+      (msg/window-size? msg)
+      [(assoc state :window-size msg) (program/cmd (fn [] {:type :continue}))]
+
+      ;; Start downloading (n threads) repos
+      (and (< (count running-repos) (get-in state [:opts :threads]))
+           (seq waiting-repos))
       (let [{:keys [opts repo->idx]} state
             needed (- (get-in state [:opts :threads]) (count running-repos))
             items (take needed waiting-repos)
             changeset (mapv #(make-repo-task opts repo->idx %) items)]
         [(reduce (fn [s c] (assoc-in s (:path c) (:updated c))) state changeset)
-         (apply charm/batch (mapcat :cmds changeset))])
-      [state nil])))
-
-(defn update-state [state msg]
-  (cond
-    (all-done? state)
-    [state charm/quit-cmd]
-
-      ;; Repo finished
-    (= :complete-repo (:type msg))
-    (let [{:keys [repo->idx]} state
-          path [:repos (get repo->idx (:repo msg))]
-          new-state (-> state
-                        (update-in path merge msg)
-                        (update-in path assoc :state :complete))]
-      (enqueue new-state))
-
-    (charm/window-size? msg)
-    [(assoc state :window-size msg) (continue)]
+         (apply program/batch (mapcat :cmds changeset))])
 
       ;; continue spinner animation
-    (spinner/tick-msg? msg)
-    (let [{:keys [spinner-id]} msg
-          r->i (:repo->idx state)
-          path [:repos (r->i spinner-id) :spinner]
-          spinner (get-in state path)
-          [new-spinner cmd] (charm/spinner-update spinner msg)]
-      [(assoc-in state path new-spinner)
-       cmd])
+      (spinner/tick-msg? msg)
+      (let [{:keys [spinner-id]} msg
+            r->i (:repo->idx state)
+            path [:repos (r->i spinner-id) :spinner]
+            spinner (get-in state path)
+            [new-spinner cmd] (spinner/spinner-update spinner msg)]
+        [(assoc-in state path new-spinner) cmd])
 
-    :else
-    (enqueue state)))
+      :else
+      [state nil])))
 
 (defn plain-run [opts]
-  (let [threads (or (:threads opts) 5)
-        repos (-> (init-state opts) :repos)
+  (let [state (init-state opts)
+        sync-opts (:opts state)
+        threads (or (:threads sync-opts) 5)
+        repos (:repos state)
+        total (count repos)
+        done (atom 0)
         results-chan (a/chan (count repos))
         _pipeline (a/pipeline-blocking threads
                                        results-chan
                                        (map (fn [repo]
-                                              (let [results ((make-repo-fn repo opts))]
+                                              (let [results ((make-repo-fn repo sync-opts))
+                                                    n (swap! done inc)]
+                                                (set-terminal-progress! 1 (percent-complete n total))
                                                 (print (format "Synced %s branches for %s\n"
                                                                (count (:results results))
                                                                (:repo repo)))
                                                 (flush)
                                                 results)))
-                                       (a/to-chan repos))]
-    (a/<!! (a/into [] results-chan))))
+                                       (a/to-chan repos))
+        out (a/<!! (a/into [] results-chan))]
+    out))
 
 ;;--- CLI entry point ---
 (def cli-handler
   (common/build-cli-args-handler
-   {:description (str "p git-sync - Sync all tracking branches in a git repository\n\n"
+   {:description (str "p git sync-all - Sync all tracking branches in a git repository\n\n"
                       "This command will iterate through all local branches with remote\n"
                       "tracking branches and attempt to fast-forward them to match upstream.\n\n"
                       "Examples:\n"
-                      "  p git-sync-all                    # Sync all tracking branches\n"
-                      "  p git-sync-all --dry-run          # Preview what would be synced\n")
+                      "  p git sync-all                     # Sync all tracking branches\n"
+                      "  p git sync-all --dry-run           # Preview what would be synced\n"
+                      "  p git sync-all --develop-only      # Only sync the develop branch\n"
+                      "  p git sync-all --develop-only --force-sync   # Hard-reset develop to origin\n"
+                      "  p git sync-all --ignore=dev-env,WebApp       # Skip those repos\n")
     :allow-no-args? true
     :cli-options [["-n" "--dry-run" "Show what would be synced without making changes"]
+                  [nil "--develop-only" "Only sync the 'develop' branch in each repo"]
+                  [nil "--force-sync" "Force-sync diverged branches (destructive: resets local to remote)"]
+                  [nil "--ignore REPOS" "Comma-separated list of repo directory names to skip"
+                   :parse-fn (fn [s] (into #{} (remove str/blank?) (str/split s #",")))]
                   ["-j" "--threads THREADS" "Number of threads to use (with --all)"
                    :default 5
                    :parse-fn parse-long
                    :validate [#(< 0 % 20) "Must be a number between 0 and 20"]]
-                  ["-p" "--progress MODE" "Progress display: full, simple, none"
+                  ["-p" "--progress MODE" "Progress display: full, plain, simple, none"
                    :default "full"
                    :validate [#(#{"full" "plain" "simple" "none"} %) "Must be full, plain, simple, or none"]]
                   [nil "--sticky" "Keep progress output on screen after completion"]
-                  ["-r" "--root" "Override root directory for repositories"]]}))
+                  ["-r" "--root DIR" "Override root directory for repositories"]]}))
 
 (defn main [args]
   (let [{:keys [options errors]} (cli-handler args)
@@ -509,9 +642,10 @@
       (doseq [e errors]
         (println e))
       (System/exit (count errors)))
+    (clear-progress-on-exit!)
     (let [repo-results (if (= progress :plain)
                          (plain-run options)
-                         (-> (charm/run {:view (case progress
+                         (-> (program/run {:view (case progress
                                                  :simple simple-view
                                                  :none none-view
                                                  full-view)
