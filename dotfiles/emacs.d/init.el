@@ -462,10 +462,13 @@
   :ensure t
   :pin melpa)
 
+(defun jd/hide-non-breaking-chars ()
+  (setq-local nobreak-char-display nil))
+
 (use-package ghostel
   :ensure t
   :pin melpa
-  )
+  :hook (ghostel-mode . jd/hide-non-breaking-chars))
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
