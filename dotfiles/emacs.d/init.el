@@ -177,6 +177,9 @@
   :ensure t
   :pin melpa
   :config
+  ;; workaround for Emacs 31 not allowing theme cycles
+  (setcdr (assoc 'gnus-group-news-low-empty doom-themes-base-faces)
+          '(:inherit 'gnus-group-mail-1-empty :weight 'normal))
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic nil)
@@ -382,6 +385,7 @@
   :ensure t)
 
 (use-package corfu
+  :pin melpa
   :ensure t
   :custom
   (corfu-auto nil)
@@ -390,11 +394,6 @@
   (corfu-popupinfo-delay '(1.5 . 0.5))
   :config
   (setq tab-always-indent 'complete)
-  (setq global-corfu-minibuffer
-      (lambda ()
-        (not (or (bound-and-true-p mct--active)
-                 (bound-and-true-p vertico--input)
-                 (eq (current-local-map) read-passwd-map)))))
   :init
   (global-corfu-mode)
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
@@ -471,6 +470,10 @@
   :ensure t
   :pin melpa
   :hook (ghostel-mode . jd/hide-non-breaking-chars))
+
+(use-package compat
+  :ensure t
+  :pin melpa)
 
 (setq browse-url-default-browser
       (if (eq system-type 'darwin)
