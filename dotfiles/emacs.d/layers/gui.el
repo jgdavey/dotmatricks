@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (use-package default-text-scale
   :ensure t
   :bind (:map default-text-scale-mode-map

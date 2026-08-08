@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (defun jd/default-layers (base-dir)
   (delq nil
         (delete-dups

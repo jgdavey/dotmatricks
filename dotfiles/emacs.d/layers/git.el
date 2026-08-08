@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (use-package transient
   :ensure t
   :pin melpa)

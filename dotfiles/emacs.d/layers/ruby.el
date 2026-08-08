@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (use-package inf-ruby
   :ensure t
   :config

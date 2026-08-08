@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; Silence compiler warnings
 (require 'sql)
 

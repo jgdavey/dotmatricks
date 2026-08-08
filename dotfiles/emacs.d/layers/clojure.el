@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (use-package flycheck-clj-kondo
   :pin melpa
   :ensure t)

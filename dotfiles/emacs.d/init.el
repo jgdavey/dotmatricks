@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; Turn off useless UI elements -- do this as early as possible to
 ;; avoid visual thrashing.
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))

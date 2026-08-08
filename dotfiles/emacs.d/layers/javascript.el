@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 (use-package js2-mode
   :pin melpa
   :ensure t
