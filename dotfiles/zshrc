@@ -13,6 +13,10 @@ export LC_CTYPE=en_US.UTF-8
 # make with the nice completion
 autoload -U compinit; compinit
 
+if command -v mise >/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
 [ ! -f "$HOME/.sharedrc" ] || source "$HOME/.sharedrc"
 
 # Completion for kill-like commands
@@ -85,10 +89,6 @@ l.() {
 }
 
 (( ${+aliases[e]} )) && unalias e
-
-if command -v mise >/dev/null; then
-  eval "$(mise activate zsh)"
-fi
 
 export EXTENDED_PROMPT_COMMAND=""
 
