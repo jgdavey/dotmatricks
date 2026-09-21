@@ -6,7 +6,6 @@ $hostname\
 $directory\
 $jobs\
 $battery\
-$mise\
 $java\
 $cmd_duration\
 $git_branch\
@@ -78,9 +77,6 @@ style = "yellow"
 [java]
 format = "[${symbol}(${version} )]($style)"
 version_format = "v${major}"
-disabled = true
-
-[mise]
 disabled = true
 
 [line_break]
