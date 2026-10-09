@@ -1,0 +1,14 @@
+# -*- mode: sh; -*-
+# vim: set ft=sh sw=2 sts=2:
+
+# Loaded in both interactive *and* non-interactive shells
+# In interactive shells, loads before others
+
+[[ ! -f "$HOME/.path" ]] || source "$HOME/.path"
+
+if command -v mise >/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# import local zsh customizations, if present
+[[ ! -f "$HOME/.zshenv.local" ]] || source "$HOME/.zshenv.local"

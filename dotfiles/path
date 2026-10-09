@@ -1,7 +1,7 @@
 # -*- mode: sh; -*-
 # vim: set ft=sh sw=2 sts=2:
 
-[ -e "$SOURCE_DIR" ] || SOURCE_DIR="$HOME/src"
+[[ -e "$SOURCE_DIR" ]] || SOURCE_DIR="$HOME/src"
 export SOURCE_DIR
 
 export GOPATH="$SOURCE_DIR/go"
@@ -19,7 +19,7 @@ export INFOPATH="${HOMEBREW_PREFIX}/share/info:${INFOPATH:-}";
 for dir in /usr/local/bin "$HOMEBREW_PREFIX/bin" "$WASMTIME_HOME/bin" "$GOPATH/bin" "$HOME/.cargo/bin"; do
   case ":$PATH:" in
     *:"$dir":*) ;;
-    *) [ ! -d "$dir" ] || PATH="$dir:$PATH" ;;
+    *) [[ ! -d "$dir" ]] || PATH="$dir:$PATH" ;;
   esac
 done
 
@@ -29,7 +29,7 @@ for dir in "$HOME/bin" "$HOME/.local/bin" ".git/safe/../../bin" ; do
     *:"$dir":*) PATH="`echo "$PATH"|sed -e "s#:$dir##"`" ;;
   esac
   case "$dir" in
-    /*) [ ! -d "$dir" ] || PATH="$dir:$PATH" ;;
+    /*) [[ ! -d "$dir" ]] || PATH="$dir:$PATH" ;;
     *) PATH="$dir:$PATH" ;;
   esac
 done
@@ -38,7 +38,7 @@ done
 for dir in /usr/local/sbin /opt/local/sbin /usr/X11/bin "$HOMEBREW_PREFIX/sbin"; do
   case ":$PATH:" in
     *:"$dir":*) ;;
-    *) [ ! -d "$dir" ] || PATH="$PATH:$dir" ;;
+    *) [[ ! -d "$dir" ]] || PATH="$PATH:$dir" ;;
   esac
 done
 
