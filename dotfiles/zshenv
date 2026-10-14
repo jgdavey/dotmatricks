@@ -6,8 +6,12 @@
 
 [[ ! -f "$HOME/.path" ]] || source "$HOME/.path"
 
-if command -v mise >/dev/null; then
-  eval "$(mise activate zsh)"
+# Interactive shells activate mise in ~/.zshrc, once completions are set up.
+# Everything else only needs its environment: `mise activate` would also run
+# compinit, which is slow and pointless without a prompt. Aggressive mode
+# moves mise's paths back in front of the ones ~/.path just prepended.
+if [[ ! -o interactive ]] && command -v mise >/dev/null; then
+  eval "$(MISE_ACTIVATE_AGGRESSIVE=1 mise env -s zsh)"
 fi
 
 # import local zsh customizations, if present

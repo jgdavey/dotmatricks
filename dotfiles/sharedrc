@@ -104,10 +104,6 @@ else
   esac
 fi
 
-if command -v mise >/dev/null ; then
-  eval "$(mise activate $MY_SHELL)"
-fi
-
 JD_ROOT="${SOURCE_DIR}/dotmatricks/jd"
 
 if [[ -d "${JD_ROOT}" ]]; then

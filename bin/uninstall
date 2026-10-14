@@ -25,10 +25,10 @@ remove_or_skip() {
   unlink=
 
   case "$status" in
+    "linked" ) unlink=1 ;;
     "external" ) if [[ -n "$force" ]]; then
                    unlink=1
                  fi ;;
-    "absent" ) unlink=1 ;;
     * ) ;;
   esac
 

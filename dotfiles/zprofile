@@ -1,0 +1,17 @@
+# -*- mode: sh; -*-
+# vim: set ft=sh sw=2 sts=2:
+
+# Loaded in login shells (every new terminal tab on macOS, and the shell
+# exec-path-from-shell starts for Emacs), after /etc/zprofile. That file
+# runs path_helper, which moves the system dirs (/usr/bin, etc.) ahead of
+# everything ~/.zshenv set up, so redo the PATH ordering here.
+
+[[ ! -f "$HOME/.path" ]] || source "$HOME/.path"
+
+# See ~/.zshenv
+if [[ ! -o interactive ]] && command -v mise >/dev/null; then
+  eval "$(MISE_ACTIVATE_AGGRESSIVE=1 mise env -s zsh)"
+fi
+
+# import local zsh customizations, if present
+[[ ! -f "$HOME/.zprofile.local" ]] || source "$HOME/.zprofile.local"

@@ -11,8 +11,10 @@ fpath=(
 export LC_CTYPE=en_US.UTF-8
 
 # make with the nice completion
-autoload -U compinit; compinit
+autoload -Uz compinit; compinit
 
+# After compinit, so mise registers its tool completions without running
+# compinit itself. Before sharedrc, which needs mise's tools (zub) on PATH.
 if command -v mise >/dev/null; then
   eval "$(mise activate zsh)"
 fi
