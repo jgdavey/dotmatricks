@@ -97,14 +97,13 @@ MY_SHELL=""
 
 if [[ -n "$BASH_VERSION" ]]; then
   MY_SHELL="bash"
-else
-  case "$SHELL" in
-    *zsh)   MY_SHELL="zsh" ;;
-    *bash)  MY_SHELL="bash" ;;
-  esac
+elif [[ -n "$ZSH_VERSION" ]]; then
+  MY_SHELL="zsh"
 fi
 
-JD_ROOT="${SOURCE_DIR}/dotmatricks/jd"
+# ~/.sharedrc links into the dotfiles checkout, wherever that lives
+JD_ROOT="$(readlink "$HOME/.sharedrc")"
+JD_ROOT="${JD_ROOT%/dotfiles/sharedrc}/jd"
 
 if [[ -d "${JD_ROOT}" ]]; then
   eval "$(${JD_ROOT}/bin/jd init - ${MY_SHELL})"
@@ -114,7 +113,7 @@ fi
 # Use emacsclient (via the `ec` wrapper in jd/bin) as the editor. It opens a
 # GUI frame on macOS, a terminal frame on headless boxes, and starts a daemon
 # if needed. $EDITOR must be a single executable path for tools that exec it
-# directly, so resolve `ec` to its absolute path (falling back to vim).
+# directly, so resolve `ec` to its absolute path (falling back to emacsclient).
 export EDITOR="$(command -v ec || command -v emacsclient)"
 export VISUAL="$EDITOR"
 

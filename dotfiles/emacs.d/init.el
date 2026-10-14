@@ -36,12 +36,6 @@
 
 (jd/setup-frame (selected-frame))
 
-(defun debug-on-load-obsolete (filename)
-  (when (equal (car (last (split-string filename "[/\\]") 2))
-               "obsolete")
-    (debug)))
-(add-to-list 'after-load-functions #'debug-on-load-obsolete)
-
 ;; Editor
 
 (setq-default indent-tabs-mode nil)   ;; don't use tabs to indent
@@ -60,11 +54,6 @@
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
-
-;; autosave the undo-tree history
-(setq undo-tree-history-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq undo-tree-auto-save-history t)
 
 ;; better buffer filenames
 (require 'uniquify)
@@ -131,8 +120,7 @@
 
 (defvar base-packages
   '((color-theme-sanityinc-tomorrow . "melpa-stable")
-    (zenburn-theme . "melpa-stable")
-    (use-package . "melpa-stable"))
+    (zenburn-theme . "melpa-stable"))
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p base-packages)

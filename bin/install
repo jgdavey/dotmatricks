@@ -71,3 +71,15 @@ find config -type f -name '*' | while read file; do
 
   link_or_skip $path "$dotmatrix_path" $force
 done
+
+# remove links to files that are no longer in the repo
+{ find "$HOME" -maxdepth 1 -type l; find "$HOME/.config" -type l; } 2>/dev/null | while read link; do
+  target="$(readlink "$link")"
+  case "$target" in
+    "$PWD"/dotfiles/*|"$PWD"/config/*)
+      if [[ ! -e "$target" ]]; then
+        remove_notice "${link#$HOME/}" "dead"
+        unlink "$link"
+      fi ;;
+  esac
+done

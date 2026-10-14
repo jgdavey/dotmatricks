@@ -40,7 +40,8 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # Shows files in color, same as LSCOLOR
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
-zstyle ':completion:*' menu select=1 _complete _approximate
+zstyle ':completion:*' menu select=1
+zstyle ':completion:*' completer _complete _approximate
 
 # insert all expansions for expand completer
 zstyle ':completion:*:expand:*' tag-order all-expansions
@@ -63,9 +64,7 @@ setopt hist_ignore_dups       # ignore duplicated commands history list
 setopt hist_ignore_space      # ignore commands that start with space
 setopt hist_verify            # show command with history expansion to user before running it
 setopt hist_reduce_blanks     # Remove superfluous blanks before recording entry.
-setopt share_history          # share command history data across sessions
-setopt appendhistory
-setopt inc_append_history     # incrementally flush history (immediate)
+setopt share_history          # share command history data across sessions (and write it immediately)
 
 # options
 setopt extendedglob interactivecomments prompt_subst no_list_beep no_bg_nice always_to_end nonomatch

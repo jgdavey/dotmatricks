@@ -4,52 +4,78 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-Personal dotfiles repository (fork of Hashrocket dotmatrix). It symlinks configuration files into `$HOME` and installs a personal command toolkit called `jd`.
+Personal dotfiles repository (fork of Hashrocket dotmatrix). It symlinks configuration files into `$HOME` and provides a personal command toolkit called `jd`.
 
 ## Installation
 
 ```bash
-bin/install          # Link dotfiles, copy .local files, install jd; safe to re-run
-bin/install -f       # Force overwrite externally-managed files
-bin/uninstall        # Remove all managed symlinks
+bin/install          # Link dotfiles, copy .local files, prune dead links; safe to re-run
+bin/install -f       # Also replace symlinks that point somewhere else
+bin/uninstall        # Remove all symlinks that point into this repo
+bin/upgrade          # git pull --rebase, then bin/install
 ```
 
-`bin/install` does three things:
-1. Symlinks `dotfiles/<name>` → `~/.<name>` for each file in `bin/file_list.sh`
-2. Symlinks `config/<path>` → `~/.config/<path>` for all files under `config/`
-3. Runs `jd autoinstall` to set up the `jd` toolkit
+`bin/install`:
+1. Copies `*.local` at the repo root to `~/.<name>` if absent (never overwrites)
+2. Symlinks `dotfiles/<name>` → `~/.<name>` for each entry in `bin/file_list.sh` (everything in `dotfiles/`, or the list in a `FILES` file if present)
+3. Symlinks each file under `config/` → `~/.config/<path>`
+4. Removes symlinks in `~` and `~/.config` that point at files no longer in the repo
+
+Real files are never replaced, even with `-f`. Run the scripts from the repo root.
 
 ## Architecture
 
 ### dotfiles/
 Configuration files that get symlinked into `$HOME` with a `.` prefix.
 
-- **`emacs.d/`** — Emacs 29+ config. `init.el` bootstraps package management and loads `layers/*.el`. Each layer is a standalone elisp file handling one domain (clojure, ruby, git, org, etc.).
-- **`zsh/`** and **`sharedrc`** — Shell config; `sharedrc` is sourced by both bash and zsh.
-- **`gitconfig`** — Git aliases and settings; 30+ aliases including `git tree`, `git bs` (branch status).
+- **`emacs.d/`** — Emacs config (relies on built-in `use-package`, so 29+; currently run on 31). See below.
+- **`zshenv`, `zprofile`, `zshrc`, `bashrc`, `bash_profile`, `sharedrc`, `path`** — Shell config. See "Shell startup" below.
+- **`zsh/functions/`** — Vendored zsh completions (added to `fpath` in `zshrc`).
+- **`gitconfig`** — Git aliases and settings; includes `~/.gitconfig.local` for identity. `cvsignore` is its global excludes file.
 
 ### config/
-Files symlinked into `~/.config/`. Contains starship prompt config, bat config, clj-kondo linting rules, and LSP settings.
+Files symlinked into `~/.config/`: `bat/config`, `ghostty/config`, `starship.toml`.
 
 ### jd/
-Personal command toolkit dispatched via `jd <command>`. Each command is a script in `jd/libexec/jd-<name>`. Install with `jd autoinstall` (adds `jd/bin` to PATH via shell config).
+Personal command toolkit, dispatched by [zub](https://github.com/jgdavey/zub) (installed via mise) using `jd/zub.yml`. `jd/bin/jd` is a thin wrapper around `zub`.
 
-Notable commands: `jd git-sync-all`, `jd clone`, `jd mux`, `jd new`, `jd battery`.
+- Each command is a script at `jd/libexec/<name>`; subcommands live in subdirectories (e.g. `jd/libexec/git/sync-all` → `jd git sync-all`).
+- Most scripts declare `#@ summary:` and `#@ usage:` comments (`;;@` in babashka scripts), which zub uses for help; `atomically` uses a [usage](https://usage.jdx.dev) spec instead.
+- `jd new <command>` generates a new command.
+- Shell integration comes from `jd init - <shell>`, evaluated in `sharedrc`. It finds the repo by following the `~/.sharedrc` symlink, so the checkout can live anywhere. It needs `zub` on PATH, so mise must be activated before `sharedrc` is sourced.
+- Completions: `jd/completions/`.
 
-## Emacs Layers
+## Shell startup
 
-The Emacs config uses a layered approach — `init.el` loads each file from `dotfiles/emacs.d/layers/`:
+PATH ordering is fragile on macOS: `/etc/zprofile` (zsh) and `/etc/profile` (bash) run `path_helper` in login shells, which moves the system dirs ahead of anything set earlier. Every new terminal tab is a login shell, as is the shell `exec-path-from-shell` starts for Emacs.
+
+- **`path`** — Sets PATH; *moves* its dirs to the front even if already present, so it can be re-sourced after `path_helper`. Shared by bash and zsh.
+- **`zshenv`** (all zsh shells) — Sources `~/.path`. Non-interactive shells load mise with `mise env` (not `mise activate`, which also runs `compinit`).
+- **`zprofile`** (zsh login shells, after `/etc/zprofile`) — Re-sources `~/.path`, and `mise env` again for non-interactive shells.
+- **`zshrc`** (interactive zsh) — Runs `compinit` once, *then* `mise activate zsh` (mise skips its own `compinit` when `compdef` exists), then `sharedrc`.
+- **`bash_profile` → `bashrc`** — `mise activate bash`, then `sharedrc`.
+- **`sharedrc`** — Aliases, `jd init`, `EDITOR`. Shared by bash and zsh.
+
+mise should run once per shell. `mise env` calls set `MISE_ACTIVATE_AGGRESSIVE=1` so mise's paths land ahead of Homebrew's in nested shells. Machine-specific settings go in `~/.zshenv.local`, `~/.zprofile.local`, `~/.zshrc.local` and `~/.bashrc.local` (not in the repo).
+
+To check a change, compare a fresh login shell with a nested one, e.g. `env -i HOME=$HOME USER=$USER TERM=xterm /bin/zsh -lc 'whence java jq openssl'` vs `zsh -c 'whence java jq openssl'`.
+
+## Emacs
+
+`init.el` sets up packages and the core editing/completion stack (Vertico, Consult, Orderless, Marginalia, Embark, Corfu), then `lib/layers.el` loads every file in `layers/`, plus `local-layers.el`, `local.el` and `custom.el` if present. Each layer is a standalone elisp file for one domain:
 
 | Layer | Purpose |
 |-------|---------|
-| `prog.el` | LSP, tree-sitter, flycheck, common programming setup |
-| `clojure.el` | CIDER, clj-kondo, babashka |
-| `git.el` | Magit, Forge (GitHub) |
-| `buffers.el` | Vertico, Consult, Embark, Corfu completion |
-| `org.el` | Org-mode configuration |
+| `prog.el` | LSP, flycheck, dumb-jump, assorted language modes, mise |
+| `clojure.el` | clojure-mode/clojure-ts-mode, CIDER, inf-clojure, clj-kondo, jet |
+| `git.el` / `forge.el` | Magit / Forge (GitHub) |
+| `buffers.el` | buffer-move, winner, comint |
+| `org.el` | Org-mode and babel |
 | `agents.el` | Claude Code IDE integration (`C-c C-'`) |
 | `evil.el` | Evil mode (vim keybindings) |
 
+Other layers: `gui`, `javascript`, `misc`, `ruby`, `rust`, `sql`, `writing`.
+
 ## Dependencies
 
-Managed via `Brewfile` at the repo root. Key taps: `d12frosted/emacs-plus`, `borkdude/brew`, `clojure-lsp/brew`.
+Managed via `Brewfile` at the repo root. Many language tools (Java, Node, Leiningen, clj-kondo, clojure-lsp, zub, etc.) come from mise rather than Homebrew.
