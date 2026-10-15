@@ -27,7 +27,6 @@
       (require 'mouse)
       (xterm-mouse-mode t)
       (setq mouse-sel-mode t)
-      (defun track-mouse (e))
 
       (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
       (global-set-key (kbd "<mouse-5>") 'scroll-up-line))))

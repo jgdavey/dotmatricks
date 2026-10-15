@@ -28,10 +28,8 @@
   (interactive "DNew directory: ")
   (let* ((name (buffer-name))
          (filename (buffer-file-name))
-         (dir
-          (if (string-match dir "\\(?:/\\|\\\\)$")
-              (substring dir 0 -1) dir))
-         (newname (concat dir "/" name)))
+         (newname (and filename
+                       (expand-file-name (file-name-nondirectory filename) dir))))
     (if (not filename)
         (message "Buffer '%s' is not visiting a file!" name)
       (progn

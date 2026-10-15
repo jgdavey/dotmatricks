@@ -73,7 +73,7 @@
   :custom
   (lsp-completion-provider :none) ;; we use Corfu!
   :hook ((rust-mode . lsp)
-         (rust-ts-mode .lsp)
+         (rust-ts-mode . lsp)
          (clojure-mode . lsp)
          (clojure-ts-mode . lsp)
          (clojurescript-mode . lsp)
