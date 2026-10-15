@@ -72,44 +72,35 @@
   :ensure t
   :custom
   (lsp-completion-provider :none) ;; we use Corfu!
-  :hook ((rust-mode . lsp)
-         (rust-ts-mode . lsp)
-         (clojure-mode . lsp)
-         (clojure-ts-mode . lsp)
-         (clojurescript-mode . lsp)
-         (clojurec-mode . lsp)
-         (go-ts-mode . lsp-deferred)
+  (lsp-disabled-clients '(tfls))
+  (lsp-headerline-breadcrumb-enable nil)
+  (lsp-response-timeout 2)
+  (lsp-signature-auto-activate nil)
+  (lsp-idle-delay 0.5)
+  (lsp-terraform-ls-enable-show-reference t)
+  ;; clojurescript-mode and clojurec-mode derive from clojure-mode, so
+  ;; its hook covers them
+  :hook ((clojure-mode . lsp-deferred)
+         (clojure-ts-mode . lsp-deferred)
          (go-mode . lsp-deferred)
+         (go-ts-mode . lsp-deferred)
+         (java-ts-mode . lsp-deferred)
+         (rust-ts-mode . lsp-deferred)
          (terraform-mode . lsp-deferred)
-         (typescript-mode . lsp-deferred)
          (typescript-ts-mode . lsp-deferred)
          (tsx-ts-mode . lsp-deferred)
-         ;;(enh-ruby-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration)
          (lsp-completion-mode . jd/lsp-mode-setup-completion))
-  :commands lsp
-  :autoload lsp-deferred
   :init
   (defun jd/lsp-mode-setup-completion ()
     (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
           '(flex))) ;; Configure flex
   :config
-  (setq lsp-disabled-clients '(tfls))
-  (setq ;; lsp-keymap-prefix "C-c l"
-        lsp-headerline-breadcrumb-enable nil
-        lsp-response-timeout 2
-        lsp-completion-enable t
-        lsp-signature-auto-activate nil
-        lsp-enable-snippet t
-        lsp-idle-delay 0.5
-        lsp-terraform-ls-enable-show-reference t)
-  (setq lsp-tailwindcss-add-on-mode t
-        lsp-tailwindcss-major-modes '(web-mode html-mode css-mode))
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]resources/public\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].datomic-local\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\].clj-kondo\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]data/batches\\'")
-  (setq lsp-enable-xref t))
+  (dolist (dir '("[/\\\\]resources/public\\'"
+                 "[/\\\\].datomic-local\\'"
+                 "[/\\\\].clj-kondo\\'"
+                 "[/\\\\]data/batches\\'"))
+    (add-to-list 'lsp-file-watch-ignored-directories dir)))
 
 (use-package consult-lsp
   :ensure t)
@@ -138,16 +129,11 @@
   (setq treemacs-space-between-root-nodes nil))
 
 
-(use-package lsp-docker
-  :ensure t
-  :after lsp-mode)
-
+;; Hooked from lsp-mode above: hooks here would wait on `:after'
 (use-package lsp-java
   :ensure t
   :pin melpa
   :after lsp-mode
-  :hook ((java-mode . lsp)
-         (java-ts-mode . lsp))
   :init
   (setq lsp-java-jdt-ls-prefer-native-command t))
 
@@ -166,58 +152,40 @@
                '("#!.*/env\\(?:[ \t]+-[A-Za-z]+\\)*[ \t]+usage[ \t]+\\(ba\\|z\\|k\\)sh\\b" . sh-mode))
   (add-hook 'after-init-hook #'global-mise-mode))
 
-(setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (c "https://github.com/tree-sitter/tree-sitter-c")
-        ;; (c++ "https://github.com/tree-sitter/tree-sitter-cpp")
-        (cmake "https://github.com/uyha/tree-sitter-cmake")
-        (commonlisp "https://github.com/tree-sitter-grammars/tree-sitter-commonlisp")
-        (css "https://github.com/tree-sitter/tree-sitter-css")
-        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-        (go "https://github.com/tree-sitter/tree-sitter-go")
-        (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
-        (html "https://github.com/tree-sitter/tree-sitter-html")
-        (java "https://github.com/tree-sitter/tree-sitter-java")
-        (javascript "https://github.com/tree-sitter/tree-sitter-javascript")
-        (json "https://github.com/tree-sitter/tree-sitter-json")
-        (latex "https://github.com/latex-lsp/tree-sitter-latex")
-        (make "https://github.com/tree-sitter-grammars/tree-sitter-make")
-        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-        (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml")
-        (org "https://github.com/milisims/tree-sitter-org")
-        (perl "https://github.com/ganezdragon/tree-sitter-perl")
-        (php "https://github.com/tree-sitter/tree-sitter-php")
-        (proto "https://github.com/mitchellh/tree-sitter-proto")
-        (python "https://github.com/tree-sitter/tree-sitter-python")
-        (r "https://github.com/r-lib/tree-sitter-r")
-        (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
-        (rust "https://github.com/tree-sitter/tree-sitter-rust")
-        (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages")
-        (toml "https://github.com/tree-sitter/tree-sitter-toml")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+;; Emacs 31's tree-sitter modes register their own grammar recipes (pinned
+;; to the versions they were written against) and remaps from the
+;; non-treesit modes; `treesit-enabled-modes' picks which remaps apply.
+;; Its setter only runs once treesit is loaded.
+(require 'treesit)
+(setopt treesit-enabled-modes
+        '(c-ts-mode
+          css-ts-mode
+          java-ts-mode
+          js-ts-mode
+          json-ts-mode
+          python-ts-mode
+          ruby-ts-mode
+          rust-ts-mode
+          toml-ts-mode
+          tsx-ts-mode
+          typescript-ts-mode
+          yaml-ts-mode))
 
-(defun jd/treesit-install-all-grammars ()
+;; If the json-mode package is installed, it claims .json files
+(add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
+
+;; Grammars for modes that don't come with a recipe
+(add-to-list 'treesit-language-source-alist
+             '(proto "https://github.com/mitchellh/tree-sitter-proto"))
+
+(defun jd/treesit-install-grammars ()
+  "Install or update the grammars for `treesit-enabled-modes'.
+Loading each mode registers the grammar versions it expects."
   (interactive)
-  (mapc (lambda (lang)
-          (treesit-install-language-grammar (car lang)))
-        treesit-language-source-alist))
-
-;; Treesit wrappers for Emacs 29+
-(setq major-mode-remap-alist
-      '((bash-mode . bash-ts-mode)
-        (c-mode . c-ts-mode)
-        (css-mode . css-ts-mode)
-        (java-mode . java-ts-mode)
-        (js2-mode . js-ts-mode)
-        (json-mode . json-ts-mode)
-        (ruby-mode . ruby-ts-mode)
-        (rust-mode . rust-ts-mode)
-        (toml-mode . toml-ts-mode)
-        (typescript-mode . typescript-ts-mode)
-        (typescriptreact-mode . tsx-ts-mode)
-        (python-mode . python-ts-mode)
-        (yaml-mode . yaml-ts-mode)))
+  (dolist (mode treesit-enabled-modes)
+    (when (autoloadp (symbol-function mode))
+      (autoload-do-load (symbol-function mode) mode)))
+  (dolist (source treesit-language-source-alist)
+    (treesit-install-language-grammar (car source))))
 
 (add-to-list 'auto-mode-alist '("\\.env\\.tmpl\\'" . bash-ts-mode))

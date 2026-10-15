@@ -1,10 +1,9 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; Provides the .rs entry in `auto-mode-alist', which remaps to
+;; rust-ts-mode (see `treesit-enabled-modes')
 (use-package rust-mode
-  :ensure t
-  :config
-  (setq lsp-rust-server 'rust-analyzer
-        lsp-rust-analyzer-proc-macro-enable t))
+  :ensure t)
 
 (use-package cargo
   :ensure t
