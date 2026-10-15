@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#@ summary: Regenerate zsh completions for tools that can print their own
+#@ usage: $0
+#@ complete: true
+
+if [ "$1" = "--complete" ]; then
+  exit
+fi
+
+set -e
+
+# Added to fpath in ~/.zshrc
+dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
+mkdir -p "$dir"
+
+# <tool> <command that prints its zsh completion>
+generators=(
+  "docker|docker completion zsh"
+  "op|op completion zsh"
+  "rustup|rustup completions zsh"
+  "cargo|rustup completions zsh cargo"
+)
+
+for entry in "${generators[@]}"; do
+  tool="${entry%%|*}"
+  cmd="${entry#*|}"
+  file="$dir/_$tool"
+
+  if ! command -v "$tool" >/dev/null; then
+    echo "skip     $tool (not installed)"
+    continue
+  fi
+
+  tmp="$(mktemp)"
+  if $cmd > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+    if cmp -s "$tmp" "$file"; then
+      echo "same     _$tool"
+      rm "$tmp"
+    else
+      echo "updated  _$tool"
+      mv "$tmp" "$file"
+    fi
+  else
+    echo "failed   $tool: $cmd" >&2
+    rm "$tmp"
+  fi
+done

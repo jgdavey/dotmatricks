@@ -11,6 +11,9 @@ header() {
 cd $HOME
 mise upgrade
 
+header "Regenerating zsh completions"
+"$ZUB_ROOT/libexec/regen-zsh-completions"
+
 cd $ZUB_ROOT/..
 header "Updating dotmatricks"
 bin/upgrade

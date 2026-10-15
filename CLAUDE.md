@@ -30,7 +30,7 @@ Configuration files that get symlinked into `$HOME` with a `.` prefix.
 
 - **`emacs.d/`** — Emacs config (relies on built-in `use-package`, so 29+; currently run on 31). See below.
 - **`zshenv`, `zprofile`, `zshrc`, `bashrc`, `bash_profile`, `sharedrc`, `path`** — Shell config. See "Shell startup" below.
-- **`zsh/functions/`** — Vendored zsh completions (added to `fpath` in `zshrc`).
+- **`zsh/functions/`** — Vendored zsh completions (added to `fpath` in `zshrc`). Only for tools that can't generate their own; those that can are listed in `jd/libexec/regen-zsh-completions`, which writes them to `~/.cache/zsh/completions` (also on `fpath`) and runs as part of `jd update`.
 - **`gitconfig`** — Git aliases and settings; includes `~/.gitconfig.local` for identity. `cvsignore` is its global excludes file.
 
 ### config/

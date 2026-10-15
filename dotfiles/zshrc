@@ -4,6 +4,7 @@
 fpath=(
   $fpath
   ~/.zsh/functions
+  ${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions # from `jd regen-zsh-completions`
   $HOMEBREW_PREFIX/share/zsh/site-functions
 )
 
