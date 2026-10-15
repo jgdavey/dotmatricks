@@ -1,18 +1,13 @@
 ;;; -*- lexical-binding: t; -*-
 
-;; Turn off useless UI elements -- do this as early as possible to
-;; avoid visual thrashing.
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+;; Frame and UI defaults are in early-init.el
+
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
-(setq inhibit-startup-echo-area-message t)
 (setq initial-scratch-message "")
-
-(add-to-list 'default-frame-alist '(width . 1.0))
-(add-to-list 'default-frame-alist '(height . 1.0))
-(add-to-list 'default-frame-alist '(top . 0))
-(add-to-list 'default-frame-alist '(left . 0))
+;; `inhibit-startup-echo-area-message' only works when set to the login
+;; name as a literal string, which doesn't suit a shared config
+(advice-add 'display-startup-echo-area-message :override #'ignore)
 
 (defun jd/setup-frame (frame)
   (if (display-graphic-p frame)

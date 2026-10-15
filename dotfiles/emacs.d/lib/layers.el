@@ -18,7 +18,7 @@
 
 (defun jd/load-file-if-exists (file)
   (if (file-exists-p file)
-      (load-file file)
+      (load (expand-file-name file) nil 'nomessage)
     nil))
 
 (jd/load-file-if-exists
@@ -26,7 +26,7 @@
 
 (mapc (lambda (layer)
         (load
-         (expand-file-name layer jd/layer-path)))
+         (expand-file-name layer jd/layer-path) nil 'nomessage))
       jd/layers)
 
 (provide 'layers)

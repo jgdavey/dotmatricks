@@ -9,5 +9,5 @@
   :init
   (default-text-scale-mode))
 
-(setq gc-cons-threshold (* 1024 1024 8))     ;; 8mb
+;; gc-cons-threshold is set in early-init.el
 (setq read-process-output-max (* 1024 1024)) ;; 1mb

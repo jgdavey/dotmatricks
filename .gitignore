@@ -1,6 +1,7 @@
 FILES
 .vim/bundle
 /dotfiles/emacs.d/*
+!/dotfiles/emacs.d/early-init.el
 !/dotfiles/emacs.d/init.el
 !/dotfiles/emacs.d/lib
 !/dotfiles/emacs.d/layers
