@@ -233,10 +233,10 @@
 (use-package project
   :bind (:map project-prefix-map
               ("s" . nil)  ;; will be rebound by consult
-              ("t" . project-find-functions))
+              )
   :custom
   (project-switch-commands #'project-find-file)
-  :config
+  :init
   (global-set-key (kbd "C-c p") project-prefix-map))
 
 (use-package savehist
