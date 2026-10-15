@@ -50,6 +50,14 @@ dirty_warning() {
   fi
 }
 
+# Repo path for an entry from file_list.sh
+source_path() {
+  case "$1" in
+    config/*) echo "$PWD/$1" ;;
+    *) echo "$PWD/dotfiles/$1" ;;
+  esac
+}
+
 path_status() {
   path="$1"
   source="$2"

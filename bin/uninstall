@@ -33,22 +33,16 @@ remove_or_skip() {
   esac
 
   if [[ -z "$unlink" ]]; then
-    skip_notice "$(basename $path)" "$status"
+    skip_notice "~${path#$HOME}" "$status"
   else
-    remove_notice "$(basename $path)" "$status"
+    remove_notice "~${path#$HOME}" "$status"
     unlink $path
   fi
 }
 
-for dotfile in $(./bin/file_list.sh); do
-  dotmatrix_path="$PWD/dotfiles/$dotfile"
-  path="$HOME/.$dotfile"
+for file in $(./bin/file_list.sh); do
+  dotmatrix_path="$(source_path $file)"
+  path="$HOME/.$file"
 
-  remove_or_skip $path "$dotmatrix_path" $force
-done
-
-find config -type f -name '*' | while read file; do
-  dotmatrix_path="$PWD/${file}"
-  path="$HOME/.${file}"
   remove_or_skip $path "$dotmatrix_path" $force
 done

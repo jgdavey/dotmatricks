@@ -17,9 +17,8 @@ bin/upgrade          # git pull --rebase, then bin/install
 
 `bin/install`:
 1. Copies `*.local` at the repo root to `~/.<name>` if absent (never overwrites)
-2. Symlinks `dotfiles/<name>` → `~/.<name>` for each entry in `bin/file_list.sh` (everything in `dotfiles/`, or the list in a `FILES` file if present)
-3. Symlinks each file under `config/` → `~/.config/<path>`
-4. Removes symlinks in `~` and `~/.config` that point at files no longer in the repo
+2. Symlinks each entry from `bin/file_list.sh` → `~/.<entry>`: everything in `dotfiles/` (linked whole), plus each file under `config/` (skipping dot-paths), so `config/bat/config` → `~/.config/bat/config`. A `FILES` file at the repo root, if present, replaces this list. `bin/uninstall` uses the same list.
+3. Removes symlinks in `~` and `~/.config` that point at files no longer in the repo
 
 Real files are never replaced, even with `-f`. Run the scripts from the repo root.
 

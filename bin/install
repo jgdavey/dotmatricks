@@ -33,11 +33,11 @@ link_or_skip() {
   esac
 
   if [[ -z "$install" ]]; then
-    skip_notice "$(basename $path)" "$status"
+    skip_notice "~${path#$HOME}" "$status"
   else
-    link_notice "$(basename $path)" "$status"
+    link_notice "~${path#$HOME}" "$status"
     mkdir -p "$(dirname $path)"
-    ln -nfs $dotmatrix_path $path
+    ln -nfs "$dotmatrix_path" "$path"
   fi
 }
 
@@ -47,27 +47,19 @@ for file in *.local ; do
   path="$HOME/.$file"
 
   if [ ! -e $path ]; then
-    copy_notice $file "absent"
+    copy_notice "~/.${file}" "absent"
     cp $dotmatrix_path $path
   else
-    skip_notice $file "exists"
+    skip_notice "~/.${file}" "exists"
   fi
 done
 
-# dotfiles
+# dotfiles and config
 for file in $(./bin/file_list.sh); do
-  dotmatrix_path="$PWD/dotfiles/$file"
+  dotmatrix_path="$(source_path $file)"
   path="$HOME/.$file"
 
   [ -e $dotmatrix_path ] || continue
-
-  link_or_skip $path "$dotmatrix_path" $force
-done
-
-# auxillary config
-find config -type f -name '*' | while read file; do
-  dotmatrix_path="$PWD/${file}"
-  path="$HOME/.${file}"
 
   link_or_skip $path "$dotmatrix_path" $force
 done
@@ -78,7 +70,7 @@ done
   case "$target" in
     "$PWD"/dotfiles/*|"$PWD"/config/*)
       if [[ ! -e "$target" ]]; then
-        remove_notice "${link#$HOME/}" "dead"
+        remove_notice "~${link#$HOME}" "dead"
         unlink "$link"
       fi ;;
   esac
