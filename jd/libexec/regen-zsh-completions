@@ -25,6 +25,7 @@ generators=(
   "cargo|rustup completions zsh cargo"
   "docker|docker completion zsh"
   "emacs|download _emacs"
+  "hexyl|hexyl --completion zsh"
   "op|op completion zsh"
   "pitchfork|pitchfork completion zsh"
   "rustup|rustup completions zsh"
