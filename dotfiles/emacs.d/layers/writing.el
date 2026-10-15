@@ -1,10 +1,12 @@
 ;;; -*- lexical-binding: t; -*-
 
 (use-package markdown-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package writeroom-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;; (use-package markdown-ts-mode
 ;;   :ensure t

@@ -29,4 +29,5 @@
   :ensure t)
 
 (use-package git-link
-  :ensure t)
+  :ensure t
+  :defer t)

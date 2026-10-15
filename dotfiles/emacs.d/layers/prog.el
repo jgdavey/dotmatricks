@@ -26,20 +26,33 @@
 
 (use-package applescript-mode
   :pin melpa
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package lua-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package yaml-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package es-mode
   :pin melpa
-  :ensure t)
+  :ensure t
+  :defer t
+  :init
+  ;; es-mode's autoloads call this once yasnippet loads, which would load
+  ;; all of es-mode (and js) at startup. Register its snippets without it.
+  (defun es-mode-snippets-initialize ()
+    (add-to-list 'yas-snippet-dirs
+                 (expand-file-name "snippets"
+                                   (file-name-directory (locate-library "es-mode")))
+                 t)))
 
 (use-package nginx-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package web-mode
   :ensure t
@@ -56,6 +69,7 @@
 
 (use-package dumb-jump
   :ensure t
+  :defer t
   :pin melpa
   :init
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
@@ -65,7 +79,8 @@
   :pin melpa)
 
 (use-package consult-flycheck
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package lsp-mode
   :pin melpa
@@ -139,7 +154,8 @@
   (setq lsp-java-jdt-ls-prefer-native-command t))
 
 (use-package dockerfile-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package protobuf-ts-mode
   :ensure t

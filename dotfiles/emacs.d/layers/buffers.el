@@ -1,7 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (use-package buffer-move
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package winner
   :ensure t

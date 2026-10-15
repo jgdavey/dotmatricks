@@ -8,4 +8,5 @@
   (js-indent-level 2))
 
 (use-package jq-format
-  :ensure t)
+  :ensure t
+  :defer t)

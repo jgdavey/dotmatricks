@@ -360,6 +360,7 @@
 (use-package expand-region
   :pin melpa
   :ensure t
+  :defer t
 ;;  :bind ;;(("C-c e e" . er/))
   )
 
@@ -391,17 +392,20 @@
 ;;     (corfu-terminal-mode +1)))
 
 (use-package wgrep
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package rg
   :ensure t
   :defer t)
 
 (use-package ssh-config-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package visual-fill-column
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package which-key
   :ensure t

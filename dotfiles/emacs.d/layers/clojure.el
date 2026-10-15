@@ -2,7 +2,8 @@
 
 (use-package flycheck-clj-kondo
   :pin melpa
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (defun jd/lsp-indent-defun (&optional arg)
   "Reindent the current defun.
@@ -73,4 +74,5 @@ of the point."
 
 (use-package jet
   :pin melpa
-  :ensure t)
+  :ensure t
+  :defer t)

@@ -2,6 +2,7 @@
 
 (use-package inf-ruby
   :ensure t
+  :defer t
   :config
   (defun inf-ruby-console-pry-rails (dir)
     "Run Rails console in DIR."

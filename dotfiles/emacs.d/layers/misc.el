@@ -1,13 +1,17 @@
 ;;; -*- lexical-binding: t; -*-
 
 (use-package csv-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package arduino-cli-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package arduino-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package terraform-mode
-  :ensure t)
+  :ensure t
+  :defer t)
