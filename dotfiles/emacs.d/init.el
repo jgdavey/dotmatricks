@@ -130,6 +130,8 @@
 
 ;; Package setup
 (require 'use-package)
+;; Record load/init/config timings; see M-x use-package-report
+(setq use-package-compute-statistics t)
 
 ;; Required until PATH injection in Info.plist works
 (use-package exec-path-from-shell
