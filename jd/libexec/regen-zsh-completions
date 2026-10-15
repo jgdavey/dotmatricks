@@ -13,12 +13,22 @@ set -e
 dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
 mkdir -p "$dir"
 
+download() {
+  local url="https://raw.githubusercontent.com/zsh-users/zsh-completions/refs/heads/master/src/${1}"
+  curl -sL "$url"
+}
+
 # <tool> <command that prints its zsh completion>
 generators=(
-  "docker|docker completion zsh"
-  "op|op completion zsh"
-  "rustup|rustup completions zsh"
+  "age|download _age"
+  "bundle|download _bundle"
   "cargo|rustup completions zsh cargo"
+  "docker|docker completion zsh"
+  "emacs|download _emacs"
+  "op|op completion zsh"
+  "pitchfork|pitchfork completion zsh"
+  "rustup|rustup completions zsh"
+  "shellcheck|download _shellcheck"
 )
 
 for entry in "${generators[@]}"; do
