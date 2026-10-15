@@ -394,7 +394,8 @@
   :ensure t)
 
 (use-package rg
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package ssh-config-mode
   :ensure t)
@@ -410,14 +411,18 @@
 (use-package yasnippet
   :ensure t
   :diminish yas-minor-mode
-  :init
-  (yas-global-mode 1))
+  :hook ((prog-mode text-mode conf-mode) . yas-minor-mode)
+  :config
+  (yas-reload-all))
 
+;; Its autoloads register the snippets once yasnippet loads
 (use-package yasnippet-snippets
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package consult-yasnippet
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package doom-modeline
   :pin melpa
@@ -443,7 +448,8 @@
 
 (use-package vterm
   :ensure t
-  :pin melpa)
+  :pin melpa
+  :defer t)
 
 (defun jd/hide-non-breaking-chars ()
   (setq-local nobreak-char-display nil))

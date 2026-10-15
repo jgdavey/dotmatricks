@@ -103,7 +103,8 @@
     (add-to-list 'lsp-file-watch-ignored-directories dir)))
 
 (use-package consult-lsp
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package lsp-ui
   :pin melpa

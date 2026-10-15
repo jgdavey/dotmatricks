@@ -36,11 +36,19 @@ of the point."
 (use-package clojure-ts-mode
   :ensure t
   :bind (:map clojure-ts-mode-map
-              ("M-q" . jd/lsp-indent-defun)))
+              ("M-q" . jd/lsp-indent-defun))
+  :init
+  ;; clojure-ts-mode only sets up these remaps once it's loaded, which
+  ;; would otherwise wait until after the first Clojure file is opened
+  (dolist (entry '((clojure-mode . clojure-ts-mode)
+                   (clojurescript-mode . clojure-ts-clojurescript-mode)
+                   (clojurec-mode . clojure-ts-clojurec-mode)))
+    (add-to-list 'major-mode-remap-defaults entry)))
 
 (use-package inf-clojure
   :pin melpa
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package cider
   :ensure t

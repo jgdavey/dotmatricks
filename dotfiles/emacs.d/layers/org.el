@@ -6,23 +6,6 @@
          :map org-mode-map
          ("C-c o" . jd/org-open-at-point))
   :init
-  (use-package ob-http
-    :ensure t)
-  (use-package ox-gfm
-    :pin melpa
-    :ensure t
-    :init
-    (eval-after-load "org"
-      '(require 'ox-gfm nil t)))
-  (use-package ob-sql-mode
-    :ensure t
-    :config
-    ;; Override so that session can link to existing SQL sessions
-    (defun org-babel-sql-mode--buffer-name (params)
-      (format "%s" (cdr (assoc :session params))))
-    ;; This plugin adds an invalid entry
-    (custom-reevaluate-setting 'org-structure-template-alist))
-
   (setq org-directory (expand-file-name "~/org"))
   (setq org-babel-clojure-backend 'cider)
   (setq org-export-backends '(ascii html icalendar latex md odt))
@@ -92,3 +75,23 @@
         (let ((browse-url-browser-function 'eww-browse-url))
           (org-open-at-point))
       (org-open-at-point))))
+
+;; Loaded by `org-babel-do-load-languages' above
+(use-package ob-http
+  :ensure t
+  :defer t)
+
+(use-package ox-gfm
+  :pin melpa
+  :ensure t
+  :after ox)
+
+(use-package ob-sql-mode
+  :ensure t
+  :after org
+  :config
+  ;; Override so that session can link to existing SQL sessions
+  (defun org-babel-sql-mode--buffer-name (params)
+    (format "%s" (cdr (assoc :session params))))
+  ;; This plugin adds an invalid entry
+  (custom-reevaluate-setting 'org-structure-template-alist))
