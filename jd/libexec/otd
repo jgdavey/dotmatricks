@@ -1,6 +1,6 @@
-#!/usr/bin/env ruby
-#@ summary: Print a random event that happened on this day in history, courtesy of Wikipedia
-#@ usage: $0
+#!/usr/bin/env -S usage exec ruby
+#USAGE about "Print a random event that happened on this day in history, courtesy of Wikipedia"
+#USAGE arg "[count]" default="1" help="Number of events to print"
 
 require 'nokogiri'
 require 'open-uri'
@@ -25,13 +25,13 @@ def events
 
   ev.collect do |node|
     node.xpath('.//style').unlink
-    node.xpath('.//sup[@class="reference"]').unlink
+    node.xpath('.//sup[contains(concat(" ", normalize-space(@class), " "), " reference ")]').unlink
     year, text = node.text.strip.split(/\s*–\s*/, 2)
     Event.new year.to_i, text
   end
 end
 
-num = (ARGV[0] || "1").to_i
+num = ENV.fetch("usage_count", "1").to_i
 
 chosen = events.sample(num).sort
 print "On this day in"
