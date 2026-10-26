@@ -1,53 +1,23 @@
-#!/usr/bin/env bash
-#@ summary: Show battery percentage, with various formatting options
-#@ usage: $0 [options]
-#@ help: |
-#@   By default, prints just the battery percentage.
-#@
-#@   Options:
-#@     --charging     Print even when plugged in (default prints nothing when plugged in)
-#@     --color        Print with color (depending on formatter)
-#@     --tmux         Print with tmux formatting (for status bar)
-#@     --format=[opt] One of percent, bar, icon, block, or hearts,
-#@                    or a format string (any of the opts, prefixed with %)
-#@
-#@   This utility is known to work with OS X and Ubuntu, but may work with other Linux distros.
-#@ complete: true
+#!/usr/bin/env -S usage bash
+#USAGE about "Show battery percentage, with various formatting options"
+#USAGE long_about """
+#USAGE Show battery percentage, with various formatting options.
+#USAGE By default, prints just the battery percentage.
+#USAGE
+#USAGE This utility is known to work with OS X and Ubuntu, but may work with other Linux distros.
+#USAGE """
+#USAGE flag "--charging" help="Print even when plugged in (default prints nothing when plugged in)"
+#USAGE flag "-c --color" help="Print with color (depending on formatter)"
+#USAGE flag "-t --tmux" help="Print with tmux formatting (for status bar)"
+#USAGE flag "-f --format <format>" default="percent" {
+#USAGE   help "One of percent, bar, icon, block, or hearts, or a format string (any of the opts, prefixed with %)"
+#USAGE }
+#USAGE complete "format" run="printf '%s\\n' percent bar icon block hearts"
 
-if [ "$1" = "--complete" ]; then
-    echo --charging
-    echo --color
-    echo --tmux
-    echo --format=percent
-    echo --format=hearts
-    exit
-fi
-
-# Default options
-format=percent
-color=
-charging=
-tmux=
-
-# Parse options
-while [ $# -gt 0 ]; do
-  case "$1" in
-      --charging) charging=1 ;;
-      -c|--color) color=1 ;;
-      -t|--tmux)  tmux=1 ;;
-      -f|--format*)
-          if echo "$1" | grep -q "=[^ ]"; then
-              format=$(echo "$1" | sed -e 's/^[^=]*=//g')
-          else
-              format="$2"
-              shift
-          fi
-          ;;
-      (--) shift; break ;;
-      (*) break ;;
-  esac
-  shift
-done
+format="${usage_format:-percent}"
+[ "$usage_color" = "true" ] && color=1
+[ "$usage_charging" = "true" ] && charging=1
+[ "$usage_tmux" = "true" ] && tmux=1
 
 # Grab battery status
 BATTERY_DISCHARGING=
