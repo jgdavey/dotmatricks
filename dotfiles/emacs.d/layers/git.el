@@ -31,3 +31,6 @@
 (use-package git-link
   :ensure t
   :defer t)
+
+(use-package igist
+  :ensure t)
